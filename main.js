@@ -1,0 +1,551 @@
+"use strict";
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+// src/main.ts
+var main_exports = {};
+__export(main_exports, {
+  default: () => FilePlacerPlugin
+});
+module.exports = __toCommonJS(main_exports);
+var import_obsidian = require("obsidian");
+
+// node_modules/monkey-around/dist/index.mjs
+function around(obj, factories) {
+  const removers = Object.keys(factories).map((key) => around1(obj, key, factories[key]));
+  return removers.length === 1 ? removers[0] : function() {
+    removers.forEach((r) => r());
+  };
+}
+function around1(obj, method, createWrapper) {
+  const inherited = obj[method], hadOwn = obj.hasOwnProperty(method), original = hadOwn ? inherited : function() {
+    return Object.getPrototypeOf(obj)[method].apply(this, arguments);
+  };
+  let current = createWrapper(original);
+  if (inherited)
+    Object.setPrototypeOf(current, inherited);
+  Object.setPrototypeOf(wrapper, current);
+  obj[method] = wrapper;
+  return remove;
+  function wrapper(...args) {
+    if (current === original && obj[method] === wrapper)
+      remove();
+    return current.apply(this, args);
+  }
+  function remove() {
+    if (obj[method] === wrapper) {
+      if (hadOwn)
+        obj[method] = original;
+      else
+        delete obj[method];
+    }
+    if (current === original)
+      return;
+    current = original;
+    Object.setPrototypeOf(wrapper, inherited || Function);
+  }
+}
+
+// src/order.ts
+function placeNames(current, moving, anchor, after) {
+  const rest = current.filter((name) => !moving.includes(name));
+  let index = anchor === null ? 0 : rest.indexOf(anchor);
+  if (index === -1) index = rest.length;
+  else if (anchor !== null && after) index += 1;
+  return [...rest.slice(0, index), ...moving, ...rest.slice(index)];
+}
+function arrange(items, nameOf2, order) {
+  const rank = new Map(order.map((name, i) => [name, i]));
+  const result = items.filter((item) => rank.has(nameOf2(item)));
+  result.sort((a, b) => (rank.get(nameOf2(a)) ?? 0) - (rank.get(nameOf2(b)) ?? 0));
+  if (result.length === items.length) return result;
+  let previous = null;
+  for (const item of items) {
+    if (!rank.has(nameOf2(item))) result.splice(previous === null ? 0 : result.indexOf(previous) + 1, 0, item);
+    previous = item;
+  }
+  return result;
+}
+
+// src/merge.ts
+var FRONTMATTER = /^---\r?\n(?:([\s\S]*?)\r?\n)?---[ \t]*(?:\r?\n|$)/;
+var FENCE = /^ {0,3}(`{3,}|~{3,})/;
+function splitNote(text) {
+  const match = FRONTMATTER.exec(text);
+  if (!match) return { head: "", frontmatter: null, body: text };
+  return { head: match[0], frontmatter: match[1] ?? "", body: text.slice(match[0].length) };
+}
+function asSection(body, title) {
+  const lines = body.split("\n");
+  const first = lines.find((line) => line.trim() !== "");
+  let fence = null;
+  const moved = lines.map((line) => {
+    const marker = FENCE.exec(line)?.[1];
+    if (marker) {
+      if (fence === null) fence = marker[0];
+      else if (marker[0] === fence) fence = null;
+      return line;
+    }
+    return fence === null ? line.replace(/^(#{1,5})(?=[ \t])/, "#$1") : line;
+  });
+  const text = moved.join("\n").replace(/^(?:[ \t]*\r?\n)+/, "").trimEnd();
+  if (first !== void 0 && /^#[ \t]/.test(first)) return text;
+  return text ? `## ${title}
+
+${text}` : `## ${title}`;
+}
+function mergeBodies(targetBody, sourceBody, sourceTitle) {
+  const top = targetBody.trimEnd();
+  const section = asSection(sourceBody, sourceTitle);
+  return `${top ? `${top}
+
+` : ""}${section}
+`;
+}
+function keepsEveryLine(merged, originals) {
+  const have = lineCounts(merged);
+  for (const [line, count] of lineCounts(originals.join("\n"))) {
+    if ((have.get(line) ?? 0) < count) return false;
+  }
+  return true;
+}
+function mergeProperties(target, source) {
+  for (const [key, value] of Object.entries(source)) {
+    const before = target[key];
+    if (isEmpty(value) || same(before, value)) continue;
+    if (isEmpty(before)) {
+      target[key] = value;
+      continue;
+    }
+    const all = [...asList(before), ...asList(value)];
+    target[key] = all.filter((item, i) => all.findIndex((other) => same(item, other)) === i);
+  }
+}
+function lineCounts(text) {
+  const counts = /* @__PURE__ */ new Map();
+  for (const line of text.split("\n")) {
+    const key = line.replace(/^#{1,6}[ \t]+/, "").trim();
+    if (key) counts.set(key, (counts.get(key) ?? 0) + 1);
+  }
+  return counts;
+}
+var isEmpty = (value) => value === void 0 || value === null || value === "";
+var same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+var asList = (value) => Array.isArray(value) ? value : [value];
+
+// src/main.ts
+var FILE_EXPLORER = "file-explorer";
+var ROW = ".nav-file-title, .nav-folder-title";
+var PINIT = "pinit-to-top-or-bottom";
+var HOVER_CLASS = "file-placer-hover";
+var LINE_CLASS = { up: "file-placer-line-top", down: "file-placer-line-bottom" };
+var INTO_CLASS = "file-placer-into";
+var SHOWN_CLASSES = [HOVER_CLASS, LINE_CLASS.up, LINE_CLASS.down, INTO_CLASS];
+var HOLD_MS = 700;
+var STILL_PX = 3;
+var DEFAULT_MERGED_FOLDER = "Merged originals";
+var parentOf = (path) => path.includes("/") ? path.slice(0, path.lastIndexOf("/")) : "/";
+var nameOf = (path) => path.slice(path.lastIndexOf("/") + 1);
+var isAtOrUnder = (path, base) => path === base || path.startsWith(base + "/");
+var childPath = (folder, name) => folder.isRoot() ? name : `${folder.path}/${name}`;
+var isNote = (file) => file instanceof import_obsidian.TFile && file.extension === "md";
+var strings = (value) => Array.isArray(value) ? value.filter((p) => typeof p === "string") : [];
+var FilePlacerPlugin = class extends import_obsidian.Plugin {
+  constructor() {
+    super(...arguments);
+    this.settings = { order: {}, mergedFolder: DEFAULT_MERGED_FOLDER, askBeforeMerge: true };
+    this.unpatch = null;
+    this.unsupported = false;
+    this.watched = /* @__PURE__ */ new WeakSet();
+    this.plan = null;
+    this.shownEl = null;
+    // The mouse during a drag: where it last moved, when, which way, and the row it is over.
+    this.mouse = { x: NaN, y: NaN, at: 0, direction: "down", row: null };
+  }
+  async onload() {
+    await this.loadSettings();
+    this.addSettingTab(new FilePlacerSettingTab(this.app, this));
+    this.registerEvent(
+      this.app.workspace.on("file-menu", (menu, file) => {
+        if (file instanceof import_obsidian.TFolder && this.settings.order[file.path]) this.addResetItem(menu, file.path);
+      })
+    );
+    this.registerEvent(this.app.vault.on("rename", (file, oldPath) => this.onRename(file, oldPath)));
+    this.registerEvent(this.app.vault.on("delete", (file) => this.onDelete(file.path)));
+    this.registerDomEvent(document, "dragstart", (evt) => this.resetMouse(evt.clientX, evt.clientY), true);
+    this.registerDomEvent(document, "dragend", () => this.endDrag(), true);
+    this.app.workspace.onLayoutReady(() => {
+      this.patchFileExplorer();
+      this.registerEvent(this.app.workspace.on("layout-change", () => this.patchFileExplorer()));
+    });
+  }
+  onunload() {
+    this.show(null);
+    this.unpatch?.();
+    this.unpatch = null;
+    this.forEachExplorer((view) => view.requestSort());
+  }
+  async place(files, folder, anchor, after) {
+    const order = placeNames(this.namesIn(folder), files.map((f) => f.name), anchor?.name ?? null, after);
+    await this.moveInto(files, folder);
+    this.settings.order[folder.path] = order;
+    await this.saveSettings();
+  }
+  // Nothing is deleted: the note dropped on keeps its place and gets the dragged note added under
+  // it, and both originals, untouched, go to the merged originals folder.
+  async merge(source, target) {
+    const { vault, fileManager } = this.app;
+    const [sourceText, targetText] = await Promise.all([vault.read(source), vault.read(target)]);
+    const from = splitNote(sourceText);
+    const into = splitNote(targetText);
+    let sourceBody = from.body;
+    let properties = null;
+    if (from.frontmatter !== null) {
+      try {
+        const parsed = (0, import_obsidian.parseYaml)(from.frontmatter);
+        if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) properties = parsed;
+      } catch {
+        properties = null;
+      }
+      if (!properties && from.frontmatter.trim()) sourceBody = "```yaml\n" + from.frontmatter + "\n```\n\n" + sourceBody;
+    }
+    const body = mergeBodies(into.body, sourceBody, source.basename);
+    if (!keepsEveryLine(body, [into.body, sourceBody])) {
+      new import_obsidian.Notice("File Placer: the merge would have lost a line, so nothing was changed.");
+      return;
+    }
+    const folder = await this.ensureFolder(this.mergedFolder());
+    await vault.create(this.freePath(folder, `${target.basename} (before merge)`), targetText);
+    await fileManager.renameFile(source, this.freePath(folder, source.basename));
+    await vault.modify(target, into.head + body);
+    if (properties) {
+      const added = properties;
+      await fileManager.processFrontMatter(target, (frontmatter) => mergeProperties(frontmatter, added));
+    }
+    new import_obsidian.Notice(`Merged "${source.basename}" into "${target.basename}".`);
+  }
+  async resetOrder(path) {
+    delete this.settings.order[path];
+    await this.saveSettings();
+  }
+  mergedFolder() {
+    return (0, import_obsidian.normalizePath)(this.settings.mergedFolder.trim() || DEFAULT_MERGED_FOLDER);
+  }
+  async loadSettings() {
+    const data = await this.loadData();
+    const order = {};
+    for (const [path, names] of Object.entries(data?.order ?? {})) order[path] = strings(names);
+    this.settings = {
+      order,
+      mergedFolder: typeof data?.mergedFolder === "string" ? data.mergedFolder : DEFAULT_MERGED_FOLDER,
+      askBeforeMerge: data?.askBeforeMerge ?? true
+    };
+  }
+  async saveSettings() {
+    await this.saveData(this.settings);
+    this.forEachExplorer((view) => view.requestSort());
+  }
+  patchFileExplorer() {
+    this.watchExplorers();
+    if (this.unpatch || this.unsupported) return;
+    const leaf = this.app.workspace.getLeavesOfType(FILE_EXPLORER).find((l) => !l.isDeferred);
+    if (!leaf) return;
+    const proto = Object.getPrototypeOf(leaf.view);
+    if (typeof proto.getSortedFolderItems !== "function") {
+      this.unsupported = true;
+      new import_obsidian.Notice("File Placer: this version of Obsidian's file explorer is not supported.");
+      return;
+    }
+    const plugin = this;
+    this.unpatch = around(proto, {
+      getSortedFolderItems(original) {
+        return function(folder) {
+          return plugin.arrange(folder, original.call(this, folder));
+        };
+      }
+    });
+    this.forEachExplorer((view) => view.requestSort());
+  }
+  // Listens in the capture phase, so it runs before the file explorer's own drop handling,
+  // which skips any drag event whose default was already prevented.
+  watchExplorers() {
+    for (const leaf of this.app.workspace.getLeavesOfType(FILE_EXPLORER)) {
+      const el = leaf.view.containerEl;
+      if (leaf.isDeferred || this.watched.has(el)) continue;
+      this.watched.add(el);
+      this.registerDomEvent(el, "dragenter", (evt) => this.onDragOver(evt), true);
+      this.registerDomEvent(el, "dragover", (evt) => this.onDragOver(evt), true);
+      this.registerDomEvent(el, "dragleave", (evt) => {
+        if (!(evt.relatedTarget instanceof Node && el.contains(evt.relatedTarget))) this.show(null);
+      }, true);
+      this.registerDomEvent(el, "drop", (evt) => this.onDrop(evt), true);
+    }
+  }
+  arrange(folder, items) {
+    const order = this.settings.order[folder.path];
+    if (!order) return items;
+    const pinit = this.app.plugins?.plugins[PINIT]?.settings;
+    const top = new Set(strings(pinit?.top));
+    const bottom = new Set(strings(pinit?.bottom));
+    const pinned = (item) => top.has(item.file.path) || bottom.has(item.file.path);
+    return [
+      ...items.filter((item) => top.has(item.file.path)),
+      ...arrange(items.filter((item) => !pinned(item)), (item) => item.file.name, order),
+      ...items.filter((item) => bottom.has(item.file.path))
+    ];
+  }
+  onDragOver(evt) {
+    const plan = this.planFor(evt);
+    this.show(plan);
+    if (!plan) {
+      const row = this.rowAt(evt);
+      if (row && this.draggedFiles()?.some((f) => f.path === row.dataset.path)) evt.preventDefault();
+      return;
+    }
+    evt.preventDefault();
+    if (evt.dataTransfer) evt.dataTransfer.dropEffect = "move";
+    this.dragManager()?.setAction(
+      plan.kind === "merge" ? `Merge into ${plan.target.basename}` : plan.kind === "into" ? `Move into ${plan.folder.name}` : "Place here"
+    );
+  }
+  onDrop(evt) {
+    const plan = this.plan;
+    this.endDrag();
+    if (!plan) return;
+    evt.preventDefault();
+    if (plan.kind === "merge") this.askToMerge(plan.source, plan.target);
+    else if (plan.kind === "into") void this.safely(() => this.moveInto(plan.files, plan.folder));
+    else void this.safely(() => this.place(plan.files, plan.folder, plan.anchor, plan.after));
+  }
+  planFor(evt) {
+    const files = this.draggedFiles();
+    const row = this.rowAt(evt);
+    if (!files || !row) return null;
+    const file = this.app.vault.getAbstractFileByPath(row.dataset.path ?? "");
+    if (!file || !file.parent || files.includes(file)) return null;
+    const held = this.track(evt, row);
+    if (held && files.length === 1 && isNote(files[0]) && isNote(file)) return { kind: "merge", row, source: files[0], target: file };
+    if (held && file instanceof import_obsidian.TFolder && this.canHold(files, file)) return { kind: "into", row, files, folder: file };
+    const side = this.mouse.direction;
+    if (side === "down" && file instanceof import_obsidian.TFolder && file.children.length > 0 && !row.parentElement?.hasClass("is-collapsed")) {
+      return this.canHold(files, file) ? { kind: "place", row, side, files, folder: file, anchor: null, after: false } : null;
+    }
+    const folder = file.parent;
+    return this.canHold(files, folder) ? { kind: "place", row, side, files, folder, anchor: file, after: side === "down" } : null;
+  }
+  rowAt(evt) {
+    return evt.target instanceof Element ? evt.target.closest(ROW) : null;
+  }
+  // Follows the mouse: the line sits on top of the row while it moves up and under it while it
+  // moves down. Returns true once the mouse has held still over the same row for HOLD_MS.
+  track(evt, row) {
+    if (Number.isNaN(this.mouse.x)) this.resetMouse(evt.clientX, evt.clientY);
+    const mouse = this.mouse;
+    const now = Date.now();
+    const dx = evt.clientX - mouse.x;
+    const dy = evt.clientY - mouse.y;
+    if (Math.abs(dy) >= STILL_PX) mouse.direction = dy < 0 ? "up" : "down";
+    if (Math.abs(dx) >= STILL_PX || Math.abs(dy) >= STILL_PX) Object.assign(mouse, { x: evt.clientX, y: evt.clientY, at: now });
+    if (row !== mouse.row) Object.assign(mouse, { row, at: now });
+    return now - mouse.at >= HOLD_MS;
+  }
+  resetMouse(x, y) {
+    this.mouse = { x, y, at: Date.now(), direction: "down", row: null };
+  }
+  endDrag() {
+    this.show(null);
+    this.mouse.x = NaN;
+  }
+  show(plan) {
+    this.plan = plan;
+    const el = plan?.row ?? null;
+    if (this.shownEl && this.shownEl !== el) this.shownEl.removeClasses(SHOWN_CLASSES);
+    this.shownEl = el;
+    if (!plan) return;
+    const wanted = [HOVER_CLASS, plan.kind === "place" ? LINE_CLASS[plan.side] : INTO_CLASS];
+    for (const cls of SHOWN_CLASSES) plan.row.toggleClass(cls, wanted.includes(cls));
+  }
+  // A folder can't go inside itself, and a move never replaces something with the same name.
+  canHold(files, folder) {
+    return files.every(
+      (f) => !(f instanceof import_obsidian.TFolder && isAtOrUnder(folder.path, f.path)) && (f.parent === folder || !folder.children.some((child) => child.name === f.name))
+    );
+  }
+  draggedFiles() {
+    const dragged = this.dragManager()?.draggable;
+    if (!dragged) return null;
+    if ((dragged.type === "file" || dragged.type === "folder") && dragged.file) return [dragged.file];
+    if (dragged.type === "files" && dragged.files && dragged.files.length > 0) return dragged.files;
+    return null;
+  }
+  dragManager() {
+    return this.app.dragManager ?? null;
+  }
+  async moveInto(files, folder) {
+    for (const file of files) {
+      if (file.parent !== folder) await this.app.fileManager.renameFile(file, childPath(folder, file.name));
+    }
+  }
+  // The folder's children as the file explorer shows them now.
+  namesIn(folder) {
+    let items = [];
+    this.forEachExplorer((view) => items = view.getSortedFolderItems(folder));
+    return items.length > 0 ? items.map((item) => item.file.name) : folder.children.map((child) => child.name);
+  }
+  askToMerge(source, target) {
+    const merge = () => void this.safely(() => this.merge(source, target));
+    if (this.settings.askBeforeMerge) new MergeModal(this.app, source, target, this.mergedFolder(), merge).open();
+    else merge();
+  }
+  async ensureFolder(path) {
+    const existing = this.app.vault.getAbstractFileByPath(path);
+    return existing instanceof import_obsidian.TFolder ? existing : this.app.vault.createFolder(path);
+  }
+  freePath(folder, base) {
+    for (let n = 0; ; n++) {
+      const path = childPath(folder, `${n === 0 ? base : `${base} ${n}`}.md`);
+      if (!this.app.vault.getAbstractFileByPath(path)) return path;
+    }
+  }
+  async safely(run) {
+    try {
+      await run();
+    } catch (error) {
+      console.error("File Placer:", error);
+      new import_obsidian.Notice(`File Placer: ${error instanceof Error ? error.message : String(error)}`);
+    }
+  }
+  addResetItem(menu, path) {
+    menu.addItem(
+      (item) => item.setSection("action").setTitle("Back to normal sort").setIcon("arrow-down-up").onClick(() => this.resetOrder(path))
+    );
+  }
+  forEachExplorer(callback) {
+    for (const leaf of this.app.workspace.getLeavesOfType(FILE_EXPLORER)) {
+      if (leaf.isDeferred) continue;
+      const view = leaf.view;
+      if (typeof view.requestSort === "function") callback(view);
+    }
+  }
+  // Renaming keeps an item's place; moving it out of a folder drops it from that folder's order.
+  // Renaming or moving a folder carries the placed order of everything inside it.
+  onRename(file, oldPath) {
+    let changed = false;
+    const oldName = nameOf(oldPath);
+    const list = this.settings.order[parentOf(oldPath)];
+    const i = list ? list.indexOf(oldName) : -1;
+    if (list && i !== -1) {
+      if (parentOf(oldPath) === parentOf(file.path)) list[i] = file.name;
+      else list.splice(i, 1);
+      changed = true;
+    }
+    if (file instanceof import_obsidian.TFolder) {
+      for (const key of Object.keys(this.settings.order)) {
+        if (!isAtOrUnder(key, oldPath)) continue;
+        this.settings.order[file.path + key.slice(oldPath.length)] = this.settings.order[key];
+        delete this.settings.order[key];
+        changed = true;
+      }
+    }
+    if (changed) void this.saveSettings();
+  }
+  onDelete(path) {
+    let changed = false;
+    const list = this.settings.order[parentOf(path)];
+    if (list?.includes(nameOf(path))) {
+      this.settings.order[parentOf(path)] = list.filter((name) => name !== nameOf(path));
+      changed = true;
+    }
+    for (const key of Object.keys(this.settings.order)) {
+      if (!isAtOrUnder(key, path)) continue;
+      delete this.settings.order[key];
+      changed = true;
+    }
+    if (changed) void this.saveSettings();
+  }
+};
+var MergeModal = class extends import_obsidian.Modal {
+  constructor(app, source, target, folder, onMerge) {
+    super(app);
+    this.source = source;
+    this.target = target;
+    this.folder = folder;
+    this.onMerge = onMerge;
+  }
+  onOpen() {
+    const from = this.source.basename;
+    const into = this.target.basename;
+    this.titleEl.setText(`Merge "${from}" into "${into}"?`);
+    this.contentEl.createEl("p", {
+      text: `"${into}" stays where it is and gets all of "${from}" added under it, with its headings one level down.`
+    });
+    this.contentEl.createEl("p", {
+      text: `Nothing is deleted: "${from}" and a copy of "${into}" as it is now go into "${this.folder}".`
+    });
+    new import_obsidian.Setting(this.contentEl).addButton((button) => button.setButtonText("Cancel").onClick(() => this.close())).addButton(
+      (button) => button.setButtonText("Merge").setCta().onClick(() => {
+        this.close();
+        this.onMerge();
+      })
+    );
+  }
+  onClose() {
+    this.contentEl.empty();
+  }
+};
+var FilePlacerSettingTab = class extends import_obsidian.PluginSettingTab {
+  constructor(app, plugin) {
+    super(app, plugin);
+    this.plugin = plugin;
+  }
+  display() {
+    const { containerEl } = this;
+    const settings = this.plugin.settings;
+    containerEl.empty();
+    containerEl.createEl("p", {
+      cls: "setting-item-description",
+      text: "Drag any note or folder in the file explorer. A purple line shows where it lands: on top of the row while you move up, under it while you move down. Hold still over a note to merge the two; hold still over a folder to move into it."
+    });
+    new import_obsidian.Setting(containerEl).setName("Ask before merging").setDesc("Show what will happen and wait for Merge.").addToggle(
+      (toggle) => toggle.setValue(settings.askBeforeMerge).onChange(async (value) => {
+        settings.askBeforeMerge = value;
+        await this.plugin.saveSettings();
+      })
+    );
+    new import_obsidian.Setting(containerEl).setName("Merged originals folder").setDesc("Where both notes go, untouched, after a merge.").addText(
+      (text) => text.setPlaceholder(DEFAULT_MERGED_FOLDER).setValue(settings.mergedFolder).onChange(async (value) => {
+        settings.mergedFolder = value;
+        await this.plugin.saveSettings();
+      })
+    );
+    new import_obsidian.Setting(containerEl).setName("Placed folders").setHeading();
+    const folders = Object.keys(settings.order).sort();
+    if (folders.length === 0) {
+      containerEl.createEl("p", { cls: "setting-item-description", text: "Nothing placed yet." });
+      return;
+    }
+    for (const path of folders) {
+      new import_obsidian.Setting(containerEl).setName(path === "/" ? "Vault root" : path).addButton(
+        (button) => button.setButtonText("Back to normal sort").onClick(async () => {
+          await this.plugin.resetOrder(path);
+          this.display();
+        })
+      );
+    }
+  }
+};

@@ -1,0 +1,9 @@
+{
+	"id": "file-placer",
+	"name": "File Placer",
+	"version": "1.0.0",
+	"minAppVersion": "1.6.0",
+	"description": "Drag notes and folders to any spot in the file explorer. A purple line shows where they land. Hold still over a note to merge the two without losing a line.",
+	"author": "Zack",
+	"isDesktopOnly": false
+}

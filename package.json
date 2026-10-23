@@ -1,0 +1,21 @@
+{
+	"name": "obsidian-file-placer",
+	"version": "1.0.0",
+	"description": "Drag notes and folders to any spot in the file explorer. A purple line shows where they land. Hold still over a note to merge the two without losing a line.",
+	"main": "main.js",
+	"private": true,
+	"scripts": {
+		"dev": "node esbuild.config.mjs",
+		"build": "tsc --noEmit --skipLibCheck && node esbuild.config.mjs production"
+	},
+	"license": "MIT",
+	"devDependencies": {
+		"@types/node": "^22.0.0",
+		"esbuild": "0.28.2",
+		"obsidian": "1.14.4",
+		"typescript": "~5.9.0"
+	},
+	"dependencies": {
+		"monkey-around": "^3.0.0"
+	}
+}
