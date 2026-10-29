@@ -76,3 +76,9 @@ the disposable vault. Observe every required row, fix only reproduced defects,
 add focused regressions to the existing suites, rerun QA and shared integration,
 and then update both checklists. Merge recovery remains the next job. Nothing was
 pushed, tagged, released or submitted. This attempt is not a completed lane job.
+
+## Local rename regression follow-up — 2026-10-29
+
+The single [shared suite](../tests/integration/pinit.test.mjs) now has **12 cases**: the original four plus eight note/folder rename-collision cases across both load orders and either disable/re-enable. They invoke both actual rename handlers, preserve exact supplied item identities/multiplicity, reload saved settings, check folder placement remapping and restore ordinary sorting after unload. The added cases fail against Pinit's starting source `144b295` (eight failures); all 12 pass with its rename normalization and defensive selection fix. File Placer production source/assets are unchanged. Its fresh QA passes 17 tests, lint, TypeScript, production build and package checks; diff checks pass.
+
+agent decision 2026-10-28: keep shared coverage here and retain top-wins/first-occurrence collision semantics because they match Pinit's existing load policy. These are source-level tests with storage/explorer doubles. The blocked runtime matrix above is unchanged; no new app attempt or personal-vault installation occurred. Pinit's README/review owns its collision contract and standalone regression details. The earlier candidate heads and counts above describe the dated live attempt, not this follow-up.
