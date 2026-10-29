@@ -27,8 +27,8 @@ export function asSection(body: string, title: string): string {
 	const moved = lines.map((line) => {
 		const marker = FENCE.exec(line)?.[1];
 		if (marker) {
-			if (fence === null) fence = marker[0];
-			else if (marker[0] === fence) fence = null;
+			if (fence === null) fence = marker;
+			else if (marker[0] === fence[0] && marker.length >= fence.length && line.slice(line.indexOf(marker) + marker.length).trim() === "") fence = null;
 			return line;
 		}
 		return fence === null ? line.replace(/^(#{1,5})(?=[ \t])/, "#$1") : line;
@@ -58,14 +58,14 @@ export function keepsEveryLine(merged: string, originals: string[]): boolean {
 // have a different value for the same property, it becomes a list of both.
 export function mergeProperties(target: Record<string, unknown>, source: Record<string, unknown>) {
 	for (const [key, value] of Object.entries(source)) {
-		const before = target[key];
+		const before = Object.prototype.hasOwnProperty.call(target, key) ? target[key] : undefined;
 		if (isEmpty(value) || same(before, value)) continue;
 		if (isEmpty(before)) {
-			target[key] = value;
+			Object.defineProperty(target, key, { value, writable: true, enumerable: true, configurable: true });
 			continue;
 		}
 		const all = [...asList(before), ...asList(value)];
-		target[key] = all.filter((item, i) => all.findIndex((other) => same(item, other)) === i);
+		Object.defineProperty(target, key, { value: all.filter((item, i) => all.findIndex((other) => same(item, other)) === i), writable: true, enumerable: true, configurable: true });
 	}
 }
 

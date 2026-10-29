@@ -1,4 +1,4 @@
-import { App, Menu, Modal, Notice, Plugin, PluginSettingTab, Setting, TAbstractFile, TFile, TFolder, View, normalizePath, parseYaml } from "obsidian";
+import { App, Component, Menu, Modal, Notice, Plugin, PluginSettingTab, Setting, TAbstractFile, TFile, TFolder, View, normalizePath, parseYaml } from "obsidian";
 import { around } from "monkey-around";
 import { arrange, placeNames } from "./order";
 import { keepsEveryLine, mergeBodies, mergeProperties, splitNote } from "./merge";
@@ -67,7 +67,9 @@ export default class FilePlacerPlugin extends Plugin {
 	settings: FilePlacerSettings = { order: {}, mergedFolder: DEFAULT_MERGED_FOLDER, askBeforeMerge: true };
 	private unpatch: (() => void) | null = null;
 	private unsupported = false;
-	private watched = new WeakSet<HTMLElement>();
+	private merging = false;
+	private unloaded = false;
+	private watched = new Map<HTMLElement, Component>();
 	private plan: Plan | null = null;
 	private shownEl: HTMLElement | null = null;
 	// The mouse during a drag: where it last moved, when, which way, and the row it is over.
@@ -85,10 +87,8 @@ export default class FilePlacerPlugin extends Plugin {
 		this.registerEvent(this.app.vault.on("rename", (file, oldPath) => this.onRename(file, oldPath)));
 		this.registerEvent(this.app.vault.on("delete", (file) => this.onDelete(file.path)));
 
-		this.registerDomEvent(document, "dragstart", (evt) => this.resetMouse(evt.clientX, evt.clientY), true);
-		this.registerDomEvent(document, "dragend", () => this.endDrag(), true);
-
 		this.app.workspace.onLayoutReady(() => {
+			if (this.unloaded) return;
 			this.patchFileExplorer();
 			// The file explorer can load later (a deferred sidebar tab, or re-enabled core plugin).
 			this.registerEvent(this.app.workspace.on("layout-change", () => this.patchFileExplorer()));
@@ -96,7 +96,10 @@ export default class FilePlacerPlugin extends Plugin {
 	}
 
 	onunload() {
-		this.show(null);
+		this.unloaded = true;
+		this.endDrag();
+		for (const component of this.watched.values()) this.removeChild(component);
+		this.watched.clear();
 		this.unpatch?.();
 		this.unpatch = null;
 		this.forEachExplorer((view) => view.requestSort());
@@ -112,7 +115,22 @@ export default class FilePlacerPlugin extends Plugin {
 	// Nothing is deleted: the note dropped on keeps its place and gets the dragged note added under
 	// it, and both originals, untouched, go to the merged originals folder.
 	async merge(source: TFile, target: TFile) {
+		if (this.merging) throw new Error("Another merge is still running. Try again when it finishes.");
+		if (source === target || !isNote(source) || !isNote(target)) throw new Error("Choose two different Markdown notes.");
+		this.merging = true;
+		try {
+			await this.mergeNotes(source, target);
+		} finally {
+			this.merging = false;
+		}
+	}
+
+	private async mergeNotes(source: TFile, target: TFile) {
 		const { vault, fileManager } = this.app;
+		if (vault.getAbstractFileByPath(source.path) !== source || vault.getAbstractFileByPath(target.path) !== target) {
+			throw new Error("A note was moved or deleted. Choose the notes again.");
+		}
+		const folderPath = this.mergedFolder();
 		const [sourceText, targetText] = await Promise.all([vault.read(source), vault.read(target)]);
 		const from = splitNote(sourceText);
 		const into = splitNote(targetText);
@@ -130,20 +148,34 @@ export default class FilePlacerPlugin extends Plugin {
 			if (!properties && from.frontmatter.trim()) sourceBody = "```yaml\n" + from.frontmatter + "\n```\n\n" + sourceBody;
 		}
 
+		if (properties && into.frontmatter?.trim()) {
+			const parsed: unknown = parseYaml(into.frontmatter);
+			if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) throw new Error("The target has invalid properties. Fix its YAML before merging.");
+		}
+
 		const body = mergeBodies(into.body, sourceBody, source.basename);
 		if (!keepsEveryLine(body, [into.body, sourceBody])) {
 			new Notice("File Placer: the merge would have lost a line, so nothing was changed.");
 			return;
 		}
 
-		const folder = await this.ensureFolder(this.mergedFolder());
-		await vault.create(this.freePath(folder, `${target.basename} (before merge)`), targetText);
-		await fileManager.renameFile(source, this.freePath(folder, source.basename));
-		await vault.modify(target, into.head + body);
+		// Plain-text snapshots cannot be rewritten by automatic Markdown link updates.
+		const folder = await this.ensureFolder(folderPath);
+		await vault.create(this.freePath(folder, `${target.basename} (before merge)`, "md.txt"), targetText);
+		await vault.create(this.freePath(folder, `${source.basename} (before merge)`, "md.txt"), sourceText);
+		if (await vault.read(source) !== sourceText) throw new Error("The source changed during the merge. Originals were kept; retry with the latest note.");
+		await vault.process(target, (current) => {
+			if (current !== targetText) throw new Error("The target changed during the merge. Originals were kept; retry with the latest note.");
+			return into.head + (into.head && !into.head.endsWith("\n") ? "\n" : "") + body;
+		});
 		if (properties) {
 			const added = properties;
 			await fileManager.processFrontMatter(target, (frontmatter: Record<string, unknown>) => mergeProperties(frontmatter, added));
 		}
+		// Rename last: a failed write must never move the source out from under the user.
+		// Link maintenance may edit the moved note; the exact source snapshot stays untouched.
+		if (await vault.read(source) !== sourceText) throw new Error("The source changed. Merged text and backups were kept; the source was not moved.");
+		await fileManager.renameFile(source, this.freePath(folder, source.basename));
 		new Notice(`Merged "${source.basename}" into "${target.basename}".`);
 	}
 
@@ -153,17 +185,22 @@ export default class FilePlacerPlugin extends Plugin {
 	}
 
 	mergedFolder(): string {
-		return normalizePath(this.settings.mergedFolder.trim() || DEFAULT_MERGED_FOLDER);
+		const raw = this.settings.mergedFolder.trim() || DEFAULT_MERGED_FOLDER;
+		const parts = raw.replace(/\\/g, "/").split("/");
+		if (raw.startsWith("/") || parts.some((part) => !part || part.startsWith(".") || /[:*?"<>|]/.test(part))) {
+			throw new Error("Choose a visible folder path inside the vault for merged originals.");
+		}
+		return normalizePath(raw);
 	}
 
 	async loadSettings() {
 		const data = (await this.loadData()) as Partial<FilePlacerSettings> | null;
-		const order: Record<string, string[]> = {};
+		const order: Record<string, string[]> = Object.create(null) as Record<string, string[]>;
 		for (const [path, names] of Object.entries(data?.order ?? {})) order[path] = strings(names);
 		this.settings = {
 			order,
 			mergedFolder: typeof data?.mergedFolder === "string" ? data.mergedFolder : DEFAULT_MERGED_FOLDER,
-			askBeforeMerge: data?.askBeforeMerge ?? true,
+			askBeforeMerge: typeof data?.askBeforeMerge === "boolean" ? data.askBeforeMerge : true,
 		};
 	}
 
@@ -173,23 +210,24 @@ export default class FilePlacerPlugin extends Plugin {
 	}
 
 	private patchFileExplorer() {
+		if (this.unloaded) return;
 		this.watchExplorers();
 		if (this.unpatch || this.unsupported) return;
 		const leaf = this.app.workspace.getLeavesOfType(FILE_EXPLORER).find((l) => !l.isDeferred);
 		if (!leaf) return;
 
 		const proto = Object.getPrototypeOf(leaf.view) as FileExplorerView;
-		if (typeof proto.getSortedFolderItems !== "function") {
+		if (typeof proto.getSortedFolderItems !== "function" || typeof proto.requestSort !== "function") {
 			this.unsupported = true;
 			new Notice("File Placer: this version of Obsidian's file explorer is not supported.");
 			return;
 		}
 
-		const plugin = this;
+		const arrangeItems = this.arrange.bind(this);
 		this.unpatch = around(proto, {
 			getSortedFolderItems(original) {
 				return function (this: FileExplorerView, folder: TFolder) {
-					return plugin.arrange(folder, original.call(this, folder));
+					return arrangeItems(folder, original.call(this, folder));
 				};
 			},
 		});
@@ -199,16 +237,29 @@ export default class FilePlacerPlugin extends Plugin {
 	// Listens in the capture phase, so it runs before the file explorer's own drop handling,
 	// which skips any drag event whose default was already prevented.
 	private watchExplorers() {
+		const live = new Set<HTMLElement>();
 		for (const leaf of this.app.workspace.getLeavesOfType(FILE_EXPLORER)) {
 			const el = leaf.view.containerEl;
-			if (leaf.isDeferred || this.watched.has(el)) continue;
-			this.watched.add(el);
-			this.registerDomEvent(el, "dragenter", (evt) => this.onDragOver(evt), true);
-			this.registerDomEvent(el, "dragover", (evt) => this.onDragOver(evt), true);
-			this.registerDomEvent(el, "dragleave", (evt) => {
-				if (!(evt.relatedTarget instanceof Node && el.contains(evt.relatedTarget))) this.show(null);
+			if (leaf.isDeferred) continue;
+			live.add(el);
+			if (this.watched.has(el)) continue;
+			const component = this.addChild(new Component());
+			this.watched.set(el, component);
+			component.registerDomEvent(el, "dragstart", (evt) => this.resetMouse(evt.clientX, evt.clientY), true);
+			component.registerDomEvent(el.doc, "dragend", () => this.endDrag(), true);
+			component.registerDomEvent(el, "dragenter", (evt) => this.onDragOver(evt), true);
+			component.registerDomEvent(el, "dragover", (evt) => this.onDragOver(evt), true);
+			component.registerDomEvent(el, "dragleave", (evt) => {
+				const related = evt.relatedTarget as Node | null;
+				if (!(related?.instanceOf(Node) && el.contains(related))) this.show(null);
 			}, true);
-			this.registerDomEvent(el, "drop", (evt) => this.onDrop(evt), true);
+			component.registerDomEvent(el, "drop", (evt) => this.onDrop(evt), true);
+		}
+		for (const [el, component] of this.watched) {
+			if (live.has(el)) continue;
+			this.removeChild(component);
+			this.watched.delete(el);
+			if (this.shownEl && el.contains(this.shownEl)) this.endDrag();
 		}
 	}
 
@@ -223,11 +274,12 @@ export default class FilePlacerPlugin extends Plugin {
 		return [
 			...items.filter((item) => top.has(item.file.path)),
 			...arrange(items.filter((item) => !pinned(item)), (item) => item.file.name, order),
-			...items.filter((item) => bottom.has(item.file.path)),
+			...items.filter((item) => bottom.has(item.file.path) && !top.has(item.file.path)),
 		];
 	}
 
 	private onDragOver(evt: DragEvent) {
+		if (evt.defaultPrevented || this.unsupported || !this.unpatch) return;
 		const plan = this.planFor(evt);
 		this.show(plan);
 		if (!plan) {
@@ -244,11 +296,11 @@ export default class FilePlacerPlugin extends Plugin {
 	}
 
 	private onDrop(evt: DragEvent) {
-		const plan = this.plan;
+		const plan = !evt.defaultPrevented && this.rowAt(evt) === this.plan?.row ? this.plan : null;
 		this.endDrag();
 		if (!plan) return;
 		evt.preventDefault();
-		if (plan.kind === "merge") this.askToMerge(plan.source, plan.target);
+		if (plan.kind === "merge") void this.safely(() => { this.askToMerge(plan.source, plan.target); return Promise.resolve(); });
 		else if (plan.kind === "into") void this.safely(() => this.moveInto(plan.files, plan.folder));
 		else void this.safely(() => this.place(plan.files, plan.folder, plan.anchor, plan.after));
 	}
@@ -274,7 +326,8 @@ export default class FilePlacerPlugin extends Plugin {
 	}
 
 	private rowAt(evt: DragEvent): HTMLElement | null {
-		return evt.target instanceof Element ? evt.target.closest<HTMLElement>(ROW) : null;
+		const target = evt.target as Node | null;
+		return target?.instanceOf(Element) ? target.closest<HTMLElement>(ROW) : null;
 	}
 
 	// Follows the mouse: the line sits on top of the row while it moves up and under it while it
@@ -312,7 +365,7 @@ export default class FilePlacerPlugin extends Plugin {
 
 	// A folder can't go inside itself, and a move never replaces something with the same name.
 	private canHold(files: TAbstractFile[], folder: TFolder): boolean {
-		return files.every(
+		return new Set(files.map((file) => file.name)).size === files.length && files.every(
 			(f) =>
 				!(f instanceof TFolder && isAtOrUnder(folder.path, f.path)) &&
 				(f.parent === folder || !folder.children.some((child) => child.name === f.name))
@@ -332,6 +385,7 @@ export default class FilePlacerPlugin extends Plugin {
 	}
 
 	private async moveInto(files: TAbstractFile[], folder: TFolder) {
+		if (!this.canHold(files, folder)) throw new Error("The move conflicts with an existing name or would put a folder inside itself.");
 		for (const file of files) {
 			if (file.parent !== folder) await this.app.fileManager.renameFile(file, childPath(folder, file.name));
 		}
@@ -352,12 +406,16 @@ export default class FilePlacerPlugin extends Plugin {
 
 	private async ensureFolder(path: string): Promise<TFolder> {
 		const existing = this.app.vault.getAbstractFileByPath(path);
-		return existing instanceof TFolder ? existing : this.app.vault.createFolder(path);
+		if (existing instanceof TFolder) return existing;
+		if (existing) throw new Error("The merged originals path is a file. Choose a folder instead.");
+		const parent = parentOf(path);
+		if (parent !== "/") await this.ensureFolder(parent);
+		return this.app.vault.createFolder(path);
 	}
 
-	private freePath(folder: TFolder, base: string): string {
+	private freePath(folder: TFolder, base: string, extension = "md"): string {
 		for (let n = 0; ; n++) {
-			const path = childPath(folder, `${n === 0 ? base : `${base} ${n}`}.md`);
+			const path = childPath(folder, `${n === 0 ? base : `${base} ${n}`}.${extension}`);
 			if (!this.app.vault.getAbstractFileByPath(path)) return path;
 		}
 	}
@@ -405,7 +463,7 @@ export default class FilePlacerPlugin extends Plugin {
 				changed = true;
 			}
 		}
-		if (changed) void this.saveSettings();
+		if (changed) void this.safely(() => this.saveSettings());
 	}
 
 	private onDelete(path: string) {
@@ -420,7 +478,7 @@ export default class FilePlacerPlugin extends Plugin {
 			delete this.settings.order[key];
 			changed = true;
 		}
-		if (changed) void this.saveSettings();
+		if (changed) void this.safely(() => this.saveSettings());
 	}
 }
 
@@ -437,7 +495,7 @@ class MergeModal extends Modal {
 			text: `"${into}" stays where it is and gets all of "${from}" added under it, with its headings one level down.`,
 		});
 		this.contentEl.createEl("p", {
-			text: `Nothing is deleted: "${from}" and a copy of "${into}" as it is now go into "${this.folder}".`,
+			text: `Exact text backups of both notes are saved in "${this.folder}" before merging. "${from}" moves there after the target is saved. Nothing is deleted.`,
 		});
 		new Setting(this.contentEl)
 			.addButton((button) => button.setButtonText("Cancel").onClick(() => this.close()))
@@ -463,6 +521,10 @@ class FilePlacerSettingTab extends PluginSettingTab {
 	}
 
 	display() {
+		this.renderSettings();
+	}
+
+	private renderSettings() {
 		const { containerEl } = this;
 		const settings = this.plugin.settings;
 		containerEl.empty();
@@ -475,7 +537,7 @@ class FilePlacerSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName("Ask before merging")
-			.setDesc("Show what will happen and wait for Merge.")
+			.setDesc("Confirm each merge before changing notes.")
 			.addToggle((toggle) =>
 				toggle.setValue(settings.askBeforeMerge).onChange(async (value) => {
 					settings.askBeforeMerge = value;
@@ -484,7 +546,7 @@ class FilePlacerSettingTab extends PluginSettingTab {
 			);
 		new Setting(containerEl)
 			.setName("Merged originals folder")
-			.setDesc("Where both notes go, untouched, after a merge.")
+			.setDesc("Exact copies of both notes are saved here before merging; the source moves here afterwards.")
 			.addText((text) =>
 				text
 					.setPlaceholder(DEFAULT_MERGED_FOLDER)
@@ -505,7 +567,7 @@ class FilePlacerSettingTab extends PluginSettingTab {
 			new Setting(containerEl).setName(path === "/" ? "Vault root" : path).addButton((button) =>
 				button.setButtonText("Back to normal sort").onClick(async () => {
 					await this.plugin.resetOrder(path);
-					this.display();
+					this.renderSettings();
 				})
 			);
 		}
