@@ -33,7 +33,8 @@ interface FilePlacerSettings {
 
 const DEFAULT_MERGED_FOLDER = "Merged originals";
 
-// Obsidian's file explorer and drag internals; not in the public API (checked against 1.14.5).
+// Obsidian's file explorer and drag internals; not in the public API.
+// Live compatibility remains open in docs/REVIEW.md.
 // Each folder's children are sorted by getSortedFolderItems, so wrapping it shows the placed order.
 interface FileExplorerItem {
 	file: TAbstractFile;

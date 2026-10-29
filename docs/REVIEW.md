@@ -199,3 +199,15 @@ The integration cases exercise both actual plugins with an explorer double in bo
 `git diff --check` passes. Nothing was pushed, tagged, released or submitted.
 
 Official manifest, submission requirements, developer policies, plugin guidelines and release instructions were rechecked on 2026-10-29. Local metadata, disclosures and licensing checks do not establish minimum-version runtime compatibility, directory name availability or community approval.
+
+## Follow-up quality review — 2026-10-29
+
+agent decision 2026-10-28: retain the accepted implementations and existing fault matrices because independent read-only review found no concrete regression; reconcile evidence and correct documentation against source and locked dependencies.
+
+Reviewed `a5b898a` → `dc7507f` alongside Pinit `dadd361`. The accepted File Placer change adds only the single shared rename/lifecycle suite and its evidence. Current active-pin integration, wrapper teardown and folder-placement remapping agree with Pinit's first-occurrence/top-wins normalization. No concrete implementation regression was found.
+
+Fresh `npm run qa` passes **17/17 tests**, zero-warning lint, TypeScript, production build and package checks. `npm run test:integration` passes **12/12 cases** (four lifecycle plus eight rename/lifecycle cases) against sibling Pinit, checking exact object identity/multiplicity, both load/handler orders and either disable/re-enable from cloned saved state. The suite remains solely in `tests/integration/pinit.test.mjs`. Removed the ambiguous historical source-comment parenthetical “checked against 1.14.5” and pointed to this checklist; this is evidence wording only, with no executable behavior change.
+
+[RUNTIME-SORTING.md](RUNTIME-SORTING.md) and the recovery section above retain the blocked live protocols. Host-double sorting, saved-state reload and synthetic restoration do not establish live compatibility, filesystem durability or actual link resolution. No new runtime protocol was created.
+
+Rechecked current official manifest, submission requirements, developer policies, plugin guidelines and submission instructions linked in this record. Local metadata, licensing and automated checks do not establish directory availability, minimum-version runtime compatibility or community approval. Production assets match the reviewed source and remain byte-identical to this review's starting candidate; `git diff --check` passes. No tests were added because no new implementation defect was reproduced. No app-access retry, installation, push, tag, release or submission occurred.
