@@ -1,6 +1,6 @@
 # Local review checklist
 
-Latest local checkpoint: [Confirmation-intent repair — 2026-10-29](#confirmation-intent-repair--2026-10-29). Earlier entries below remain dated history.
+Latest local checkpoint: [Confirmation and ownership REVIEW — 2026-10-29](#confirmation-and-ownership-review--2026-10-29). Earlier entries below remain dated history.
 
 Prepared on 2026-10-28. Nothing was submitted, tagged, pushed, or released.
 
@@ -442,3 +442,15 @@ against unchanged clean Pinit `8d5374307df00ded6d7cc596dc0410f1ba7f54a7` on
 `main.js` is rebuilt from final source; dependencies, metadata and CSS are
 unchanged. Working/staged diff checks pass. Nothing was pushed, tagged, released
 or submitted. These results accept the bounded local candidate only.
+
+## Confirmation and ownership REVIEW — 2026-10-29
+
+agent decision 2026-10-28: accept only the bounded local REVIEW after independent source/contract review, fresh checks and local commits; keep existing live/community gates open because local evidence cannot establish them.
+
+Reviewed `02166ce` → `9d525bf` with independent read-only source/test/API review. Displayed source/target identities and full paths plus normalized originals destination are captured, validated and dispatched synchronously before the first await. One-shot consumption precedes close; cancel/unload retire pending authority, and separate valid prompts retain the lock. Current-content reads, confirmation-disabled behavior, drop intent, sorting and recovery remain intact. No new defect found. Destination is a path contract; later mutations are not atomic and unload cannot cancel dispatched work. Retained callbacks do not establish live modal coexistence. The shared integration suite passed **12/12** against sibling Pinit `8d53743`; its implementation remained unchanged.
+
+Fresh `npm run qa` passed **134/134 tests**, TypeScript, production build and package checks. Configured lint passed with zero warnings. Each of the seven QA commands ran once for this REVIEW; the fresh aggregate is **543 standalone tests plus 12 shared cases**. Five new graph cases account for the increase from the historical 538-plus-12 intake arithmetic. No final QA failed.
+
+README installation/development instructions, manifest/package/lock/root-lock/version agreement, desktop flags, dependency classification, licenses/notices and assets were checked against source/build configuration. Current official [plugin guidelines](https://docs.obsidian.md/Plugins/Releasing/Plugin%20guidelines), [developer policies](https://docs.obsidian.md/community-directory/developer-policies), [submission requirements](https://docs.obsidian.md/community-directory/submission-requirements-for-plugins), [manifest](https://docs.obsidian.md/Reference/Manifest) and [submission instructions](https://docs.obsidian.md/Plugins/Releasing/Submit%20your%20plugin) were rechecked. Local consistency does not establish minimum-version compatibility, directory availability, hosted-review success or community approval.
+
+Production assets are byte-identical to this REVIEW's starting candidate. Diff checks pass. Existing readiness/live protocols remain their sole homes, including explorer/modal/WebGL/xterm, popout, mobile where advertised, Linux and minimum versions as applicable. The three older live sorting/recovery deliverables remain blocked. No app-access retry, personal-vault installation, push, tag, release or submission occurred.
