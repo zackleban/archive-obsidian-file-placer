@@ -109,27 +109,23 @@ function arrange(items, nameOf2, order) {
 
 // src/merge.ts
 var FRONTMATTER = /^---\r?\n(?:([\s\S]*?)\r?\n)?---[ \t]*(?:\r?\n|$)/;
-var FENCE = /^ {0,3}(`{3,}|~{3,})/;
+var FENCE = /^ {0,3}(`{3,}|~{3,})([\s\S]*)$/;
+var ATX = /^( {0,3})(#{1,6})(?=[ \t]|$)([\s\S]*)$/;
 function splitNote(text) {
   const match = FRONTMATTER.exec(text);
   if (!match) return { head: "", frontmatter: null, body: text };
   return { head: match[0], frontmatter: match[1] ?? "", body: text.slice(match[0].length) };
 }
 function asSection(body, title) {
-  const lines = body.split("\n");
-  const first = lines.find((line) => line.trim() !== "");
-  let fence = null;
-  const moved = lines.map((line) => {
-    const marker = FENCE.exec(line)?.[1];
-    if (marker) {
-      if (fence === null) fence = marker;
-      else if (marker[0] === fence[0] && marker.length >= fence.length && line.slice(line.indexOf(marker) + marker.length).trim() === "") fence = null;
-      return line;
-    }
-    return fence === null ? line.replace(/^(#{1,5})(?=[ \t])/, "#$1") : line;
+  const lines = scanLines(body);
+  const first = lines.find(({ text: text2 }) => text2.trim() !== "");
+  const moved = lines.map(({ text: text2, heading }) => {
+    if (!heading || heading[2].length === 6) return text2;
+    const indent = heading[1].length;
+    return text2.slice(0, indent) + "#" + text2.slice(indent);
   });
   const text = moved.join("\n").replace(/^(?:[ \t]*\r?\n)+/, "").trimEnd();
-  if (first !== void 0 && /^#[ \t]/.test(first)) return text;
+  if (first?.heading?.[2].length === 1) return text;
   return text ? `## ${title}
 
 ${text}` : `## ${title}`;
@@ -144,7 +140,11 @@ function mergeBodies(targetBody, sourceBody, sourceTitle) {
 }
 function keepsEveryLine(merged, originals) {
   const have = lineCounts(merged);
-  for (const [line, count] of lineCounts(originals.join("\n"))) {
+  const needed = /* @__PURE__ */ new Map();
+  for (const original of originals) {
+    for (const [line, count] of lineCounts(original)) needed.set(line, (needed.get(line) ?? 0) + count);
+  }
+  for (const [line, count] of needed) {
     if ((have.get(line) ?? 0) < count) return false;
   }
   return true;
@@ -161,11 +161,28 @@ function mergeProperties(target, source) {
     Object.defineProperty(target, key, { value: all.filter((item, i) => all.findIndex((other) => same(item, other)) === i), writable: true, enumerable: true, configurable: true });
   }
 }
+function scanLines(text) {
+  let fence = null;
+  return text.split("\n").map((text2) => {
+    const line = text2.replace(/\r$/, "");
+    const marker = FENCE.exec(line);
+    let heading = null;
+    if (fence !== null) {
+      if (marker && marker[1][0] === fence[0] && marker[1].length >= fence.length && /^[ \t]*$/.test(marker[2])) fence = null;
+    } else if (marker && (marker[1][0] === "~" || !marker[2].includes("`"))) {
+      fence = marker[1];
+    } else {
+      heading = ATX.exec(line);
+    }
+    return { text: text2, heading };
+  });
+}
 function lineCounts(text) {
   const counts = /* @__PURE__ */ new Map();
-  for (const line of text.split("\n")) {
-    const key = line.replace(/^#{1,6}[ \t]+/, "").trim();
-    if (key) counts.set(key, (counts.get(key) ?? 0) + 1);
+  for (const { text: line, heading } of scanLines(text)) {
+    if (!heading && !line.trim()) continue;
+    const key = heading ? `heading:${heading[3].trim()}` : `text:${line.trim()}`;
+    counts.set(key, (counts.get(key) ?? 0) + 1);
   }
   return counts;
 }

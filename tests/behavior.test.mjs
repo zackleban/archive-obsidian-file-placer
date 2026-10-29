@@ -1,10 +1,11 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { dirname, join } from "node:path";
 import { load, TFile, TFolder, notices } from "./helpers.mjs";
 import { sourcePath, targetPath, sourceText, targetText, fixtureFiles } from "./fixtures/merge-recovery.mjs";
-const { asSection, mergeBodies, keepsEveryLine, splitNote, mergeProperties } = await load("src/merge.ts");
+const { asSection, mergeBodies, keepsEveryLine, splitNote, mergeProperties } = await load(join(dirname(process.env.FILE_PLACER_SOURCE ?? "src/main.ts"), "merge.ts"));
 const { arrange, placeNames } = await load("src/order.ts");
-const { default: FilePlacer } = await load("src/main.ts");
+const { default: FilePlacer } = await load(process.env.FILE_PLACER_SOURCE ?? "src/main.ts");
 
 test("headings move down but nested short fences and code stay intact", () => {
   const source = "# Title\n\n````md\n```\n# code heading\n````\n## End";
@@ -252,3 +253,97 @@ test("older Pinit versions keep pin priority through the settings fallback",()=>
   app.plugins={plugins:{"pinit-to-top-or-bottom":{settings:{top:["a.md"],bottom:["c.md"]}}}};
   assert.deepEqual(plugin.arrange(folder,items).map(item=>item.file.path),["a.md","b.md","c.md"]);
 });
+
+// Heading repair composition: use the existing synthetic vault and actual merge
+// action, checking literal expected output rather than calling mergeBodies for it.
+for (const eol of ["\n", "\r\n"]) {
+  for (const [name, from, section] of [
+    ["indented", ["  # Heading", "Body"], ["  ## Heading", "Body"]],
+    ["inline", ["```inline```", "# Heading"], ["## Source", "", "```inline```", "## Heading"]],
+    ["empty", ["#", "Body"], ["##", "Body"]],
+    ["combined", ["   #", "#", "Keep", "Keep", "```inline```", "# Later", "~~~lang`x", "# literal", "~~~", "    # code", "###### cap"], ["   ##", "##", "Keep", "Keep", "```inline```", "## Later", "~~~lang`x", "# literal", "~~~", "    # code", "###### cap"]],
+  ]) {
+    test(`heading structure action: ${name} ${JSON.stringify(eol)} keeps snapshots and archives`, async () => {
+      const sourceText = from.join(eol) + eol;
+      const targetText = `# Target${eol}Keep`; // No final newline.
+      const state = fixture({"Source.md": sourceText, "Target.md": targetText});
+      const { plugin, vault, app, files, texts, source, target } = state;
+      const effects = [];
+      for (const [owner, method] of [[vault,"createFolder"], [vault,"create"], [vault,"process"], [app.fileManager,"renameFile"]]) {
+        const original = owner[method];
+        owner[method] = async (...args) => { effects.push(method); return original(...args); };
+      }
+      notices.length = 0;
+      await plugin.merge(source, target);
+      // Added wrapper/separators are LF even when copied body lines use CRLF.
+      const expectedSection = name === "inline" ? `## Source\n\n${section.slice(2).join(eol)}` : section.join(eol);
+      assert.equal(texts.get(target), `${targetText}\n\n${expectedSection}\n`);
+      assert.deepEqual(snapshots(state), {
+        "Merged originals/Target (before merge).md.txt": targetText,
+        "Merged originals/Source (before merge).md.txt": sourceText,
+      });
+      assert.equal(texts.get(source), sourceText);
+      assert.equal(source.path, "Merged originals/Source.md");
+      assert.equal(files.get(source.path), source);
+      assert.equal(files.has("Source.md"), false);
+      assert.deepEqual(effects, ["createFolder", "create", "create", "process", "renameFile"]);
+      assert.deepEqual(notices, ['Merged "Source" into "Target".']);
+      assert.equal(plugin.merging, false);
+    });
+  }
+}
+
+test("heading structure action: properties compose with exact CRLF originals", async () => {
+  const state = recoveryFixture();
+  const { plugin, texts, source, target } = state;
+  const sourceText = '---\r\n{"status":"source"}\r\n---\r\n  #\r\n```inline```\r\n# Heading\r\nKeep\r\n';
+  const targetText = '---\n{"status":"target"}\n---\n# Target\nKeep';
+  texts.set(source, sourceText); texts.set(target, targetText);
+  await plugin.merge(source, target);
+  assert.equal(texts.get(target), '---\n{"status":["target","source"]}\n---\n# Target\nKeep\n\n  ##\r\n```inline```\r\n## Heading\r\nKeep\n');
+  assert.deepEqual(snapshots(state), {
+    "Merged originals/Target (before merge).md.txt": targetText,
+    "Merged originals/Source (before merge).md.txt": sourceText,
+  });
+  assert.equal(texts.get(source), sourceText);
+  assert.equal(source.path, "Merged originals/Source.md");
+});
+
+test("heading structure action: unclosed target fence aborts before any write", async () => {
+  const state = fixture({"Source.md": "  # Heading\nBody", "Target.md": "```\nTarget code"});
+  const { plugin, vault, app, texts, source, target } = state;
+  for (const [owner, method] of [[vault,"createFolder"], [vault,"create"], [vault,"process"], [app.fileManager,"processFrontMatter"], [app.fileManager,"renameFile"]]) {
+    owner[method] = async () => assert.fail(`Unexpected ${method}`);
+  }
+  notices.length = 0;
+  await plugin.merge(source, target);
+  assert.equal(texts.get(source), "  # Heading\nBody");
+  assert.equal(texts.get(target), "```\nTarget code");
+  assert.equal(source.path, "Source.md");
+  assert.deepEqual(snapshots(state), {});
+  assert.deepEqual(notices, ["File Placer: the merge would have lost a line, so nothing was changed."]);
+  assert.equal(plugin.merging, false);
+});
+
+for (const stage of ["before target write", "after target write"]) {
+  test(`heading structure action: source edit ${stage} retains snapshots and prevents archival`, async () => {
+    const originalSource = "  # Heading\n#\nBody\n";
+    const state = fixture({"Source.md": originalSource, "Target.md": "Target"});
+    const { plugin, vault, texts, source, target } = state;
+    const read = vault.read;
+    let reads = 0;
+    vault.read = async file => {
+      if (file === source && ++reads === (stage === "before target write" ? 2 : 3)) texts.set(source, "Current edit");
+      return read(file);
+    };
+    await assert.rejects(plugin.merge(source, target), /source changed/i);
+    assert.equal(source.path, "Source.md");
+    assert.equal(texts.get(source), "Current edit");
+    assert.equal(texts.get(target), stage === "before target write" ? "Target" : "Target\n\n  ## Heading\n##\nBody\n");
+    assert.deepEqual(snapshots(state), {
+      "Merged originals/Target (before merge).md.txt": "Target",
+      "Merged originals/Source (before merge).md.txt": originalSource,
+    });
+    assert.equal(plugin.merging, false);
+  });
+}

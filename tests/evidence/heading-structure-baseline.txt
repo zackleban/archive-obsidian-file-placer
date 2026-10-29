@@ -1,0 +1,1307 @@
+Baseline: 9412dfadedf0a4f4ea14c695aaf94bb17a131d9c; before production edits.
+Command: node --test tests/heading-structure.test.mjs
+Expected exit: 1
+
+✖ heading structure baseline: indented H1 (1.007541ms)
+✖ heading preservation baseline: indented H1 (0.125292ms)
+✖ heading structure baseline: inline triple-backtick span (0.0855ms)
+✔ heading preservation baseline: inline triple-backtick span (0.091167ms)
+✖ heading structure baseline: empty H1 (0.055583ms)
+✖ heading preservation baseline: empty H1 (0.045958ms)
+✔ heading structure LF: indent 0, tail " Heading ###  " (0.09275ms)
+✔ heading structure LF: indent 0, tail "\tHeading" (0.048375ms)
+✖ heading structure LF: indent 0, tail "" (0.06525ms)
+✔ heading structure LF: indent 0, tail " \t" (0.072042ms)
+✖ heading structure LF: indent 1, tail " Heading ###  " (0.191833ms)
+✖ heading structure LF: indent 1, tail "\tHeading" (0.085375ms)
+✖ heading structure LF: indent 1, tail "" (0.065541ms)
+✖ heading structure LF: indent 1, tail " \t" (0.055417ms)
+✖ heading structure LF: indent 2, tail " Heading ###  " (0.06625ms)
+✖ heading structure LF: indent 2, tail "\tHeading" (0.055917ms)
+✖ heading structure LF: indent 2, tail "" (0.042167ms)
+✖ heading structure LF: indent 2, tail " \t" (0.045375ms)
+✖ heading structure LF: indent 3, tail " Heading ###  " (0.304ms)
+✖ heading structure LF: indent 3, tail "\tHeading" (0.050459ms)
+✖ heading structure LF: indent 3, tail "" (0.043333ms)
+✖ heading structure LF: indent 3, tail " \t" (0.039792ms)
+✔ heading structure LF: invalid "    # Code" (0.041666ms)
+✔ heading structure LF: invalid "\t# Code" (0.018541ms)
+✔ heading structure LF: invalid " #no-space" (0.019375ms)
+✔ heading structure LF: invalid "####### Too many" (0.020291ms)
+✔ heading structure LF: invalid "\\# Escaped" (0.025917ms)
+✔ heading structure LF: invalid "# NBSP" (0.018167ms)
+✔ heading structure LF: invalid "#\u000bVT" (0.016584ms)
+✔ heading structure LF: invalid "#\fFF" (0.015584ms)
+✔ heading structure LF: invalid "#\rbare CR" (0.016042ms)
+✔ heading structure LF: backtick block and longer indented closer (0.046791ms)
+✔ heading structure LF: tilde info can contain backticks (0.021875ms)
+✔ heading structure LF: short wrong type and content closers stay inside (0.024333ms)
+✖ heading structure LF: four-space and NBSP closers stay inside (0.053125ms)
+✔ heading structure LF: unclosed block (0.017042ms)
+✖ heading structure LF: backtick in info rejects opening (0.040875ms)
+✔ heading structure LF: inline span after prose (0.020791ms)
+✔ heading structure LF: indented fence is ordinary text (0.020083ms)
+✖ heading structure LF: first nonblank H1 and outer whitespace (0.049833ms)
+✔ heading structure CRLF: indent 0, tail " Heading ###  " (0.025084ms)
+✔ heading structure CRLF: indent 0, tail "\tHeading" (0.019875ms)
+✖ heading structure CRLF: indent 0, tail "" (0.047583ms)
+✔ heading structure CRLF: indent 0, tail " \t" (0.020209ms)
+✖ heading structure CRLF: indent 1, tail " Heading ###  " (0.051167ms)
+✖ heading structure CRLF: indent 1, tail "\tHeading" (0.055084ms)
+✖ heading structure CRLF: indent 1, tail "" (0.037666ms)
+✖ heading structure CRLF: indent 1, tail " \t" (0.04675ms)
+✖ heading structure CRLF: indent 2, tail " Heading ###  " (0.050209ms)
+✖ heading structure CRLF: indent 2, tail "\tHeading" (0.04725ms)
+✖ heading structure CRLF: indent 2, tail "" (0.036291ms)
+✖ heading structure CRLF: indent 2, tail " \t" (0.043834ms)
+✖ heading structure CRLF: indent 3, tail " Heading ###  " (0.052166ms)
+✖ heading structure CRLF: indent 3, tail "\tHeading" (0.049584ms)
+✖ heading structure CRLF: indent 3, tail "" (0.038875ms)
+✖ heading structure CRLF: indent 3, tail " \t" (0.052708ms)
+✔ heading structure CRLF: invalid "    # Code" (0.020625ms)
+✔ heading structure CRLF: invalid "\t# Code" (0.015709ms)
+✔ heading structure CRLF: invalid " #no-space" (0.015833ms)
+✔ heading structure CRLF: invalid "####### Too many" (0.019291ms)
+✔ heading structure CRLF: invalid "\\# Escaped" (0.019125ms)
+✔ heading structure CRLF: invalid "# NBSP" (0.015417ms)
+✔ heading structure CRLF: invalid "#\u000bVT" (0.022834ms)
+✔ heading structure CRLF: invalid "#\fFF" (0.014709ms)
+✔ heading structure CRLF: invalid "#\rbare CR" (0.022375ms)
+✔ heading structure CRLF: backtick block and longer indented closer (0.016458ms)
+✔ heading structure CRLF: tilde info can contain backticks (0.014958ms)
+✔ heading structure CRLF: short wrong type and content closers stay inside (0.0215ms)
+✖ heading structure CRLF: four-space and NBSP closers stay inside (0.297417ms)
+✔ heading structure CRLF: unclosed block (0.021209ms)
+✖ heading structure CRLF: backtick in info rejects opening (0.032584ms)
+✔ heading structure CRLF: inline span after prose (0.013167ms)
+✔ heading structure CRLF: indented fence is ordinary text (0.011625ms)
+✖ heading structure CRLF: first nonblank H1 and outer whitespace (0.0315ms)
+✖ heading preservation: empty heading demotion (0.0405ms)
+✖ heading preservation: whitespace empty heading cannot vanish (0.031042ms)
+✖ heading preservation: empty headings retain multiplicity (0.029542ms)
+✔ heading preservation: duplicate empty heading cannot vanish (0.010584ms)
+✔ heading preservation: empty headings counted across originals (0.010209ms)
+✔ heading preservation: ordinary repeats counted across originals (0.01025ms)
+✔ heading preservation: missing ordinary line (0.010333ms)
+✖ heading preservation: heading cannot stand in for ordinary text (0.029541ms)
+✖ heading preservation: ordinary text cannot stand in for heading (0.028375ms)
+✔ heading preservation: closing hashes are retained syntax (0.015167ms)
+✖ heading preservation: fenced heading stays literal (0.029709ms)
+✔ heading preservation: indented code heading stays literal (0.014875ms)
+✔ heading preservation: invalid heading hashes are content (0.01225ms)
+✔ heading preservation: ordinary hash-only text is content (0.009583ms)
+✖ heading preservation: fence state resets between original documents (0.033667ms)
+✖ heading preservation: unclosed target rejects changed heading context (0.035042ms)
+✖ heading preservation: real merge keeps repeated headings and ordinary lines separately (0.060334ms)
+ℹ tests 91
+ℹ suites 0
+ℹ pass 45
+ℹ fail 46
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 81.314541
+
+✖ failing tests:
+
+test at tests/heading-structure.test.mjs:15:3
+✖ heading structure baseline: indented H1 (1.007541ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + '## Source\n\n  # Heading\nBody'
+  - '  ## Heading\nBody'
+
+      at TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:15:60)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.start (node:internal/test_runner/test:1262:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '## Source\n\n  # Heading\nBody',
+    expected: '  ## Heading\nBody',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/heading-structure.test.mjs:16:3
+✖ heading preservation baseline: indented H1 (0.125292ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  false !== true
+
+      at TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:16:63)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/heading-structure.test.mjs:15:3
+✖ heading structure baseline: inline triple-backtick span (0.0855ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + '## Source\n\n```inline```\n# Heading'
+  - '## Source\n\n```inline```\n## Heading'
+                                 ^
+
+      at TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:15:60)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '## Source\n\n```inline```\n# Heading',
+    expected: '## Source\n\n```inline```\n## Heading',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/heading-structure.test.mjs:15:3
+✖ heading structure baseline: empty H1 (0.055583ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + '## Source\n\n#\nBody'
+  - '##\nBody'
+       ^
+
+      at TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:15:60)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '## Source\n\n#\nBody',
+    expected: '##\nBody',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/heading-structure.test.mjs:16:3
+✖ heading preservation baseline: empty H1 (0.045958ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  false !== true
+
+      at TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:16:63)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/heading-structure.test.mjs:23:7
+✖ heading structure LF: indent 0, tail "" (0.06525ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + '## Source\n\n#\n##\n###\n####\n#####\n######\nBody'
+  - '##\n###\n####\n#####\n######\n######\nBody'
+
+      at TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:27:16)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '## Source\n\n#\n##\n###\n####\n#####\n######\nBody',
+    expected: '##\n###\n####\n#####\n######\n######\nBody',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/heading-structure.test.mjs:23:7
+✖ heading structure LF: indent 1, tail " Heading ###  " (0.191833ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + '## Source\n' +
+  +   '\n' +
+  +   ' # Heading ###  \n' +
+  +   ' ## Heading ###  \n' +
+  - ' ## Heading ###  \n' +
+      ' ### Heading ###  \n' +
+      ' #### Heading ###  \n' +
+      ' ##### Heading ###  \n' +
+      ' ###### Heading ###  \n' +
+  -   ' ###### Heading ###  \n' +
+      'Body'
+
+      at TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:27:16)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '## Source\n\n # Heading ###  \n ## Heading ###  \n ### Heading ###  \n #### Heading ###  \n ##### Heading ###  \n ###### Heading ###  \nBody',
+    expected: ' ## Heading ###  \n ### Heading ###  \n #### Heading ###  \n ##### Heading ###  \n ###### Heading ###  \n ###### Heading ###  \nBody',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/heading-structure.test.mjs:23:7
+✖ heading structure LF: indent 1, tail "\tHeading" (0.085375ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + '## Source\n' +
+  +   '\n' +
+  +   ' #\tHeading\n' +
+  +   ' ##\tHeading\n' +
+  - ' ##\tHeading\n' +
+      ' ###\tHeading\n' +
+      ' ####\tHeading\n' +
+      ' #####\tHeading\n' +
+      ' ######\tHeading\n' +
+  -   ' ######\tHeading\n' +
+      'Body'
+
+      at TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:27:16)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '## Source\n\n #\tHeading\n ##\tHeading\n ###\tHeading\n ####\tHeading\n #####\tHeading\n ######\tHeading\nBody',
+    expected: ' ##\tHeading\n ###\tHeading\n ####\tHeading\n #####\tHeading\n ######\tHeading\n ######\tHeading\nBody',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/heading-structure.test.mjs:23:7
+✖ heading structure LF: indent 1, tail "" (0.065541ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + '## Source\n\n #\n ##\n ###\n ####\n #####\n ######\nBody'
+  - ' ##\n ###\n ####\n #####\n ######\n ######\nBody'
+
+      at TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:27:16)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '## Source\n\n #\n ##\n ###\n ####\n #####\n ######\nBody',
+    expected: ' ##\n ###\n ####\n #####\n ######\n ######\nBody',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/heading-structure.test.mjs:23:7
+✖ heading structure LF: indent 1, tail " \t" (0.055417ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + '## Source\n\n # \t\n ## \t\n ### \t\n #### \t\n ##### \t\n ###### \t\nBody'
+  - ' ## \t\n ### \t\n #### \t\n ##### \t\n ###### \t\n ###### \t\nBody'
+
+      at TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:27:16)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '## Source\n\n # \t\n ## \t\n ### \t\n #### \t\n ##### \t\n ###### \t\nBody',
+    expected: ' ## \t\n ### \t\n #### \t\n ##### \t\n ###### \t\n ###### \t\nBody',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/heading-structure.test.mjs:23:7
+✖ heading structure LF: indent 2, tail " Heading ###  " (0.06625ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + '## Source\n' +
+  +   '\n' +
+  +   '  # Heading ###  \n' +
+  +   '  ## Heading ###  \n' +
+  - '  ## Heading ###  \n' +
+      '  ### Heading ###  \n' +
+      '  #### Heading ###  \n' +
+      '  ##### Heading ###  \n' +
+      '  ###### Heading ###  \n' +
+  -   '  ###### Heading ###  \n' +
+      'Body'
+
+      at TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:27:16)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '## Source\n\n  # Heading ###  \n  ## Heading ###  \n  ### Heading ###  \n  #### Heading ###  \n  ##### Heading ###  \n  ###### Heading ###  \nBody',
+    expected: '  ## Heading ###  \n  ### Heading ###  \n  #### Heading ###  \n  ##### Heading ###  \n  ###### Heading ###  \n  ###### Heading ###  \nBody',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/heading-structure.test.mjs:23:7
+✖ heading structure LF: indent 2, tail "\tHeading" (0.055917ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + '## Source\n' +
+  +   '\n' +
+  +   '  #\tHeading\n' +
+  +   '  ##\tHeading\n' +
+  - '  ##\tHeading\n' +
+      '  ###\tHeading\n' +
+      '  ####\tHeading\n' +
+      '  #####\tHeading\n' +
+      '  ######\tHeading\n' +
+  -   '  ######\tHeading\n' +
+      'Body'
+
+      at TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:27:16)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '## Source\n\n  #\tHeading\n  ##\tHeading\n  ###\tHeading\n  ####\tHeading\n  #####\tHeading\n  ######\tHeading\nBody',
+    expected: '  ##\tHeading\n  ###\tHeading\n  ####\tHeading\n  #####\tHeading\n  ######\tHeading\n  ######\tHeading\nBody',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/heading-structure.test.mjs:23:7
+✖ heading structure LF: indent 2, tail "" (0.042167ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + '## Source\n\n  #\n  ##\n  ###\n  ####\n  #####\n  ######\nBody'
+  - '  ##\n  ###\n  ####\n  #####\n  ######\n  ######\nBody'
+
+      at TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:27:16)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '## Source\n\n  #\n  ##\n  ###\n  ####\n  #####\n  ######\nBody',
+    expected: '  ##\n  ###\n  ####\n  #####\n  ######\n  ######\nBody',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/heading-structure.test.mjs:23:7
+✖ heading structure LF: indent 2, tail " \t" (0.045375ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + '## Source\n\n  # \t\n  ## \t\n  ### \t\n  #### \t\n  ##### \t\n  ###### \t\nBody'
+  - '  ## \t\n  ### \t\n  #### \t\n  ##### \t\n  ###### \t\n  ###### \t\nBody'
+
+      at TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:27:16)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '## Source\n\n  # \t\n  ## \t\n  ### \t\n  #### \t\n  ##### \t\n  ###### \t\nBody',
+    expected: '  ## \t\n  ### \t\n  #### \t\n  ##### \t\n  ###### \t\n  ###### \t\nBody',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/heading-structure.test.mjs:23:7
+✖ heading structure LF: indent 3, tail " Heading ###  " (0.304ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + '## Source\n' +
+  +   '\n' +
+  +   '   # Heading ###  \n' +
+  +   '   ## Heading ###  \n' +
+  - '   ## Heading ###  \n' +
+      '   ### Heading ###  \n' +
+      '   #### Heading ###  \n' +
+      '   ##### Heading ###  \n' +
+      '   ###### Heading ###  \n' +
+  -   '   ###### Heading ###  \n' +
+      'Body'
+
+      at TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:27:16)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '## Source\n\n   # Heading ###  \n   ## Heading ###  \n   ### Heading ###  \n   #### Heading ###  \n   ##### Heading ###  \n   ###### Heading ###  \nBody',
+    expected: '   ## Heading ###  \n   ### Heading ###  \n   #### Heading ###  \n   ##### Heading ###  \n   ###### Heading ###  \n   ###### Heading ###  \nBody',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/heading-structure.test.mjs:23:7
+✖ heading structure LF: indent 3, tail "\tHeading" (0.050459ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + '## Source\n' +
+  +   '\n' +
+  +   '   #\tHeading\n' +
+  +   '   ##\tHeading\n' +
+  - '   ##\tHeading\n' +
+      '   ###\tHeading\n' +
+      '   ####\tHeading\n' +
+      '   #####\tHeading\n' +
+      '   ######\tHeading\n' +
+  -   '   ######\tHeading\n' +
+      'Body'
+
+      at TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:27:16)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '## Source\n\n   #\tHeading\n   ##\tHeading\n   ###\tHeading\n   ####\tHeading\n   #####\tHeading\n   ######\tHeading\nBody',
+    expected: '   ##\tHeading\n   ###\tHeading\n   ####\tHeading\n   #####\tHeading\n   ######\tHeading\n   ######\tHeading\nBody',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/heading-structure.test.mjs:23:7
+✖ heading structure LF: indent 3, tail "" (0.043333ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + '## Source\n\n   #\n   ##\n   ###\n   ####\n   #####\n   ######\nBody'
+  - '   ##\n   ###\n   ####\n   #####\n   ######\n   ######\nBody'
+
+      at TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:27:16)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '## Source\n\n   #\n   ##\n   ###\n   ####\n   #####\n   ######\nBody',
+    expected: '   ##\n   ###\n   ####\n   #####\n   ######\n   ######\nBody',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/heading-structure.test.mjs:23:7
+✖ heading structure LF: indent 3, tail " \t" (0.039792ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + '## Source\n\n   # \t\n   ## \t\n   ### \t\n   #### \t\n   ##### \t\n   ###### \t\nBody'
+  - '   ## \t\n   ### \t\n   #### \t\n   ##### \t\n   ###### \t\n   ###### \t\nBody'
+
+      at TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:27:16)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '## Source\n\n   # \t\n   ## \t\n   ### \t\n   #### \t\n   ##### \t\n   ###### \t\nBody',
+    expected: '   ## \t\n   ### \t\n   #### \t\n   ##### \t\n   ###### \t\n   ###### \t\nBody',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/heading-structure.test.mjs:51:5
+✖ heading structure LF: four-space and NBSP closers stay inside (0.053125ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + '## Source\n\n~~~\n    ~~~\n# indent\n~~~ \n## nbsp\n~~~\n# Later'
+  - '## Source\n\n~~~\n    ~~~\n# indent\n~~~ \n# nbsp\n~~~\n## Later'
+
+      at TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:54:14)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '## Source\n\n~~~\n    ~~~\n# indent\n~~~ \n## nbsp\n~~~\n# Later',
+    expected: '## Source\n\n~~~\n    ~~~\n# indent\n~~~ \n# nbsp\n~~~\n## Later',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/heading-structure.test.mjs:51:5
+✖ heading structure LF: backtick in info rejects opening (0.040875ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + '## Source\n\n```lang`x\n# Later'
+  - '## Source\n\n```lang`x\n## Later'
+                              ^
+
+      at TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:54:14)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '## Source\n\n```lang`x\n# Later',
+    expected: '## Source\n\n```lang`x\n## Later',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/heading-structure.test.mjs:58:3
+✖ heading structure LF: first nonblank H1 and outer whitespace (0.049833ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + '## Source\n\n   #\nBody'
+  - '   ##\nBody'
+
+      at TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:59:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '## Source\n\n   #\nBody',
+    expected: '   ##\nBody',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/heading-structure.test.mjs:23:7
+✖ heading structure CRLF: indent 0, tail "" (0.047583ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + '## Source\n\n#\r\n##\r\n###\r\n####\r\n#####\r\n######\r\nBody'
+  - '##\r\n###\r\n####\r\n#####\r\n######\r\n######\r\nBody'
+
+      at TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:27:16)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '## Source\n\n#\r\n##\r\n###\r\n####\r\n#####\r\n######\r\nBody',
+    expected: '##\r\n###\r\n####\r\n#####\r\n######\r\n######\r\nBody',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/heading-structure.test.mjs:23:7
+✖ heading structure CRLF: indent 1, tail " Heading ###  " (0.051167ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + '## Source\n' +
+  +   '\n' +
+  +   ' # Heading ###  \r\n' +
+  +   ' ## Heading ###  \r\n' +
+  - ' ## Heading ###  \r\n' +
+      ' ### Heading ###  \r\n' +
+      ' #### Heading ###  \r\n' +
+      ' ##### Heading ###  \r\n' +
+      ' ###### Heading ###  \r\n' +
+  -   ' ###### Heading ###  \r\n' +
+      'Body'
+
+      at TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:27:16)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '## Source\n\n # Heading ###  \r\n ## Heading ###  \r\n ### Heading ###  \r\n #### Heading ###  \r\n ##### Heading ###  \r\n ###### Heading ###  \r\nBody',
+    expected: ' ## Heading ###  \r\n ### Heading ###  \r\n #### Heading ###  \r\n ##### Heading ###  \r\n ###### Heading ###  \r\n ###### Heading ###  \r\nBody',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/heading-structure.test.mjs:23:7
+✖ heading structure CRLF: indent 1, tail "\tHeading" (0.055084ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + '## Source\n' +
+  +   '\n' +
+  +   ' #\tHeading\r\n' +
+  +   ' ##\tHeading\r\n' +
+  - ' ##\tHeading\r\n' +
+      ' ###\tHeading\r\n' +
+      ' ####\tHeading\r\n' +
+      ' #####\tHeading\r\n' +
+      ' ######\tHeading\r\n' +
+  -   ' ######\tHeading\r\n' +
+      'Body'
+
+      at TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:27:16)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '## Source\n\n #\tHeading\r\n ##\tHeading\r\n ###\tHeading\r\n ####\tHeading\r\n #####\tHeading\r\n ######\tHeading\r\nBody',
+    expected: ' ##\tHeading\r\n ###\tHeading\r\n ####\tHeading\r\n #####\tHeading\r\n ######\tHeading\r\n ######\tHeading\r\nBody',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/heading-structure.test.mjs:23:7
+✖ heading structure CRLF: indent 1, tail "" (0.037666ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + '## Source\n\n #\r\n ##\r\n ###\r\n ####\r\n #####\r\n ######\r\nBody'
+  - ' ##\r\n ###\r\n ####\r\n #####\r\n ######\r\n ######\r\nBody'
+
+      at TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:27:16)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '## Source\n\n #\r\n ##\r\n ###\r\n ####\r\n #####\r\n ######\r\nBody',
+    expected: ' ##\r\n ###\r\n ####\r\n #####\r\n ######\r\n ######\r\nBody',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/heading-structure.test.mjs:23:7
+✖ heading structure CRLF: indent 1, tail " \t" (0.04675ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + '## Source\n\n # \t\r\n ## \t\r\n ### \t\r\n #### \t\r\n ##### \t\r\n ###### \t\r\nBody'
+  - ' ## \t\r\n ### \t\r\n #### \t\r\n ##### \t\r\n ###### \t\r\n ###### \t\r\nBody'
+
+      at TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:27:16)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '## Source\n\n # \t\r\n ## \t\r\n ### \t\r\n #### \t\r\n ##### \t\r\n ###### \t\r\nBody',
+    expected: ' ## \t\r\n ### \t\r\n #### \t\r\n ##### \t\r\n ###### \t\r\n ###### \t\r\nBody',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/heading-structure.test.mjs:23:7
+✖ heading structure CRLF: indent 2, tail " Heading ###  " (0.050209ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + '## Source\n' +
+  +   '\n' +
+  +   '  # Heading ###  \r\n' +
+  +   '  ## Heading ###  \r\n' +
+  - '  ## Heading ###  \r\n' +
+      '  ### Heading ###  \r\n' +
+      '  #### Heading ###  \r\n' +
+      '  ##### Heading ###  \r\n' +
+      '  ###### Heading ###  \r\n' +
+  -   '  ###### Heading ###  \r\n' +
+      'Body'
+
+      at TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:27:16)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '## Source\n\n  # Heading ###  \r\n  ## Heading ###  \r\n  ### Heading ###  \r\n  #### Heading ###  \r\n  ##### Heading ###  \r\n  ###### Heading ###  \r\nBody',
+    expected: '  ## Heading ###  \r\n  ### Heading ###  \r\n  #### Heading ###  \r\n  ##### Heading ###  \r\n  ###### Heading ###  \r\n  ###### Heading ###  \r\nBody',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/heading-structure.test.mjs:23:7
+✖ heading structure CRLF: indent 2, tail "\tHeading" (0.04725ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + '## Source\n' +
+  +   '\n' +
+  +   '  #\tHeading\r\n' +
+  +   '  ##\tHeading\r\n' +
+  - '  ##\tHeading\r\n' +
+      '  ###\tHeading\r\n' +
+      '  ####\tHeading\r\n' +
+      '  #####\tHeading\r\n' +
+      '  ######\tHeading\r\n' +
+  -   '  ######\tHeading\r\n' +
+      'Body'
+
+      at TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:27:16)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '## Source\n\n  #\tHeading\r\n  ##\tHeading\r\n  ###\tHeading\r\n  ####\tHeading\r\n  #####\tHeading\r\n  ######\tHeading\r\nBody',
+    expected: '  ##\tHeading\r\n  ###\tHeading\r\n  ####\tHeading\r\n  #####\tHeading\r\n  ######\tHeading\r\n  ######\tHeading\r\nBody',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/heading-structure.test.mjs:23:7
+✖ heading structure CRLF: indent 2, tail "" (0.036291ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + '## Source\n\n  #\r\n  ##\r\n  ###\r\n  ####\r\n  #####\r\n  ######\r\nBody'
+  - '  ##\r\n  ###\r\n  ####\r\n  #####\r\n  ######\r\n  ######\r\nBody'
+
+      at TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:27:16)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '## Source\n\n  #\r\n  ##\r\n  ###\r\n  ####\r\n  #####\r\n  ######\r\nBody',
+    expected: '  ##\r\n  ###\r\n  ####\r\n  #####\r\n  ######\r\n  ######\r\nBody',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/heading-structure.test.mjs:23:7
+✖ heading structure CRLF: indent 2, tail " \t" (0.043834ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + '## Source\n\n  # \t\r\n  ## \t\r\n  ### \t\r\n  #### \t\r\n  ##### \t\r\n  ###### \t\r\nBody'
+  - '  ## \t\r\n  ### \t\r\n  #### \t\r\n  ##### \t\r\n  ###### \t\r\n  ###### \t\r\nBody'
+
+      at TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:27:16)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '## Source\n\n  # \t\r\n  ## \t\r\n  ### \t\r\n  #### \t\r\n  ##### \t\r\n  ###### \t\r\nBody',
+    expected: '  ## \t\r\n  ### \t\r\n  #### \t\r\n  ##### \t\r\n  ###### \t\r\n  ###### \t\r\nBody',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/heading-structure.test.mjs:23:7
+✖ heading structure CRLF: indent 3, tail " Heading ###  " (0.052166ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + '## Source\n' +
+  +   '\n' +
+  +   '   # Heading ###  \r\n' +
+  +   '   ## Heading ###  \r\n' +
+  - '   ## Heading ###  \r\n' +
+      '   ### Heading ###  \r\n' +
+      '   #### Heading ###  \r\n' +
+      '   ##### Heading ###  \r\n' +
+      '   ###### Heading ###  \r\n' +
+  -   '   ###### Heading ###  \r\n' +
+      'Body'
+
+      at TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:27:16)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '## Source\n\n   # Heading ###  \r\n   ## Heading ###  \r\n   ### Heading ###  \r\n   #### Heading ###  \r\n   ##### Heading ###  \r\n   ###### Heading ###  \r\nBody',
+    expected: '   ## Heading ###  \r\n   ### Heading ###  \r\n   #### Heading ###  \r\n   ##### Heading ###  \r\n   ###### Heading ###  \r\n   ###### Heading ###  \r\nBody',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/heading-structure.test.mjs:23:7
+✖ heading structure CRLF: indent 3, tail "\tHeading" (0.049584ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + '## Source\n' +
+  +   '\n' +
+  +   '   #\tHeading\r\n' +
+  +   '   ##\tHeading\r\n' +
+  - '   ##\tHeading\r\n' +
+      '   ###\tHeading\r\n' +
+      '   ####\tHeading\r\n' +
+      '   #####\tHeading\r\n' +
+      '   ######\tHeading\r\n' +
+  -   '   ######\tHeading\r\n' +
+      'Body'
+
+      at TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:27:16)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '## Source\n\n   #\tHeading\r\n   ##\tHeading\r\n   ###\tHeading\r\n   ####\tHeading\r\n   #####\tHeading\r\n   ######\tHeading\r\nBody',
+    expected: '   ##\tHeading\r\n   ###\tHeading\r\n   ####\tHeading\r\n   #####\tHeading\r\n   ######\tHeading\r\n   ######\tHeading\r\nBody',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/heading-structure.test.mjs:23:7
+✖ heading structure CRLF: indent 3, tail "" (0.038875ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + '## Source\n\n   #\r\n   ##\r\n   ###\r\n   ####\r\n   #####\r\n   ######\r\nBody'
+  - '   ##\r\n   ###\r\n   ####\r\n   #####\r\n   ######\r\n   ######\r\nBody'
+
+      at TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:27:16)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '## Source\n\n   #\r\n   ##\r\n   ###\r\n   ####\r\n   #####\r\n   ######\r\nBody',
+    expected: '   ##\r\n   ###\r\n   ####\r\n   #####\r\n   ######\r\n   ######\r\nBody',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/heading-structure.test.mjs:23:7
+✖ heading structure CRLF: indent 3, tail " \t" (0.052708ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + '## Source\n' +
+  +   '\n' +
+  +   '   # \t\r\n' +
+  +   '   ## \t\r\n' +
+  +   '   ### \t\r\n' +
+  +   '   #### \t\r\n' +
+  +   '   ##### \t\r\n' +
+  +   '   ###### \t\r\n' +
+  +   'Body'
+  - '   ## \t\r\n   ### \t\r\n   #### \t\r\n   ##### \t\r\n   ###### \t\r\n   ###### \t\r\nBody'
+
+      at TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:27:16)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '## Source\n\n   # \t\r\n   ## \t\r\n   ### \t\r\n   #### \t\r\n   ##### \t\r\n   ###### \t\r\nBody',
+    expected: '   ## \t\r\n   ### \t\r\n   #### \t\r\n   ##### \t\r\n   ###### \t\r\n   ###### \t\r\nBody',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/heading-structure.test.mjs:51:5
+✖ heading structure CRLF: four-space and NBSP closers stay inside (0.297417ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + '## Source\n\n~~~\r\n    ~~~\r\n# indent\r\n~~~ \r\n## nbsp\r\n~~~\r\n# Later'
+  - '## Source\n\n~~~\r\n    ~~~\r\n# indent\r\n~~~ \r\n# nbsp\r\n~~~\r\n## Later'
+
+      at TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:54:14)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '## Source\n\n~~~\r\n    ~~~\r\n# indent\r\n~~~ \r\n## nbsp\r\n~~~\r\n# Later',
+    expected: '## Source\n\n~~~\r\n    ~~~\r\n# indent\r\n~~~ \r\n# nbsp\r\n~~~\r\n## Later',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/heading-structure.test.mjs:51:5
+✖ heading structure CRLF: backtick in info rejects opening (0.032584ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + '## Source\n\n```lang`x\r\n# Later'
+  - '## Source\n\n```lang`x\r\n## Later'
+                                ^
+
+      at TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:54:14)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '## Source\n\n```lang`x\r\n# Later',
+    expected: '## Source\n\n```lang`x\r\n## Later',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/heading-structure.test.mjs:58:3
+✖ heading structure CRLF: first nonblank H1 and outer whitespace (0.0315ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + '## Source\n\n   #\r\nBody'
+  - '   ##\r\nBody'
+
+      at TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:59:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '## Source\n\n   #\r\nBody',
+    expected: '   ##\r\nBody',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/heading-structure.test.mjs:82:4
+✖ heading preservation: empty heading demotion (0.0405ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  false !== true
+
+      at TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:82:55)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/heading-structure.test.mjs:82:4
+✖ heading preservation: whitespace empty heading cannot vanish (0.031042ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  true !== false
+
+      at TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:82:55)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/heading-structure.test.mjs:82:4
+✖ heading preservation: empty headings retain multiplicity (0.029542ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  false !== true
+
+      at TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:82:55)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/heading-structure.test.mjs:82:4
+✖ heading preservation: heading cannot stand in for ordinary text (0.029541ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  true !== false
+
+      at TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:82:55)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/heading-structure.test.mjs:82:4
+✖ heading preservation: ordinary text cannot stand in for heading (0.028375ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  true !== false
+
+      at TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:82:55)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/heading-structure.test.mjs:82:4
+✖ heading preservation: fenced heading stays literal (0.029709ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  true !== false
+
+      at TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:82:55)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/heading-structure.test.mjs:82:4
+✖ heading preservation: fence state resets between original documents (0.033667ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  true !== false
+
+      at TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:82:55)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/heading-structure.test.mjs:82:4
+✖ heading preservation: unclosed target rejects changed heading context (0.035042ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  true !== false
+
+      at TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:82:55)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/heading-structure.test.mjs:84:1
+✖ heading preservation: real merge keeps repeated headings and ordinary lines separately (0.060334ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + '# Keep\nKeep\n#\nKeep\n\n## Source\n\n  # Keep\nKeep\n#\n#\n```inline```\n# Later\n'
+  - '# Keep\nKeep\n#\nKeep\n\n  ## Keep\nKeep\n##\n##\n```inline```\n## Later\n'
+
+      at TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:88:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '# Keep\nKeep\n#\nKeep\n\n## Source\n\n  # Keep\nKeep\n#\n#\n```inline```\n# Later\n',
+    expected: '# Keep\nKeep\n#\nKeep\n\n  ## Keep\nKeep\n##\n##\n```inline```\n## Later\n',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

@@ -1,0 +1,2787 @@
+Baseline: 9412dfadedf0a4f4ea14c695aaf94bb17a131d9c exported into temporary source directory.
+Command: FILE_PLACER_SOURCE=<baseline>/main.ts node --test --test-reporter=tap --test-name-pattern=heading tests/heading-structure.test.mjs tests/behavior.test.mjs
+Exit: 1
+
+TAP version 13
+# Subtest: headings move down but nested short fences and code stay intact
+ok 1 - headings move down but nested short fences and code stay intact
+  ---
+  duration_ms: 0.735708
+  type: 'test'
+  ...
+# Subtest: heading structure action: indented "\\n" keeps snapshots and archives
+not ok 2 - heading structure action: indented "\\n" keeps snapshots and archives
+  ---
+  duration_ms: 1.003541
+  type: 'test'
+  location: '/Users/maxogalactic/side-projects/obsidian-file-placer/tests/behavior.test.mjs:266:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+
+    + '# Target\nKeep\n\n## Source\n\n  # Heading\nBody\n'
+    - '# Target\nKeep\n\n  ## Heading\nBody\n'
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: |-
+    # Target
+    Keep
+
+      ## Heading
+    Body
+
+  actual: |-
+    # Target
+    Keep
+
+    ## Source
+
+      # Heading
+    Body
+
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/behavior.test.mjs:280:14)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: heading structure action: inline "\\n" keeps snapshots and archives
+not ok 3 - heading structure action: inline "\\n" keeps snapshots and archives
+  ---
+  duration_ms: 0.189
+  type: 'test'
+  location: '/Users/maxogalactic/side-projects/obsidian-file-placer/tests/behavior.test.mjs:266:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+
+    + '# Target\nKeep\n\n## Source\n\n```inline```\n# Heading\n'
+    - '# Target\nKeep\n\n## Source\n\n```inline```\n## Heading\n'
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: |-
+    # Target
+    Keep
+
+    ## Source
+
+    ```inline```
+    ## Heading
+
+  actual: |-
+    # Target
+    Keep
+
+    ## Source
+
+    ```inline```
+    # Heading
+
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/behavior.test.mjs:280:14)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: heading structure action: empty "\\n" keeps snapshots and archives
+not ok 4 - heading structure action: empty "\\n" keeps snapshots and archives
+  ---
+  duration_ms: 0.174208
+  type: 'test'
+  location: '/Users/maxogalactic/side-projects/obsidian-file-placer/tests/behavior.test.mjs:266:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+
+    + '# Target\nKeep\n\n## Source\n\n#\nBody\n'
+    - '# Target\nKeep\n\n##\nBody\n'
+                           ^
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: |-
+    # Target
+    Keep
+
+    ##
+    Body
+
+  actual: |-
+    # Target
+    Keep
+
+    ## Source
+
+    #
+    Body
+
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/behavior.test.mjs:280:14)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: heading structure action: combined "\\n" keeps snapshots and archives
+not ok 5 - heading structure action: combined "\\n" keeps snapshots and archives
+  ---
+  duration_ms: 0.315542
+  type: 'test'
+  location: '/Users/maxogalactic/side-projects/obsidian-file-placer/tests/behavior.test.mjs:266:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+
+      '# Target\n' +
+        'Keep\n' +
+        '\n' +
+    +   '## Source\n' +
+    +   '\n' +
+    +   '   #\n' +
+    +   '#\n' +
+    -   '   ##\n' +
+    -   '##\n' +
+        'Keep\n' +
+        'Keep\n' +
+        '```inline```\n' +
+    +   '# Later\n' +
+    -   '## Later\n' +
+        '~~~lang`x\n' +
+        '# literal\n' +
+        '~~~\n' +
+        '    # code\n' +
+        '###### cap\n'
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: |-
+    # Target
+    Keep
+
+       ##
+    ##
+    Keep
+    Keep
+    ```inline```
+    ## Later
+    ~~~lang`x
+    # literal
+    ~~~
+        # code
+    ###### cap
+
+  actual: |-
+    # Target
+    Keep
+
+    ## Source
+
+       #
+    #
+    Keep
+    Keep
+    ```inline```
+    # Later
+    ~~~lang`x
+    # literal
+    ~~~
+        # code
+    ###### cap
+
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/behavior.test.mjs:280:14)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: heading structure action: indented "\\r\\n" keeps snapshots and archives
+not ok 6 - heading structure action: indented "\\r\\n" keeps snapshots and archives
+  ---
+  duration_ms: 0.168042
+  type: 'test'
+  location: '/Users/maxogalactic/side-projects/obsidian-file-placer/tests/behavior.test.mjs:266:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+
+    + '# Target\r\nKeep\n\n## Source\n\n  # Heading\r\nBody\n'
+    - '# Target\r\nKeep\n\n  ## Heading\r\nBody\n'
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: |-
+    # Target
+    Keep
+
+      ## Heading
+    Body
+
+  actual: |-
+    # Target
+    Keep
+
+    ## Source
+
+      # Heading
+    Body
+
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/behavior.test.mjs:280:14)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: heading structure action: inline "\\r\\n" keeps snapshots and archives
+not ok 7 - heading structure action: inline "\\r\\n" keeps snapshots and archives
+  ---
+  duration_ms: 0.127666
+  type: 'test'
+  location: '/Users/maxogalactic/side-projects/obsidian-file-placer/tests/behavior.test.mjs:266:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+
+    + '# Target\r\nKeep\n\n## Source\n\n```inline```\r\n# Heading\n'
+    - '# Target\r\nKeep\n\n## Source\n\n```inline```\r\n## Heading\n'
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: |-
+    # Target
+    Keep
+
+    ## Source
+
+    ```inline```
+    ## Heading
+
+  actual: |-
+    # Target
+    Keep
+
+    ## Source
+
+    ```inline```
+    # Heading
+
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/behavior.test.mjs:280:14)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: heading structure action: empty "\\r\\n" keeps snapshots and archives
+not ok 8 - heading structure action: empty "\\r\\n" keeps snapshots and archives
+  ---
+  duration_ms: 0.104084
+  type: 'test'
+  location: '/Users/maxogalactic/side-projects/obsidian-file-placer/tests/behavior.test.mjs:266:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+
+    + '# Target\r\nKeep\n\n## Source\n\n#\r\nBody\n'
+    - '# Target\r\nKeep\n\n##\r\nBody\n'
+                             ^
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: |-
+    # Target
+    Keep
+
+    ##
+    Body
+
+  actual: |-
+    # Target
+    Keep
+
+    ## Source
+
+    #
+    Body
+
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/behavior.test.mjs:280:14)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: heading structure action: combined "\\r\\n" keeps snapshots and archives
+not ok 9 - heading structure action: combined "\\r\\n" keeps snapshots and archives
+  ---
+  duration_ms: 0.130041
+  type: 'test'
+  location: '/Users/maxogalactic/side-projects/obsidian-file-placer/tests/behavior.test.mjs:266:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+
+      '# Target\r\n' +
+        'Keep\n' +
+        '\n' +
+    +   '## Source\n' +
+    +   '\n' +
+    +   '   #\r\n' +
+    +   '#\r\n' +
+    -   '   ##\r\n' +
+    -   '##\r\n' +
+        'Keep\r\n' +
+        'Keep\r\n' +
+        '```inline```\r\n' +
+    +   '# Later\r\n' +
+    -   '## Later\r\n' +
+        '~~~lang`x\r\n' +
+        '# literal\r\n' +
+        '~~~\r\n' +
+        '    # code\r\n' +
+        '###### cap\n'
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: |-
+    # Target
+    Keep
+
+       ##
+    ##
+    Keep
+    Keep
+    ```inline```
+    ## Later
+    ~~~lang`x
+    # literal
+    ~~~
+        # code
+    ###### cap
+
+  actual: |-
+    # Target
+    Keep
+
+    ## Source
+
+       #
+    #
+    Keep
+    Keep
+    ```inline```
+    # Later
+    ~~~lang`x
+    # literal
+    ~~~
+        # code
+    ###### cap
+
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/behavior.test.mjs:280:14)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: heading structure action: properties compose with exact CRLF originals
+not ok 10 - heading structure action: properties compose with exact CRLF originals
+  ---
+  duration_ms: 0.318709
+  type: 'test'
+  location: '/Users/maxogalactic/side-projects/obsidian-file-placer/tests/behavior.test.mjs:296:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+
+      '---\n' +
+        '{"status":["target","source"]}\n' +
+        '---\n' +
+        '# Target\n' +
+        'Keep\n' +
+        '\n' +
+    +   '## Source\n' +
+    +   '\n' +
+    +   '  #\r\n' +
+    -   '  ##\r\n' +
+        '```inline```\r\n' +
+    +   '# Heading\r\n' +
+    -   '## Heading\r\n' +
+        'Keep\n'
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: |-
+    ---
+    {"status":["target","source"]}
+    ---
+    # Target
+    Keep
+
+      ##
+    ```inline```
+    ## Heading
+    Keep
+
+  actual: |-
+    ---
+    {"status":["target","source"]}
+    ---
+    # Target
+    Keep
+
+    ## Source
+
+      #
+    ```inline```
+    # Heading
+    Keep
+
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/behavior.test.mjs:303:10)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: heading structure action: unclosed target fence aborts before any write
+not ok 11 - heading structure action: unclosed target fence aborts before any write
+  ---
+  duration_ms: 0.259917
+  type: 'test'
+  location: '/Users/maxogalactic/side-projects/obsidian-file-placer/tests/behavior.test.mjs:312:1'
+  failureType: 'testCodeFailure'
+  error: 'Unexpected createFolder'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  operator: 'fail'
+  stack: |-
+    owner.<computed> [as createFolder] (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/behavior.test.mjs:316:40)
+    FilePlacerPlugin.ensureFolder (<baseline>/main.ts:539:27)
+    FilePlacerPlugin.mergeNotes (<baseline>/main.ts:253:31)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async FilePlacerPlugin.merge (<baseline>/main.ts:219:7)
+    async TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/behavior.test.mjs:319:3)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: heading structure action: source edit before target write retains snapshots and prevents archival
+ok 12 - heading structure action: source edit before target write retains snapshots and prevents archival
+  ---
+  duration_ms: 0.515
+  type: 'test'
+  ...
+# Subtest: heading structure action: source edit after target write retains snapshots and prevents archival
+not ok 13 - heading structure action: source edit after target write retains snapshots and prevents archival
+  ---
+  duration_ms: 0.122125
+  type: 'test'
+  location: '/Users/maxogalactic/side-projects/obsidian-file-placer/tests/behavior.test.mjs:329:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+
+    + 'Target\n\n## Source\n\n  # Heading\n#\nBody\n'
+    - 'Target\n\n  ## Heading\n##\nBody\n'
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: |-
+    Target
+
+      ## Heading
+    ##
+    Body
+
+  actual: |-
+    Target
+
+    ## Source
+
+      # Heading
+    #
+    Body
+
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/behavior.test.mjs:342:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: heading structure baseline: indented H1
+not ok 14 - heading structure baseline: indented H1
+  ---
+  duration_ms: 1.164417
+  type: 'test'
+  location: '/Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:15:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+
+    + '## Source\n\n  # Heading\nBody'
+    - '  ## Heading\nBody'
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: |-
+      ## Heading
+    Body
+  actual: |-
+    ## Source
+
+      # Heading
+    Body
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:15:60)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1402:25)
+    Test.start (node:internal/test_runner/test:1262:17)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+  ...
+# Subtest: heading preservation baseline: indented H1
+not ok 15 - heading preservation baseline: indented H1
+  ---
+  duration_ms: 0.158541
+  type: 'test'
+  location: '/Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:16:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+
+    false !== true
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:16:63)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1402:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+    Test.postRun (node:internal/test_runner/test:1542:19)
+    Test.run (node:internal/test_runner/test:1467:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3)
+  ...
+# Subtest: heading structure baseline: inline triple-backtick span
+not ok 16 - heading structure baseline: inline triple-backtick span
+  ---
+  duration_ms: 0.1005
+  type: 'test'
+  location: '/Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:15:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+
+    + '## Source\n\n```inline```\n# Heading'
+    - '## Source\n\n```inline```\n## Heading'
+                                   ^
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: |-
+    ## Source
+
+    ```inline```
+    ## Heading
+  actual: |-
+    ## Source
+
+    ```inline```
+    # Heading
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:15:60)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1402:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+    Test.postRun (node:internal/test_runner/test:1542:19)
+    Test.run (node:internal/test_runner/test:1467:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: heading preservation baseline: inline triple-backtick span
+ok 17 - heading preservation baseline: inline triple-backtick span
+  ---
+  duration_ms: 0.106791
+  type: 'test'
+  ...
+# Subtest: heading structure baseline: empty H1
+not ok 18 - heading structure baseline: empty H1
+  ---
+  duration_ms: 0.062916
+  type: 'test'
+  location: '/Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:15:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+
+    + '## Source\n\n#\nBody'
+    - '##\nBody'
+         ^
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: |-
+    ##
+    Body
+  actual: |-
+    ## Source
+
+    #
+    Body
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:15:60)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1402:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+    Test.postRun (node:internal/test_runner/test:1542:19)
+    Test.run (node:internal/test_runner/test:1467:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: heading preservation baseline: empty H1
+not ok 19 - heading preservation baseline: empty H1
+  ---
+  duration_ms: 0.051
+  type: 'test'
+  location: '/Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:16:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+
+    false !== true
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:16:63)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1402:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+    Test.postRun (node:internal/test_runner/test:1542:19)
+    Test.run (node:internal/test_runner/test:1467:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: heading structure LF: indent 0, tail " Heading \#\#\#  "
+ok 20 - heading structure LF: indent 0, tail " Heading \#\#\#  "
+  ---
+  duration_ms: 0.08675
+  type: 'test'
+  ...
+# Subtest: heading structure LF: indent 0, tail "\\tHeading"
+ok 21 - heading structure LF: indent 0, tail "\\tHeading"
+  ---
+  duration_ms: 0.04275
+  type: 'test'
+  ...
+# Subtest: heading structure LF: indent 0, tail ""
+not ok 22 - heading structure LF: indent 0, tail ""
+  ---
+  duration_ms: 0.066125
+  type: 'test'
+  location: '/Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:23:7'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+
+    + '## Source\n\n#\n##\n###\n####\n#####\n######\nBody'
+    - '##\n###\n####\n#####\n######\n######\nBody'
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: |-
+    ##
+    ###
+    ####
+    #####
+    ######
+    ######
+    Body
+  actual: |-
+    ## Source
+
+    #
+    ##
+    ###
+    ####
+    #####
+    ######
+    Body
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:27:16)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1402:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+    Test.postRun (node:internal/test_runner/test:1542:19)
+    Test.run (node:internal/test_runner/test:1467:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: heading structure LF: indent 0, tail " \\t"
+ok 23 - heading structure LF: indent 0, tail " \\t"
+  ---
+  duration_ms: 0.078875
+  type: 'test'
+  ...
+# Subtest: heading structure LF: indent 1, tail " Heading \#\#\#  "
+not ok 24 - heading structure LF: indent 1, tail " Heading \#\#\#  "
+  ---
+  duration_ms: 0.264958
+  type: 'test'
+  location: '/Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:23:7'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+
+    + '## Source\n' +
+    +   '\n' +
+    +   ' # Heading ###  \n' +
+    +   ' ## Heading ###  \n' +
+    - ' ## Heading ###  \n' +
+        ' ### Heading ###  \n' +
+        ' #### Heading ###  \n' +
+        ' ##### Heading ###  \n' +
+        ' ###### Heading ###  \n' +
+    -   ' ###### Heading ###  \n' +
+        'Body'
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: |-
+     ## Heading ###
+     ### Heading ###
+     #### Heading ###
+     ##### Heading ###
+     ###### Heading ###
+     ###### Heading ###
+    Body
+  actual: |-
+    ## Source
+
+     # Heading ###
+     ## Heading ###
+     ### Heading ###
+     #### Heading ###
+     ##### Heading ###
+     ###### Heading ###
+    Body
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:27:16)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1402:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+    Test.postRun (node:internal/test_runner/test:1542:19)
+    Test.run (node:internal/test_runner/test:1467:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: heading structure LF: indent 1, tail "\\tHeading"
+not ok 25 - heading structure LF: indent 1, tail "\\tHeading"
+  ---
+  duration_ms: 0.088709
+  type: 'test'
+  location: '/Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:23:7'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+
+    + '## Source\n' +
+    +   '\n' +
+    +   ' #\tHeading\n' +
+    +   ' ##\tHeading\n' +
+    - ' ##\tHeading\n' +
+        ' ###\tHeading\n' +
+        ' ####\tHeading\n' +
+        ' #####\tHeading\n' +
+        ' ######\tHeading\n' +
+    -   ' ######\tHeading\n' +
+        'Body'
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: |-
+     ##	Heading
+     ###	Heading
+     ####	Heading
+     #####	Heading
+     ######	Heading
+     ######	Heading
+    Body
+  actual: |-
+    ## Source
+
+     #	Heading
+     ##	Heading
+     ###	Heading
+     ####	Heading
+     #####	Heading
+     ######	Heading
+    Body
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:27:16)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1402:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+    Test.postRun (node:internal/test_runner/test:1542:19)
+    Test.run (node:internal/test_runner/test:1467:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: heading structure LF: indent 1, tail ""
+not ok 26 - heading structure LF: indent 1, tail ""
+  ---
+  duration_ms: 0.100208
+  type: 'test'
+  location: '/Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:23:7'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+
+    + '## Source\n\n #\n ##\n ###\n ####\n #####\n ######\nBody'
+    - ' ##\n ###\n ####\n #####\n ######\n ######\nBody'
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: |-
+     ##
+     ###
+     ####
+     #####
+     ######
+     ######
+    Body
+  actual: |-
+    ## Source
+
+     #
+     ##
+     ###
+     ####
+     #####
+     ######
+    Body
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:27:16)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1402:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+    Test.postRun (node:internal/test_runner/test:1542:19)
+    Test.run (node:internal/test_runner/test:1467:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: heading structure LF: indent 1, tail " \\t"
+not ok 27 - heading structure LF: indent 1, tail " \\t"
+  ---
+  duration_ms: 0.096625
+  type: 'test'
+  location: '/Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:23:7'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+
+    + '## Source\n\n # \t\n ## \t\n ### \t\n #### \t\n ##### \t\n ###### \t\nBody'
+    - ' ## \t\n ### \t\n #### \t\n ##### \t\n ###### \t\n ###### \t\nBody'
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: |-
+     ##
+     ###
+     ####
+     #####
+     ######
+     ######
+    Body
+  actual: |-
+    ## Source
+
+     #
+     ##
+     ###
+     ####
+     #####
+     ######
+    Body
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:27:16)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1402:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+    Test.postRun (node:internal/test_runner/test:1542:19)
+    Test.run (node:internal/test_runner/test:1467:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: heading structure LF: indent 2, tail " Heading \#\#\#  "
+not ok 28 - heading structure LF: indent 2, tail " Heading \#\#\#  "
+  ---
+  duration_ms: 0.087542
+  type: 'test'
+  location: '/Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:23:7'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+
+    + '## Source\n' +
+    +   '\n' +
+    +   '  # Heading ###  \n' +
+    +   '  ## Heading ###  \n' +
+    - '  ## Heading ###  \n' +
+        '  ### Heading ###  \n' +
+        '  #### Heading ###  \n' +
+        '  ##### Heading ###  \n' +
+        '  ###### Heading ###  \n' +
+    -   '  ###### Heading ###  \n' +
+        'Body'
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: |-
+      ## Heading ###
+      ### Heading ###
+      #### Heading ###
+      ##### Heading ###
+      ###### Heading ###
+      ###### Heading ###
+    Body
+  actual: |-
+    ## Source
+
+      # Heading ###
+      ## Heading ###
+      ### Heading ###
+      #### Heading ###
+      ##### Heading ###
+      ###### Heading ###
+    Body
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:27:16)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1402:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+    Test.postRun (node:internal/test_runner/test:1542:19)
+    Test.run (node:internal/test_runner/test:1467:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: heading structure LF: indent 2, tail "\\tHeading"
+not ok 29 - heading structure LF: indent 2, tail "\\tHeading"
+  ---
+  duration_ms: 0.062125
+  type: 'test'
+  location: '/Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:23:7'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+
+    + '## Source\n' +
+    +   '\n' +
+    +   '  #\tHeading\n' +
+    +   '  ##\tHeading\n' +
+    - '  ##\tHeading\n' +
+        '  ###\tHeading\n' +
+        '  ####\tHeading\n' +
+        '  #####\tHeading\n' +
+        '  ######\tHeading\n' +
+    -   '  ######\tHeading\n' +
+        'Body'
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: |-
+      ##	Heading
+      ###	Heading
+      ####	Heading
+      #####	Heading
+      ######	Heading
+      ######	Heading
+    Body
+  actual: |-
+    ## Source
+
+      #	Heading
+      ##	Heading
+      ###	Heading
+      ####	Heading
+      #####	Heading
+      ######	Heading
+    Body
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:27:16)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1402:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+    Test.postRun (node:internal/test_runner/test:1542:19)
+    Test.run (node:internal/test_runner/test:1467:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: heading structure LF: indent 2, tail ""
+not ok 30 - heading structure LF: indent 2, tail ""
+  ---
+  duration_ms: 0.046458
+  type: 'test'
+  location: '/Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:23:7'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+
+    + '## Source\n\n  #\n  ##\n  ###\n  ####\n  #####\n  ######\nBody'
+    - '  ##\n  ###\n  ####\n  #####\n  ######\n  ######\nBody'
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: |-
+      ##
+      ###
+      ####
+      #####
+      ######
+      ######
+    Body
+  actual: |-
+    ## Source
+
+      #
+      ##
+      ###
+      ####
+      #####
+      ######
+    Body
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:27:16)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1402:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+    Test.postRun (node:internal/test_runner/test:1542:19)
+    Test.run (node:internal/test_runner/test:1467:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: heading structure LF: indent 2, tail " \\t"
+not ok 31 - heading structure LF: indent 2, tail " \\t"
+  ---
+  duration_ms: 0.071292
+  type: 'test'
+  location: '/Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:23:7'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+
+    + '## Source\n\n  # \t\n  ## \t\n  ### \t\n  #### \t\n  ##### \t\n  ###### \t\nBody'
+    - '  ## \t\n  ### \t\n  #### \t\n  ##### \t\n  ###### \t\n  ###### \t\nBody'
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: |-
+      ##
+      ###
+      ####
+      #####
+      ######
+      ######
+    Body
+  actual: |-
+    ## Source
+
+      #
+      ##
+      ###
+      ####
+      #####
+      ######
+    Body
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:27:16)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1402:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+    Test.postRun (node:internal/test_runner/test:1542:19)
+    Test.run (node:internal/test_runner/test:1467:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: heading structure LF: indent 3, tail " Heading \#\#\#  "
+not ok 32 - heading structure LF: indent 3, tail " Heading \#\#\#  "
+  ---
+  duration_ms: 0.060125
+  type: 'test'
+  location: '/Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:23:7'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+
+    + '## Source\n' +
+    +   '\n' +
+    +   '   # Heading ###  \n' +
+    +   '   ## Heading ###  \n' +
+    - '   ## Heading ###  \n' +
+        '   ### Heading ###  \n' +
+        '   #### Heading ###  \n' +
+        '   ##### Heading ###  \n' +
+        '   ###### Heading ###  \n' +
+    -   '   ###### Heading ###  \n' +
+        'Body'
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: |-
+       ## Heading ###
+       ### Heading ###
+       #### Heading ###
+       ##### Heading ###
+       ###### Heading ###
+       ###### Heading ###
+    Body
+  actual: |-
+    ## Source
+
+       # Heading ###
+       ## Heading ###
+       ### Heading ###
+       #### Heading ###
+       ##### Heading ###
+       ###### Heading ###
+    Body
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:27:16)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1402:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+    Test.postRun (node:internal/test_runner/test:1542:19)
+    Test.run (node:internal/test_runner/test:1467:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: heading structure LF: indent 3, tail "\\tHeading"
+not ok 33 - heading structure LF: indent 3, tail "\\tHeading"
+  ---
+  duration_ms: 0.049584
+  type: 'test'
+  location: '/Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:23:7'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+
+    + '## Source\n' +
+    +   '\n' +
+    +   '   #\tHeading\n' +
+    +   '   ##\tHeading\n' +
+    - '   ##\tHeading\n' +
+        '   ###\tHeading\n' +
+        '   ####\tHeading\n' +
+        '   #####\tHeading\n' +
+        '   ######\tHeading\n' +
+    -   '   ######\tHeading\n' +
+        'Body'
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: |-
+       ##	Heading
+       ###	Heading
+       ####	Heading
+       #####	Heading
+       ######	Heading
+       ######	Heading
+    Body
+  actual: |-
+    ## Source
+
+       #	Heading
+       ##	Heading
+       ###	Heading
+       ####	Heading
+       #####	Heading
+       ######	Heading
+    Body
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:27:16)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1402:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+    Test.postRun (node:internal/test_runner/test:1542:19)
+    Test.run (node:internal/test_runner/test:1467:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: heading structure LF: indent 3, tail ""
+not ok 34 - heading structure LF: indent 3, tail ""
+  ---
+  duration_ms: 0.039042
+  type: 'test'
+  location: '/Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:23:7'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+
+    + '## Source\n\n   #\n   ##\n   ###\n   ####\n   #####\n   ######\nBody'
+    - '   ##\n   ###\n   ####\n   #####\n   ######\n   ######\nBody'
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: |-
+       ##
+       ###
+       ####
+       #####
+       ######
+       ######
+    Body
+  actual: |-
+    ## Source
+
+       #
+       ##
+       ###
+       ####
+       #####
+       ######
+    Body
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:27:16)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1402:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+    Test.postRun (node:internal/test_runner/test:1542:19)
+    Test.run (node:internal/test_runner/test:1467:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: heading structure LF: indent 3, tail " \\t"
+not ok 35 - heading structure LF: indent 3, tail " \\t"
+  ---
+  duration_ms: 0.044166
+  type: 'test'
+  location: '/Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:23:7'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+
+    + '## Source\n\n   # \t\n   ## \t\n   ### \t\n   #### \t\n   ##### \t\n   ###### \t\nBody'
+    - '   ## \t\n   ### \t\n   #### \t\n   ##### \t\n   ###### \t\n   ###### \t\nBody'
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: |-
+       ##
+       ###
+       ####
+       #####
+       ######
+       ######
+    Body
+  actual: |-
+    ## Source
+
+       #
+       ##
+       ###
+       ####
+       #####
+       ######
+    Body
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:27:16)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1402:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+    Test.postRun (node:internal/test_runner/test:1542:19)
+    Test.run (node:internal/test_runner/test:1467:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: heading structure LF: invalid "    \# Code"
+ok 36 - heading structure LF: invalid "    \# Code"
+  ---
+  duration_ms: 0.040666
+  type: 'test'
+  ...
+# Subtest: heading structure LF: invalid "\\t\# Code"
+ok 37 - heading structure LF: invalid "\\t\# Code"
+  ---
+  duration_ms: 0.020666
+  type: 'test'
+  ...
+# Subtest: heading structure LF: invalid " \#no-space"
+ok 38 - heading structure LF: invalid " \#no-space"
+  ---
+  duration_ms: 0.025041
+  type: 'test'
+  ...
+# Subtest: heading structure LF: invalid "\#\#\#\#\#\#\# Too many"
+ok 39 - heading structure LF: invalid "\#\#\#\#\#\#\# Too many"
+  ---
+  duration_ms: 0.019958
+  type: 'test'
+  ...
+# Subtest: heading structure LF: invalid "\\\\\# Escaped"
+ok 40 - heading structure LF: invalid "\\\\\# Escaped"
+  ---
+  duration_ms: 0.019083
+  type: 'test'
+  ...
+# Subtest: heading structure LF: invalid "\# NBSP"
+ok 41 - heading structure LF: invalid "\# NBSP"
+  ---
+  duration_ms: 0.019292
+  type: 'test'
+  ...
+# Subtest: heading structure LF: invalid "\#\\u000bVT"
+ok 42 - heading structure LF: invalid "\#\\u000bVT"
+  ---
+  duration_ms: 0.0175
+  type: 'test'
+  ...
+# Subtest: heading structure LF: invalid "\#\\fFF"
+ok 43 - heading structure LF: invalid "\#\\fFF"
+  ---
+  duration_ms: 0.017416
+  type: 'test'
+  ...
+# Subtest: heading structure LF: invalid "\#\\rbare CR"
+ok 44 - heading structure LF: invalid "\#\\rbare CR"
+  ---
+  duration_ms: 0.029958
+  type: 'test'
+  ...
+# Subtest: heading structure LF: backtick block and longer indented closer
+ok 45 - heading structure LF: backtick block and longer indented closer
+  ---
+  duration_ms: 0.042334
+  type: 'test'
+  ...
+# Subtest: heading structure LF: tilde info can contain backticks
+ok 46 - heading structure LF: tilde info can contain backticks
+  ---
+  duration_ms: 0.02475
+  type: 'test'
+  ...
+# Subtest: heading structure LF: short wrong type and content closers stay inside
+ok 47 - heading structure LF: short wrong type and content closers stay inside
+  ---
+  duration_ms: 0.026292
+  type: 'test'
+  ...
+# Subtest: heading structure LF: four-space and NBSP closers stay inside
+not ok 48 - heading structure LF: four-space and NBSP closers stay inside
+  ---
+  duration_ms: 0.067209
+  type: 'test'
+  location: '/Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:51:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+
+    + '## Source\n\n~~~\n    ~~~\n# indent\n~~~ \n## nbsp\n~~~\n# Later'
+    - '## Source\n\n~~~\n    ~~~\n# indent\n~~~ \n# nbsp\n~~~\n## Later'
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: |-
+    ## Source
+
+    ~~~
+        ~~~
+    # indent
+    ~~~
+    # nbsp
+    ~~~
+    ## Later
+  actual: |-
+    ## Source
+
+    ~~~
+        ~~~
+    # indent
+    ~~~
+    ## nbsp
+    ~~~
+    # Later
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:54:14)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1402:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+    Test.postRun (node:internal/test_runner/test:1542:19)
+    Test.run (node:internal/test_runner/test:1467:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: heading structure LF: unclosed block
+ok 49 - heading structure LF: unclosed block
+  ---
+  duration_ms: 0.022917
+  type: 'test'
+  ...
+# Subtest: heading structure LF: backtick in info rejects opening
+not ok 50 - heading structure LF: backtick in info rejects opening
+  ---
+  duration_ms: 0.045875
+  type: 'test'
+  location: '/Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:51:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+
+    + '## Source\n\n```lang`x\n# Later'
+    - '## Source\n\n```lang`x\n## Later'
+                                ^
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: |-
+    ## Source
+
+    ```lang`x
+    ## Later
+  actual: |-
+    ## Source
+
+    ```lang`x
+    # Later
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:54:14)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1402:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+    Test.postRun (node:internal/test_runner/test:1542:19)
+    Test.run (node:internal/test_runner/test:1467:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: heading structure LF: inline span after prose
+ok 51 - heading structure LF: inline span after prose
+  ---
+  duration_ms: 0.024916
+  type: 'test'
+  ...
+# Subtest: heading structure LF: indented fence is ordinary text
+ok 52 - heading structure LF: indented fence is ordinary text
+  ---
+  duration_ms: 0.020083
+  type: 'test'
+  ...
+# Subtest: heading structure LF: first nonblank H1 and outer whitespace
+not ok 53 - heading structure LF: first nonblank H1 and outer whitespace
+  ---
+  duration_ms: 0.049958
+  type: 'test'
+  location: '/Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:58:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+
+    + '## Source\n\n   #\nBody'
+    - '   ##\nBody'
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: |-
+       ##
+    Body
+  actual: |-
+    ## Source
+
+       #
+    Body
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:59:12)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1402:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+    Test.postRun (node:internal/test_runner/test:1542:19)
+    Test.run (node:internal/test_runner/test:1467:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: heading structure CRLF: indent 0, tail " Heading \#\#\#  "
+ok 54 - heading structure CRLF: indent 0, tail " Heading \#\#\#  "
+  ---
+  duration_ms: 0.025833
+  type: 'test'
+  ...
+# Subtest: heading structure CRLF: indent 0, tail "\\tHeading"
+ok 55 - heading structure CRLF: indent 0, tail "\\tHeading"
+  ---
+  duration_ms: 0.021584
+  type: 'test'
+  ...
+# Subtest: heading structure CRLF: indent 0, tail ""
+not ok 56 - heading structure CRLF: indent 0, tail ""
+  ---
+  duration_ms: 0.051
+  type: 'test'
+  location: '/Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:23:7'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+
+    + '## Source\n\n#\r\n##\r\n###\r\n####\r\n#####\r\n######\r\nBody'
+    - '##\r\n###\r\n####\r\n#####\r\n######\r\n######\r\nBody'
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: |-
+    ##
+    ###
+    ####
+    #####
+    ######
+    ######
+    Body
+  actual: |-
+    ## Source
+
+    #
+    ##
+    ###
+    ####
+    #####
+    ######
+    Body
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:27:16)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1402:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+    Test.postRun (node:internal/test_runner/test:1542:19)
+    Test.run (node:internal/test_runner/test:1467:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: heading structure CRLF: indent 0, tail " \\t"
+ok 57 - heading structure CRLF: indent 0, tail " \\t"
+  ---
+  duration_ms: 0.03525
+  type: 'test'
+  ...
+# Subtest: heading structure CRLF: indent 1, tail " Heading \#\#\#  "
+not ok 58 - heading structure CRLF: indent 1, tail " Heading \#\#\#  "
+  ---
+  duration_ms: 0.066125
+  type: 'test'
+  location: '/Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:23:7'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+
+    + '## Source\n' +
+    +   '\n' +
+    +   ' # Heading ###  \r\n' +
+    +   ' ## Heading ###  \r\n' +
+    - ' ## Heading ###  \r\n' +
+        ' ### Heading ###  \r\n' +
+        ' #### Heading ###  \r\n' +
+        ' ##### Heading ###  \r\n' +
+        ' ###### Heading ###  \r\n' +
+    -   ' ###### Heading ###  \r\n' +
+        'Body'
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: |-
+     ## Heading ###
+     ### Heading ###
+     #### Heading ###
+     ##### Heading ###
+     ###### Heading ###
+     ###### Heading ###
+    Body
+  actual: |-
+    ## Source
+
+     # Heading ###
+     ## Heading ###
+     ### Heading ###
+     #### Heading ###
+     ##### Heading ###
+     ###### Heading ###
+    Body
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:27:16)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1402:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+    Test.postRun (node:internal/test_runner/test:1542:19)
+    Test.run (node:internal/test_runner/test:1467:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: heading structure CRLF: indent 1, tail "\\tHeading"
+not ok 59 - heading structure CRLF: indent 1, tail "\\tHeading"
+  ---
+  duration_ms: 0.070458
+  type: 'test'
+  location: '/Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:23:7'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+
+    + '## Source\n' +
+    +   '\n' +
+    +   ' #\tHeading\r\n' +
+    +   ' ##\tHeading\r\n' +
+    - ' ##\tHeading\r\n' +
+        ' ###\tHeading\r\n' +
+        ' ####\tHeading\r\n' +
+        ' #####\tHeading\r\n' +
+        ' ######\tHeading\r\n' +
+    -   ' ######\tHeading\r\n' +
+        'Body'
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: |-
+     ##	Heading
+     ###	Heading
+     ####	Heading
+     #####	Heading
+     ######	Heading
+     ######	Heading
+    Body
+  actual: |-
+    ## Source
+
+     #	Heading
+     ##	Heading
+     ###	Heading
+     ####	Heading
+     #####	Heading
+     ######	Heading
+    Body
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:27:16)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1402:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+    Test.postRun (node:internal/test_runner/test:1542:19)
+    Test.run (node:internal/test_runner/test:1467:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: heading structure CRLF: indent 1, tail ""
+not ok 60 - heading structure CRLF: indent 1, tail ""
+  ---
+  duration_ms: 0.048542
+  type: 'test'
+  location: '/Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:23:7'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+
+    + '## Source\n\n #\r\n ##\r\n ###\r\n ####\r\n #####\r\n ######\r\nBody'
+    - ' ##\r\n ###\r\n ####\r\n #####\r\n ######\r\n ######\r\nBody'
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: |-
+     ##
+     ###
+     ####
+     #####
+     ######
+     ######
+    Body
+  actual: |-
+    ## Source
+
+     #
+     ##
+     ###
+     ####
+     #####
+     ######
+    Body
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:27:16)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1402:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+    Test.postRun (node:internal/test_runner/test:1542:19)
+    Test.run (node:internal/test_runner/test:1467:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: heading structure CRLF: indent 1, tail " \\t"
+not ok 61 - heading structure CRLF: indent 1, tail " \\t"
+  ---
+  duration_ms: 0.042125
+  type: 'test'
+  location: '/Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:23:7'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+
+    + '## Source\n\n # \t\r\n ## \t\r\n ### \t\r\n #### \t\r\n ##### \t\r\n ###### \t\r\nBody'
+    - ' ## \t\r\n ### \t\r\n #### \t\r\n ##### \t\r\n ###### \t\r\n ###### \t\r\nBody'
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: |-
+     ##
+     ###
+     ####
+     #####
+     ######
+     ######
+    Body
+  actual: |-
+    ## Source
+
+     #
+     ##
+     ###
+     ####
+     #####
+     ######
+    Body
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:27:16)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1402:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+    Test.postRun (node:internal/test_runner/test:1542:19)
+    Test.run (node:internal/test_runner/test:1467:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: heading structure CRLF: indent 2, tail " Heading \#\#\#  "
+not ok 62 - heading structure CRLF: indent 2, tail " Heading \#\#\#  "
+  ---
+  duration_ms: 0.056333
+  type: 'test'
+  location: '/Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:23:7'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+
+    + '## Source\n' +
+    +   '\n' +
+    +   '  # Heading ###  \r\n' +
+    +   '  ## Heading ###  \r\n' +
+    - '  ## Heading ###  \r\n' +
+        '  ### Heading ###  \r\n' +
+        '  #### Heading ###  \r\n' +
+        '  ##### Heading ###  \r\n' +
+        '  ###### Heading ###  \r\n' +
+    -   '  ###### Heading ###  \r\n' +
+        'Body'
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: |-
+      ## Heading ###
+      ### Heading ###
+      #### Heading ###
+      ##### Heading ###
+      ###### Heading ###
+      ###### Heading ###
+    Body
+  actual: |-
+    ## Source
+
+      # Heading ###
+      ## Heading ###
+      ### Heading ###
+      #### Heading ###
+      ##### Heading ###
+      ###### Heading ###
+    Body
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:27:16)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1402:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+    Test.postRun (node:internal/test_runner/test:1542:19)
+    Test.run (node:internal/test_runner/test:1467:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: heading structure CRLF: indent 2, tail "\\tHeading"
+not ok 63 - heading structure CRLF: indent 2, tail "\\tHeading"
+  ---
+  duration_ms: 0.048333
+  type: 'test'
+  location: '/Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:23:7'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+
+    + '## Source\n' +
+    +   '\n' +
+    +   '  #\tHeading\r\n' +
+    +   '  ##\tHeading\r\n' +
+    - '  ##\tHeading\r\n' +
+        '  ###\tHeading\r\n' +
+        '  ####\tHeading\r\n' +
+        '  #####\tHeading\r\n' +
+        '  ######\tHeading\r\n' +
+    -   '  ######\tHeading\r\n' +
+        'Body'
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: |-
+      ##	Heading
+      ###	Heading
+      ####	Heading
+      #####	Heading
+      ######	Heading
+      ######	Heading
+    Body
+  actual: |-
+    ## Source
+
+      #	Heading
+      ##	Heading
+      ###	Heading
+      ####	Heading
+      #####	Heading
+      ######	Heading
+    Body
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:27:16)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1402:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+    Test.postRun (node:internal/test_runner/test:1542:19)
+    Test.run (node:internal/test_runner/test:1467:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: heading structure CRLF: indent 2, tail ""
+not ok 64 - heading structure CRLF: indent 2, tail ""
+  ---
+  duration_ms: 0.045875
+  type: 'test'
+  location: '/Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:23:7'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+
+    + '## Source\n\n  #\r\n  ##\r\n  ###\r\n  ####\r\n  #####\r\n  ######\r\nBody'
+    - '  ##\r\n  ###\r\n  ####\r\n  #####\r\n  ######\r\n  ######\r\nBody'
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: |-
+      ##
+      ###
+      ####
+      #####
+      ######
+      ######
+    Body
+  actual: |-
+    ## Source
+
+      #
+      ##
+      ###
+      ####
+      #####
+      ######
+    Body
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:27:16)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1402:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+    Test.postRun (node:internal/test_runner/test:1542:19)
+    Test.run (node:internal/test_runner/test:1467:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: heading structure CRLF: indent 2, tail " \\t"
+not ok 65 - heading structure CRLF: indent 2, tail " \\t"
+  ---
+  duration_ms: 0.040417
+  type: 'test'
+  location: '/Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:23:7'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+
+    + '## Source\n\n  # \t\r\n  ## \t\r\n  ### \t\r\n  #### \t\r\n  ##### \t\r\n  ###### \t\r\nBody'
+    - '  ## \t\r\n  ### \t\r\n  #### \t\r\n  ##### \t\r\n  ###### \t\r\n  ###### \t\r\nBody'
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: |-
+      ##
+      ###
+      ####
+      #####
+      ######
+      ######
+    Body
+  actual: |-
+    ## Source
+
+      #
+      ##
+      ###
+      ####
+      #####
+      ######
+    Body
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:27:16)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1402:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+    Test.postRun (node:internal/test_runner/test:1542:19)
+    Test.run (node:internal/test_runner/test:1467:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: heading structure CRLF: indent 3, tail " Heading \#\#\#  "
+not ok 66 - heading structure CRLF: indent 3, tail " Heading \#\#\#  "
+  ---
+  duration_ms: 0.066083
+  type: 'test'
+  location: '/Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:23:7'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+
+    + '## Source\n' +
+    +   '\n' +
+    +   '   # Heading ###  \r\n' +
+    +   '   ## Heading ###  \r\n' +
+    - '   ## Heading ###  \r\n' +
+        '   ### Heading ###  \r\n' +
+        '   #### Heading ###  \r\n' +
+        '   ##### Heading ###  \r\n' +
+        '   ###### Heading ###  \r\n' +
+    -   '   ###### Heading ###  \r\n' +
+        'Body'
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: |-
+       ## Heading ###
+       ### Heading ###
+       #### Heading ###
+       ##### Heading ###
+       ###### Heading ###
+       ###### Heading ###
+    Body
+  actual: |-
+    ## Source
+
+       # Heading ###
+       ## Heading ###
+       ### Heading ###
+       #### Heading ###
+       ##### Heading ###
+       ###### Heading ###
+    Body
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:27:16)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1402:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+    Test.postRun (node:internal/test_runner/test:1542:19)
+    Test.run (node:internal/test_runner/test:1467:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: heading structure CRLF: indent 3, tail "\\tHeading"
+not ok 67 - heading structure CRLF: indent 3, tail "\\tHeading"
+  ---
+  duration_ms: 0.060833
+  type: 'test'
+  location: '/Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:23:7'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+
+    + '## Source\n' +
+    +   '\n' +
+    +   '   #\tHeading\r\n' +
+    +   '   ##\tHeading\r\n' +
+    - '   ##\tHeading\r\n' +
+        '   ###\tHeading\r\n' +
+        '   ####\tHeading\r\n' +
+        '   #####\tHeading\r\n' +
+        '   ######\tHeading\r\n' +
+    -   '   ######\tHeading\r\n' +
+        'Body'
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: |-
+       ##	Heading
+       ###	Heading
+       ####	Heading
+       #####	Heading
+       ######	Heading
+       ######	Heading
+    Body
+  actual: |-
+    ## Source
+
+       #	Heading
+       ##	Heading
+       ###	Heading
+       ####	Heading
+       #####	Heading
+       ######	Heading
+    Body
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:27:16)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1402:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+    Test.postRun (node:internal/test_runner/test:1542:19)
+    Test.run (node:internal/test_runner/test:1467:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: heading structure CRLF: indent 3, tail ""
+not ok 68 - heading structure CRLF: indent 3, tail ""
+  ---
+  duration_ms: 0.053708
+  type: 'test'
+  location: '/Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:23:7'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+
+    + '## Source\n\n   #\r\n   ##\r\n   ###\r\n   ####\r\n   #####\r\n   ######\r\nBody'
+    - '   ##\r\n   ###\r\n   ####\r\n   #####\r\n   ######\r\n   ######\r\nBody'
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: |-
+       ##
+       ###
+       ####
+       #####
+       ######
+       ######
+    Body
+  actual: |-
+    ## Source
+
+       #
+       ##
+       ###
+       ####
+       #####
+       ######
+    Body
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:27:16)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1402:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+    Test.postRun (node:internal/test_runner/test:1542:19)
+    Test.run (node:internal/test_runner/test:1467:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: heading structure CRLF: indent 3, tail " \\t"
+not ok 69 - heading structure CRLF: indent 3, tail " \\t"
+  ---
+  duration_ms: 0.06675
+  type: 'test'
+  location: '/Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:23:7'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+
+    + '## Source\n' +
+    +   '\n' +
+    +   '   # \t\r\n' +
+    +   '   ## \t\r\n' +
+    +   '   ### \t\r\n' +
+    +   '   #### \t\r\n' +
+    +   '   ##### \t\r\n' +
+    +   '   ###### \t\r\n' +
+    +   'Body'
+    - '   ## \t\r\n   ### \t\r\n   #### \t\r\n   ##### \t\r\n   ###### \t\r\n   ###### \t\r\nBody'
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: |-
+       ##
+       ###
+       ####
+       #####
+       ######
+       ######
+    Body
+  actual: |-
+    ## Source
+
+       #
+       ##
+       ###
+       ####
+       #####
+       ######
+    Body
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:27:16)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1402:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+    Test.postRun (node:internal/test_runner/test:1542:19)
+    Test.run (node:internal/test_runner/test:1467:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: heading structure CRLF: invalid "    \# Code"
+ok 70 - heading structure CRLF: invalid "    \# Code"
+  ---
+  duration_ms: 0.02225
+  type: 'test'
+  ...
+# Subtest: heading structure CRLF: invalid "\\t\# Code"
+ok 71 - heading structure CRLF: invalid "\\t\# Code"
+  ---
+  duration_ms: 0.017
+  type: 'test'
+  ...
+# Subtest: heading structure CRLF: invalid " \#no-space"
+ok 72 - heading structure CRLF: invalid " \#no-space"
+  ---
+  duration_ms: 0.018542
+  type: 'test'
+  ...
+# Subtest: heading structure CRLF: invalid "\#\#\#\#\#\#\# Too many"
+ok 73 - heading structure CRLF: invalid "\#\#\#\#\#\#\# Too many"
+  ---
+  duration_ms: 0.019125
+  type: 'test'
+  ...
+# Subtest: heading structure CRLF: invalid "\\\\\# Escaped"
+ok 74 - heading structure CRLF: invalid "\\\\\# Escaped"
+  ---
+  duration_ms: 0.023875
+  type: 'test'
+  ...
+# Subtest: heading structure CRLF: invalid "\# NBSP"
+ok 75 - heading structure CRLF: invalid "\# NBSP"
+  ---
+  duration_ms: 0.015875
+  type: 'test'
+  ...
+# Subtest: heading structure CRLF: invalid "\#\\u000bVT"
+ok 76 - heading structure CRLF: invalid "\#\\u000bVT"
+  ---
+  duration_ms: 0.016292
+  type: 'test'
+  ...
+# Subtest: heading structure CRLF: invalid "\#\\fFF"
+ok 77 - heading structure CRLF: invalid "\#\\fFF"
+  ---
+  duration_ms: 0.015209
+  type: 'test'
+  ...
+# Subtest: heading structure CRLF: invalid "\#\\rbare CR"
+ok 78 - heading structure CRLF: invalid "\#\\rbare CR"
+  ---
+  duration_ms: 0.01575
+  type: 'test'
+  ...
+# Subtest: heading structure CRLF: backtick block and longer indented closer
+ok 79 - heading structure CRLF: backtick block and longer indented closer
+  ---
+  duration_ms: 0.372375
+  type: 'test'
+  ...
+# Subtest: heading structure CRLF: tilde info can contain backticks
+ok 80 - heading structure CRLF: tilde info can contain backticks
+  ---
+  duration_ms: 0.047417
+  type: 'test'
+  ...
+# Subtest: heading structure CRLF: short wrong type and content closers stay inside
+ok 81 - heading structure CRLF: short wrong type and content closers stay inside
+  ---
+  duration_ms: 0.026166
+  type: 'test'
+  ...
+# Subtest: heading structure CRLF: four-space and NBSP closers stay inside
+not ok 82 - heading structure CRLF: four-space and NBSP closers stay inside
+  ---
+  duration_ms: 0.061542
+  type: 'test'
+  location: '/Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:51:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+
+    + '## Source\n\n~~~\r\n    ~~~\r\n# indent\r\n~~~ \r\n## nbsp\r\n~~~\r\n# Later'
+    - '## Source\n\n~~~\r\n    ~~~\r\n# indent\r\n~~~ \r\n# nbsp\r\n~~~\r\n## Later'
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: |-
+    ## Source
+
+    ~~~
+        ~~~
+    # indent
+    ~~~
+    # nbsp
+    ~~~
+    ## Later
+  actual: |-
+    ## Source
+
+    ~~~
+        ~~~
+    # indent
+    ~~~
+    ## nbsp
+    ~~~
+    # Later
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:54:14)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1402:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+    Test.postRun (node:internal/test_runner/test:1542:19)
+    Test.run (node:internal/test_runner/test:1467:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: heading structure CRLF: unclosed block
+ok 83 - heading structure CRLF: unclosed block
+  ---
+  duration_ms: 0.019
+  type: 'test'
+  ...
+# Subtest: heading structure CRLF: backtick in info rejects opening
+not ok 84 - heading structure CRLF: backtick in info rejects opening
+  ---
+  duration_ms: 0.042541
+  type: 'test'
+  location: '/Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:51:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+
+    + '## Source\n\n```lang`x\r\n# Later'
+    - '## Source\n\n```lang`x\r\n## Later'
+                                  ^
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: |-
+    ## Source
+
+    ```lang`x
+    ## Later
+  actual: |-
+    ## Source
+
+    ```lang`x
+    # Later
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:54:14)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1402:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+    Test.postRun (node:internal/test_runner/test:1542:19)
+    Test.run (node:internal/test_runner/test:1467:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: heading structure CRLF: inline span after prose
+ok 85 - heading structure CRLF: inline span after prose
+  ---
+  duration_ms: 0.015875
+  type: 'test'
+  ...
+# Subtest: heading structure CRLF: indented fence is ordinary text
+ok 86 - heading structure CRLF: indented fence is ordinary text
+  ---
+  duration_ms: 0.014
+  type: 'test'
+  ...
+# Subtest: heading structure CRLF: first nonblank H1 and outer whitespace
+not ok 87 - heading structure CRLF: first nonblank H1 and outer whitespace
+  ---
+  duration_ms: 0.03925
+  type: 'test'
+  location: '/Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:58:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+
+    + '## Source\n\n   #\r\nBody'
+    - '   ##\r\nBody'
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: |-
+       ##
+    Body
+  actual: |-
+    ## Source
+
+       #
+    Body
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:59:12)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1402:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+    Test.postRun (node:internal/test_runner/test:1542:19)
+    Test.run (node:internal/test_runner/test:1467:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: heading preservation: empty heading demotion
+not ok 88 - heading preservation: empty heading demotion
+  ---
+  duration_ms: 0.055166
+  type: 'test'
+  location: '/Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:82:4'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+
+    false !== true
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:82:55)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1402:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+    Test.postRun (node:internal/test_runner/test:1542:19)
+    Test.run (node:internal/test_runner/test:1467:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: heading preservation: whitespace empty heading cannot vanish
+not ok 89 - heading preservation: whitespace empty heading cannot vanish
+  ---
+  duration_ms: 0.038291
+  type: 'test'
+  location: '/Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:82:4'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+
+    true !== false
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: false
+  actual: true
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:82:55)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1402:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+    Test.postRun (node:internal/test_runner/test:1542:19)
+    Test.run (node:internal/test_runner/test:1467:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: heading preservation: empty headings retain multiplicity
+not ok 90 - heading preservation: empty headings retain multiplicity
+  ---
+  duration_ms: 0.032792
+  type: 'test'
+  location: '/Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:82:4'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+
+    false !== true
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:82:55)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1402:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+    Test.postRun (node:internal/test_runner/test:1542:19)
+    Test.run (node:internal/test_runner/test:1467:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: heading preservation: duplicate empty heading cannot vanish
+ok 91 - heading preservation: duplicate empty heading cannot vanish
+  ---
+  duration_ms: 0.012041
+  type: 'test'
+  ...
+# Subtest: heading preservation: empty headings counted across originals
+ok 92 - heading preservation: empty headings counted across originals
+  ---
+  duration_ms: 0.011291
+  type: 'test'
+  ...
+# Subtest: heading preservation: ordinary repeats counted across originals
+ok 93 - heading preservation: ordinary repeats counted across originals
+  ---
+  duration_ms: 0.011333
+  type: 'test'
+  ...
+# Subtest: heading preservation: missing ordinary line
+ok 94 - heading preservation: missing ordinary line
+  ---
+  duration_ms: 0.011958
+  type: 'test'
+  ...
+# Subtest: heading preservation: heading cannot stand in for ordinary text
+not ok 95 - heading preservation: heading cannot stand in for ordinary text
+  ---
+  duration_ms: 0.036667
+  type: 'test'
+  location: '/Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:82:4'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+
+    true !== false
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: false
+  actual: true
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:82:55)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1402:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+    Test.postRun (node:internal/test_runner/test:1542:19)
+    Test.run (node:internal/test_runner/test:1467:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: heading preservation: ordinary text cannot stand in for heading
+not ok 96 - heading preservation: ordinary text cannot stand in for heading
+  ---
+  duration_ms: 0.031292
+  type: 'test'
+  location: '/Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:82:4'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+
+    true !== false
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: false
+  actual: true
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:82:55)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1402:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+    Test.postRun (node:internal/test_runner/test:1542:19)
+    Test.run (node:internal/test_runner/test:1467:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: heading preservation: closing hashes are retained syntax
+ok 97 - heading preservation: closing hashes are retained syntax
+  ---
+  duration_ms: 0.018458
+  type: 'test'
+  ...
+# Subtest: heading preservation: fenced heading stays literal
+not ok 98 - heading preservation: fenced heading stays literal
+  ---
+  duration_ms: 0.032167
+  type: 'test'
+  location: '/Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:82:4'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+
+    true !== false
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: false
+  actual: true
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:82:55)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1402:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+    Test.postRun (node:internal/test_runner/test:1542:19)
+    Test.run (node:internal/test_runner/test:1467:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: heading preservation: indented code heading stays literal
+ok 99 - heading preservation: indented code heading stays literal
+  ---
+  duration_ms: 0.017291
+  type: 'test'
+  ...
+# Subtest: heading preservation: invalid heading hashes are content
+ok 100 - heading preservation: invalid heading hashes are content
+  ---
+  duration_ms: 0.013875
+  type: 'test'
+  ...
+# Subtest: heading preservation: ordinary hash-only text is content
+ok 101 - heading preservation: ordinary hash-only text is content
+  ---
+  duration_ms: 0.010708
+  type: 'test'
+  ...
+# Subtest: heading preservation: fence state resets between original documents
+not ok 102 - heading preservation: fence state resets between original documents
+  ---
+  duration_ms: 0.037625
+  type: 'test'
+  location: '/Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:82:4'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+
+    true !== false
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: false
+  actual: true
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:82:55)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1402:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+    Test.postRun (node:internal/test_runner/test:1542:19)
+    Test.run (node:internal/test_runner/test:1467:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: heading preservation: unclosed target rejects changed heading context
+not ok 103 - heading preservation: unclosed target rejects changed heading context
+  ---
+  duration_ms: 0.03575
+  type: 'test'
+  location: '/Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:82:4'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+
+    true !== false
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: false
+  actual: true
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:82:55)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1402:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+    Test.postRun (node:internal/test_runner/test:1542:19)
+    Test.run (node:internal/test_runner/test:1467:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: heading preservation: real merge keeps repeated headings and ordinary lines separately
+not ok 104 - heading preservation: real merge keeps repeated headings and ordinary lines separately
+  ---
+  duration_ms: 0.067834
+  type: 'test'
+  location: '/Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:84:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+
+    + '# Keep\nKeep\n#\nKeep\n\n## Source\n\n  # Keep\nKeep\n#\n#\n```inline```\n# Later\n'
+    - '# Keep\nKeep\n#\nKeep\n\n  ## Keep\nKeep\n##\n##\n```inline```\n## Later\n'
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: |-
+    # Keep
+    Keep
+    #
+    Keep
+
+      ## Keep
+    Keep
+    ##
+    ##
+    ```inline```
+    ## Later
+
+  actual: |-
+    # Keep
+    Keep
+    #
+    Keep
+
+    ## Source
+
+      # Keep
+    Keep
+    #
+    #
+    ```inline```
+    # Later
+
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/heading-structure.test.mjs:88:10)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1402:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+    Test.postRun (node:internal/test_runner/test:1542:19)
+    Test.run (node:internal/test_runner/test:1467:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: heading structure: literal U+2028 "\\n"
+ok 105 - heading structure: literal U+2028 "\\n"
+  ---
+  duration_ms: 0.108292
+  type: 'test'
+  ...
+# Subtest: heading structure: literal U+2028 "\\r\\n"
+ok 106 - heading structure: literal U+2028 "\\r\\n"
+  ---
+  duration_ms: 0.018416
+  type: 'test'
+  ...
+# Subtest: heading structure: literal U+2029 "\\n"
+ok 107 - heading structure: literal U+2029 "\\n"
+  ---
+  duration_ms: 0.015791
+  type: 'test'
+  ...
+# Subtest: heading structure: literal U+2029 "\\r\\n"
+ok 108 - heading structure: literal U+2029 "\\r\\n"
+  ---
+  duration_ms: 0.015167
+  type: 'test'
+  ...
+1..108
+# tests 108
+# suites 0
+# pass 51
+# fail 57
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 65.653666

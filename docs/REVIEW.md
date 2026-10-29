@@ -1,6 +1,6 @@
 # Local review checklist
 
-Latest local checkpoint: [Confirmation and ownership REVIEW — 2026-10-29](#confirmation-and-ownership-review--2026-10-29). Earlier entries below remain dated history.
+Latest local checkpoint: [Heading structure repair — 2026-10-29](#heading-structure-repair--2026-10-29). Earlier entries below remain dated history.
 
 Prepared on 2026-10-28. Nothing was submitted, tagged, pushed, or released.
 
@@ -454,3 +454,123 @@ Fresh `npm run qa` passed **134/134 tests**, TypeScript, production build and pa
 README installation/development instructions, manifest/package/lock/root-lock/version agreement, desktop flags, dependency classification, licenses/notices and assets were checked against source/build configuration. Current official [plugin guidelines](https://docs.obsidian.md/Plugins/Releasing/Plugin%20guidelines), [developer policies](https://docs.obsidian.md/community-directory/developer-policies), [submission requirements](https://docs.obsidian.md/community-directory/submission-requirements-for-plugins), [manifest](https://docs.obsidian.md/Reference/Manifest) and [submission instructions](https://docs.obsidian.md/Plugins/Releasing/Submit%20your%20plugin) were rechecked. Local consistency does not establish minimum-version compatibility, directory availability, hosted-review success or community approval.
 
 Production assets are byte-identical to this REVIEW's starting candidate. Diff checks pass. Existing readiness/live protocols remain their sole homes, including explorer/modal/WebGL/xterm, popout, mobile where advertised, Linux and minimum versions as applicable. The three older live sorting/recovery deliverables remain blocked. No app-access retry, personal-vault installation, push, tag, release or submission occurred.
+
+
+## Heading structure repair — 2026-10-29
+
+**agent decision 2026-10-28:** use one bounded top-level ATX/fence scanner for
+heading demotion, first-heading wrapper selection and line preservation, because
+fixing only demotion makes legitimate output fail the production guard. Retain
+level six and the existing whitespace/separator policy. Keep `src/main.ts`,
+confirmation/drop intent, sorting, recovery, dependencies and metadata unchanged.
+One editing owner and one parallel read-only reviewer cover this candidate.
+
+### Supported contract and limits
+
+The README Merge notes section owns the user-facing policy. The scanner recognizes
+zero to three ASCII leading spaces, one to six opening hashes and ASCII space/tab
+or end of line after them, including empty headings. It inserts one hash after
+indentation for levels one through five; H6 stays H6. The first nonblank supported
+H1 suppresses the source-name wrapper. Raw heading suffixes, including closing
+hashes, are retained rather than parsed or normalized away.
+
+Top-level backtick/tilde openers need at least three matching characters. Backtick
+info strings containing any backtick are rejected; tilde info may contain them.
+A closer must match the type, meet/exceed the opening length, have at most three
+leading spaces and only spaces/tabs afterward. Code/fence text is copied literally.
+Four-space/tab-indented lines, escaped hashes, missing separators, seven hashes
+and non-ASCII/vertical whitespace separators do not become headings. Internal
+LF/CRLF stays intact; new separators/wrappers/final newline use LF. The existing
+source outer-blank and trailing-whitespace trimming and target trailing-whitespace
+trimming remain, so merged text is not a byte-preserving transformation.
+
+Primary syntax references checked: [CommonMark 0.31.2 ATX headings](https://spec.commonmark.org/0.31.2/#atx-headings)
+and [fenced code blocks](https://spec.commonmark.org/0.31.2/#fenced-code-blocks).
+They define these syntax boundaries, not live Obsidian rendering. This is not a
+full block/inline parser: setext, list/quote containers, HTML/comments and multiline
+inline-code context are outside the contract. Context inside those structures
+may be interpreted as top-level syntax. No rendered hierarchy guarantee is made.
+
+Preservation uses the same scanner with typed heading/literal keys. It ignores
+outer whitespace and heading level only; empty headings have explicit keys and
+closing hashes remain content. Ordinary lines cannot be replaced by same-word
+headings or generated wrappers, nor can code heading hashes silently change.
+Counts from each original are accumulated separately, resetting fence state per
+original. Missing repeats, including empty headings across notes, reject. This
+is a multiset check: it does not establish order, position, rendering or exact
+formatting, and additional equal keys can satisfy counts. Incompatible contexts
+(such as an unclosed target fence absorbing an appended heading) fail closed
+before any folder/snapshot/write/rename; no synthetic closer is inserted.
+
+### Persisted evidence and replay
+
+Before production edits, `tests/heading-structure.test.mjs` persisted **91 cases**
+against `9412dfadedf0a4f4ea14c695aaf94bb17a131d9c`: **46 fail / 45 pass**.
+[Initial output](../tests/evidence/heading-structure-baseline.txt) includes the
+three required exact-output cases and corresponding preservation probes. Both
+indented/empty corrected outputs fail the old guard; the inline-span output
+already passes its old guard but its transformation is wrong. Positive controls
+cover already-supported syntax and ordinary-content loss rejection.
+
+The final source replay additionally exercises real plugin merge actions through
+the existing behavior fixture. **108 heading-selected cases: 57 fail / 51 pass**
+(includes one retained heading/fence behavior test). [Replay output](../tests/evidence/heading-structure-baseline-replay.txt)
+records the same assertions against exported original source; only source
+selection changes. Output trailing whitespace is normalized for clean diffs.
+
+```sh
+baseline_dir=$(mktemp -d /tmp/file-placer-heading-baseline.XXXXXX)
+ln -s "$PWD/node_modules" "$baseline_dir/node_modules"
+for source in main.ts merge.ts order.ts; do
+  git show "9412dfadedf0a4f4ea14c695aaf94bb17a131d9c:src/$source" > "$baseline_dir/$source"
+done
+FILE_PLACER_SOURCE="$baseline_dir/main.ts" node --test --test-reporter=tap --test-name-pattern=heading tests/heading-structure.test.mjs tests/behavior.test.mjs
+```
+
+Expected baseline exit is 1. Candidate focused suite with both complete files
+passes **124/124**: 95 syntax/preservation, 12 new actual-action cases and all 17
+retained behavior/recovery cases. Literal expected strings independently check
+the output, not a second call to the transformer under test. The matrix includes
+all six levels, four supported indents, tabs/EOL/empty/closing-hash suffixes,
+LF/CRLF, invalid heading controls, same-line inline spans, genuine/invalid fence
+openers and closers, unclosed fences, meaningful multiplicity and loss controls.
+
+Actual `merge`/`mergeNotes` tests assert exact target text, exact original
+snapshots (including CRLF and missing final newline), unchanged archived source
+text/identity, create/create/process/rename ordering, conflicting property merge,
+pre-write preservation rejection with zero writes and source edits detected both
+before and after target write. Retained suites cover target edits, backup/write/
+archive failures, restoration/retry, lock, sorting and confirmation/drop intent.
+
+Vault/file objects, frontmatter serialization and UI notices are host doubles.
+These are synthetic operation/text assertions, not filesystem durability, link
+maintenance, live Markdown rendering or Obsidian lifecycle evidence. Existing
+live sorting/drag/modal/popout/mobile/minimum/current-version and recovery/link
+gates remain open in this record and RUNTIME-SORTING.md. No denied access was
+retried and no installation in the personal vault was attempted.
+
+Independent read-only review caught an intermediate suffix-regex mistake:
+JavaScript dot excludes U+2028/U+2029 even inside an LF-delimited line. Four
+persisted positive controls failed that candidate and passed the original
+implementation. The scanner now accepts literal Unicode separators in heading
+text and fence info; four added controls pass. The [intermediate failing output](../tests/evidence/heading-unicode-review-regression.txt)
+is separate from original-source baseline evidence. This is why the final replay
+has four more passing controls than the initial replay.
+
+### Final local verification
+
+Independent read-only review accepts the bounded candidate with no remaining
+blocker after the Unicode correction. One final `npm run qa` exits 0:
+**241/241 tests** (95 heading/preservation, 29 behavior/recovery, 92 drop intent,
+25 confirmation intent), zero-warning lint, TypeScript, production build and
+package checks. One final `npm run test:integration` exits 0: **12/12** against
+unchanged clean Pinit `ddc675827e6000ba8639ff101e775a16e050f9f7`. Neither full
+command failed or needed repetition. Node 24.22.0/npm 11.19.1; no dependencies
+were installed or updated.
+
+An independent in-memory esbuild production build using the checked-in build
+options matches `main.js` byte for byte; its input inventory contains no JSDOM.
+`main.js` SHA-256: `3e3bdaf644be35d8f35257c7600147c796d5c9bb9afe0f774b5b9e09719c3d34`.
+CSS, notices, metadata and runtime dependencies are unchanged. Working/staged
+diff checks pass. No push, tag, release, submission or app-access attempt occurred.
+This is local candidate acceptance only; the existing live gates remain open.
