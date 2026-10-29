@@ -618,8 +618,9 @@ var FilePlacerPlugin = class extends import_obsidian.Plugin {
     const list = this.settings.order[parentOf(oldPath)];
     const i = list ? list.indexOf(oldName) : -1;
     if (list && i !== -1) {
-      if (parentOf(oldPath) === parentOf(file.path)) list[i] = file.name;
-      else list.splice(i, 1);
+      if (parentOf(oldPath) === parentOf(file.path)) {
+        this.settings.order[parentOf(oldPath)] = list.flatMap((name, index) => index === i ? [file.name] : name === file.name ? [] : [name]);
+      } else list.splice(i, 1);
       changed = true;
     }
     if (file instanceof import_obsidian.TFolder) {

@@ -20,6 +20,7 @@ This repository contains a local submission candidate, not a published community
 - Drop among another folder's children to move the selection into that folder.
 - Hold still over a folder for about 700 ms, then drop on its purple outline to move into it.
 - Each folder remembers its order. New items remain beside their neighbors in the ordinary sort order.
+- Renaming a placed note or folder within the same parent keeps its source position relative to unaffected entries. Any stale saved entries for the destination name are removed, whether they were before or after the source. Unrelated missing names stay saved. Moving to another parent keeps the existing move behavior; this is not a general cleanup of historical settings.
 - Right-click a folder and choose **Back to normal sort**, or reset it in the plugin settings. The settings also include the vault root.
 - Pinit to Top or Bottom pins take precedence over manual placement. With both current local candidates installed, disabling Pinit immediately restores the placed order; re-enabling it restores saved pins. Install both updated candidates for this cleanup fix; older Pinit versions still use the settings compatibility fallback.
 

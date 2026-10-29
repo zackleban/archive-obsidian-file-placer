@@ -82,3 +82,24 @@ pushed, tagged, released or submitted. This attempt is not a completed lane job.
 The single [shared suite](../tests/integration/pinit.test.mjs) now has **12 cases**: the original four plus eight note/folder rename-collision cases across both load orders and either disable/re-enable. They invoke both actual rename handlers, preserve exact supplied item identities/multiplicity, reload saved settings, check folder placement remapping and restore ordinary sorting after unload. The added cases fail against Pinit's starting source `144b295` (eight failures); all 12 pass with its rename normalization and defensive selection fix. File Placer production source/assets are unchanged. Its fresh QA passes 17 tests, lint, TypeScript, production build and package checks; diff checks pass.
 
 agent decision 2026-10-28: keep shared coverage here and retain top-wins/first-occurrence collision semantics because they match Pinit's existing load policy. These are source-level tests with storage/explorer doubles. The blocked runtime matrix above is unchanged; no new app attempt or personal-vault installation occurred. Pinit's README/review owns its collision contract and standalone regression details. The earlier candidate heads and counts above describe the dated live attempt, not this follow-up.
+
+## File Placer source-position follow-up — 2026-10-29
+
+The sole shared suite now passes **28/28** cases against unchanged Pinit
+`ddc675827e6000ba8639ff101e775a16e050f9f7`. Its 16 added cases fail on original
+File Placer `83db0de` (12 retained cases pass). Unlike the earlier Pinit follow-up,
+these put stale destination names in File Placer's own saved order and check an
+unpinned renamed row, including a folder's row in its nested parent. Both stale
+positions, both load/handler orders, saved/reloaded state, either disable/re-enable,
+reset, pin precedence and ordinary sorting after unload pass with exact object
+identity/multiplicity. Parent/descendant settings and unrelated missing names
+remain intact. No second shared suite or runtime record was created.
+
+agent decision 2026-10-28: remove stale destination names while retaining the
+source slot because first-occurrence deduplication can steal its place. This
+policy is specific to File Placer's placement; Pinit's existing top-wins/first-pin
+policy is unchanged. [The existing readiness record](REVIEW.md#rename-order-repair--2026-10-29)
+owns baseline/replay, full local QA and scope. These source/host-double passes do
+not close any blocked runtime row above, certify disk durability or validate
+malformed historical settings/folder-key collisions. The live matrix, popout and
+minimum-version gates remain open; no new app-access attempt occurred.

@@ -550,7 +550,11 @@ export default class FilePlacerPlugin extends Plugin {
 		const list = this.settings.order[parentOf(oldPath)];
 		const i = list ? list.indexOf(oldName) : -1;
 		if (list && i !== -1) {
-			if (parentOf(oldPath) === parentOf(file.path)) list[i] = file.name;
+			if (parentOf(oldPath) === parentOf(file.path)) {
+				// Keep the source slot, not a stale destination slot on either side of it.
+				this.settings.order[parentOf(oldPath)] = list.flatMap((name, index) =>
+					index === i ? [file.name] : name === file.name ? [] : [name]);
+			}
 			else list.splice(i, 1);
 			changed = true;
 		}

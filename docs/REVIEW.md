@@ -1,6 +1,6 @@
 # Local review checklist
 
-Latest local checkpoint: [Heading structure repair — 2026-10-29](#heading-structure-repair--2026-10-29). Earlier entries below remain dated history.
+Latest local checkpoint: [Rename order repair — 2026-10-29](#rename-order-repair--2026-10-29). Earlier entries below remain dated history.
 
 Prepared on 2026-10-28. Nothing was submitted, tagged, pushed, or released.
 
@@ -574,3 +574,88 @@ options matches `main.js` byte for byte; its input inventory contains no JSDOM.
 CSS, notices, metadata and runtime dependencies are unchanged. Working/staged
 diff checks pass. No push, tag, release, submission or app-access attempt occurred.
 This is local candidate acceptance only; the existing live gates remain open.
+
+## Rename order repair — 2026-10-29
+
+agent decision 2026-10-28: retain the source slot during a same-parent rename and
+remove colliding stale destination-name entries, because the existing rename
+contract promises to keep the item's place. Keeping the first destination
+occurrence would instead move the item when that stale entry precedes the source.
+Only `onRename`'s same-parent name transition changes; `arrange`, cross-parent
+removal, folder descendant-key remapping and asynchronous saving are unchanged.
+
+For a source name present once in an otherwise unique saved list, the result
+remains unique with the new name at the source's position relative to unaffected
+entries. Unrelated missing names/preferences remain intact. This does not
+normalize every malformed historical setting, select a policy for repeated source
+names, resolve colliding folder-order keys, or redesign persistence. A source
+absent from the saved list leaves the destination entry alone, as before.
+
+### Baseline, replay and candidate
+
+Persisted before production edits at `83db0de142931f9eae8b0e3e2bc5ef55cfcde346`:
+
+- [Standalone baseline](../tests/evidence/rename-order-baseline.txt): **17 tests,
+  8 fail / 9 pass**. Both stale-target sides fail across root/nested notes/folders;
+  ordinary rename, cross-parent move and absent-source controls pass.
+- [Shared baseline](../tests/evidence/rename-order-integration-baseline.txt):
+  **28 tests, 16 fail / 12 pass**, using unchanged Pinit
+  `ddc675827e6000ba8639ff101e775a16e050f9f7`. All new File Placer collision cases
+  fail; all retained integration cases pass. Only trailing output whitespace
+  was normalized in these captured logs.
+
+Replay the final tests against the exported original source without switching
+or modifying the working tree:
+
+```sh
+baseline_dir=$(mktemp -d /tmp/file-placer-rename-baseline.XXXXXX)
+ln -s "$PWD/node_modules" "$baseline_dir/node_modules"
+for source in main.ts merge.ts order.ts; do
+  git show "83db0de142931f9eae8b0e3e2bc5ef55cfcde346:src/$source" > "$baseline_dir/$source"
+done
+FILE_PLACER_SOURCE="$baseline_dir/main.ts" node --test --test-reporter=tap tests/rename-order.test.mjs tests/integration/pinit.test.mjs
+```
+
+Expected exit 1: **45 tests, 24 fail / 21 pass**. Candidate focused command
+without `FILE_PLACER_SOURCE` passes **45/45**. Literal expected arrays and exact
+object identities check immediate sorting, cloned save/reload, unaffected live
+neighbors, unrelated missing names and preferences. Folder cases preserve child
+and deep-order remapping while leaving `Oldish` path-boundary siblings alone.
+Cross-parent controls retain the destination's existing saved order. A second
+ordinary rename retains source position after the collision repair.
+
+The sole shared suite remains `tests/integration/pinit.test.mjs`: 16 new cases
+keep the renamed note/root or folder/nested row unpinned so pins cannot hide a
+position error. Both load/rename-handler orders, either plugin's unload/reload
+from cloned saved state, inactive Pinit still in the registry, pin precedence,
+parent reset and final ordinary sorting preserve exact identities/multiplicity.
+No sibling source, dependency, metadata or CSS change is needed.
+
+Two independent read-only reviewers accept the source-position policy and
+integration with no blocking findings; each independently ran the focused tests.
+The existing standalone suite retains new-item insertion, manual placement,
+merge/recovery, heading, drop and confirmation contracts.
+
+These are actual-source calls and installed wrappers with storage/explorer
+**doubles**, not live Obsidian, full registered event dispatch or filesystem
+persistence/durability evidence. Save timing/concurrency, malformed historical
+settings and folder-key collisions are not newly certified. Live sorting,
+popout, mobile, minimum/current-version, drag/modal and recovery/link gates stay
+open in this record and [RUNTIME-SORTING.md](RUNTIME-SORTING.md). No blocked app
+access was retried and nothing was installed in the personal vault.
+
+### Final local verification
+
+One final `npm run qa` exits 0: **258/258 tests**, zero-warning official lint,
+TypeScript, production build and metadata/package checks. One final
+`npm run test:integration` exits 0: **28/28** against unchanged clean Pinit
+`ddc675827e6000ba8639ff101e775a16e050f9f7`. Neither full check failed or needed
+repeating. Original-source replay reproduced **24 failures / 21 passes** across
+the 45 focused cases. Node 24.22.0/npm 11.19.1; no installs or updates.
+
+An in-memory esbuild production build using the checked-in options matches the
+rebuilt `main.js` byte for byte; its input inventory contains no JSDOM.
+SHA-256: `c7405ae8d768e5fef9ec56a4d8fcc89c347ec15cea4b43133bce6d8514f37ecc`.
+Working/staged diff checks pass. Source, matching asset, regressions, baseline
+evidence and docs belong to this local commit on `agent/2026-10-28`; no push,
+tag, release or submission. Existing live gates remain open.

@@ -1,0 +1,1002 @@
+TAP version 13
+# Subtest: sorting survives placer loading first and placer disabling first
+ok 1 - sorting survives placer loading first and placer disabling first
+  ---
+  duration_ms: 1.340292
+  type: 'test'
+  ...
+# Subtest: sorting survives placer loading first and pinit disabling first
+ok 2 - sorting survives placer loading first and pinit disabling first
+  ---
+  duration_ms: 0.174167
+  type: 'test'
+  ...
+# Subtest: sorting survives pinit loading first and placer disabling first
+ok 3 - sorting survives pinit loading first and placer disabling first
+  ---
+  duration_ms: 0.128875
+  type: 'test'
+  ...
+# Subtest: sorting survives pinit loading first and pinit disabling first
+ok 4 - sorting survives pinit loading first and pinit disabling first
+  ---
+  duration_ms: 0.130291
+  type: 'test'
+  ...
+# Subtest: note rename collisions: placer first, placer disable/re-enable
+ok 5 - note rename collisions: placer first, placer disable/re-enable
+  ---
+  duration_ms: 1.884458
+  type: 'test'
+  ...
+# Subtest: note rename collisions: placer first, pinit disable/re-enable
+ok 6 - note rename collisions: placer first, pinit disable/re-enable
+  ---
+  duration_ms: 0.7585
+  type: 'test'
+  ...
+# Subtest: note rename collisions: pinit first, placer disable/re-enable
+ok 7 - note rename collisions: pinit first, placer disable/re-enable
+  ---
+  duration_ms: 0.388208
+  type: 'test'
+  ...
+# Subtest: note rename collisions: pinit first, pinit disable/re-enable
+ok 8 - note rename collisions: pinit first, pinit disable/re-enable
+  ---
+  duration_ms: 0.32075
+  type: 'test'
+  ...
+# Subtest: folder rename collisions: placer first, placer disable/re-enable
+ok 9 - folder rename collisions: placer first, placer disable/re-enable
+  ---
+  duration_ms: 0.341209
+  type: 'test'
+  ...
+# Subtest: folder rename collisions: placer first, pinit disable/re-enable
+ok 10 - folder rename collisions: placer first, pinit disable/re-enable
+  ---
+  duration_ms: 0.281209
+  type: 'test'
+  ...
+# Subtest: folder rename collisions: pinit first, placer disable/re-enable
+ok 11 - folder rename collisions: pinit first, placer disable/re-enable
+  ---
+  duration_ms: 0.343375
+  type: 'test'
+  ...
+# Subtest: folder rename collisions: pinit first, pinit disable/re-enable
+ok 12 - folder rename collisions: pinit first, pinit disable/re-enable
+  ---
+  duration_ms: 0.308959
+  type: 'test'
+  ...
+# Subtest: File Placer source position: note, stale before, placer first, placer reload
+not ok 13 - File Placer source position: note, stale before, placer first, placer reload
+  ---
+  duration_ms: 0.962875
+  type: 'test'
+  location: '/Users/maxogalactic/side-projects/obsidian-file-placer/tests/integration/pinit.test.mjs:173:9'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+
+      {
+        askBeforeMerge: false,
+        mergedFolder: 'Custom originals',
+        order: {
+          '/': [
+            'f.md',
+    +       'Renamed.md',
+            'b.md',
+            'Missing.md',
+            'Renamed.md',
+            'd.md',
+            'e.md',
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    order:
+      /:
+        0: 'f.md'
+        1: 'b.md'
+        2: 'Missing.md'
+        3: 'Renamed.md'
+        4: 'd.md'
+        5: 'e.md'
+        6: 'a.md'
+      Unrelated:
+        0: 'Absent.md'
+    mergedFolder: 'Custom originals'
+    askBeforeMerge: false
+  actual:
+    order:
+      /:
+        0: 'f.md'
+        1: 'Renamed.md'
+        2: 'b.md'
+        3: 'Missing.md'
+        4: 'Renamed.md'
+        5: 'd.md'
+        6: 'e.md'
+        7: 'a.md'
+      Unrelated:
+        0: 'Absent.md'
+    mergedFolder: 'Custom originals'
+    askBeforeMerge: false
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/integration/pinit.test.mjs:238:20)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: File Placer source position: note, stale before, placer first, pinit reload
+not ok 14 - File Placer source position: note, stale before, placer first, pinit reload
+  ---
+  duration_ms: 0.26175
+  type: 'test'
+  location: '/Users/maxogalactic/side-projects/obsidian-file-placer/tests/integration/pinit.test.mjs:173:9'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+
+      {
+        askBeforeMerge: false,
+        mergedFolder: 'Custom originals',
+        order: {
+          '/': [
+            'f.md',
+    +       'Renamed.md',
+            'b.md',
+            'Missing.md',
+            'Renamed.md',
+            'd.md',
+            'e.md',
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    order:
+      /:
+        0: 'f.md'
+        1: 'b.md'
+        2: 'Missing.md'
+        3: 'Renamed.md'
+        4: 'd.md'
+        5: 'e.md'
+        6: 'a.md'
+      Unrelated:
+        0: 'Absent.md'
+    mergedFolder: 'Custom originals'
+    askBeforeMerge: false
+  actual:
+    order:
+      /:
+        0: 'f.md'
+        1: 'Renamed.md'
+        2: 'b.md'
+        3: 'Missing.md'
+        4: 'Renamed.md'
+        5: 'd.md'
+        6: 'e.md'
+        7: 'a.md'
+      Unrelated:
+        0: 'Absent.md'
+    mergedFolder: 'Custom originals'
+    askBeforeMerge: false
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/integration/pinit.test.mjs:238:20)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: File Placer source position: note, stale before, pinit first, placer reload
+not ok 15 - File Placer source position: note, stale before, pinit first, placer reload
+  ---
+  duration_ms: 0.16225
+  type: 'test'
+  location: '/Users/maxogalactic/side-projects/obsidian-file-placer/tests/integration/pinit.test.mjs:173:9'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+
+      {
+        askBeforeMerge: false,
+        mergedFolder: 'Custom originals',
+        order: {
+          '/': [
+            'f.md',
+    +       'Renamed.md',
+            'b.md',
+            'Missing.md',
+            'Renamed.md',
+            'd.md',
+            'e.md',
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    order:
+      /:
+        0: 'f.md'
+        1: 'b.md'
+        2: 'Missing.md'
+        3: 'Renamed.md'
+        4: 'd.md'
+        5: 'e.md'
+        6: 'a.md'
+      Unrelated:
+        0: 'Absent.md'
+    mergedFolder: 'Custom originals'
+    askBeforeMerge: false
+  actual:
+    order:
+      /:
+        0: 'f.md'
+        1: 'Renamed.md'
+        2: 'b.md'
+        3: 'Missing.md'
+        4: 'Renamed.md'
+        5: 'd.md'
+        6: 'e.md'
+        7: 'a.md'
+      Unrelated:
+        0: 'Absent.md'
+    mergedFolder: 'Custom originals'
+    askBeforeMerge: false
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/integration/pinit.test.mjs:238:20)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: File Placer source position: note, stale before, pinit first, pinit reload
+not ok 16 - File Placer source position: note, stale before, pinit first, pinit reload
+  ---
+  duration_ms: 0.121959
+  type: 'test'
+  location: '/Users/maxogalactic/side-projects/obsidian-file-placer/tests/integration/pinit.test.mjs:173:9'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+
+      {
+        askBeforeMerge: false,
+        mergedFolder: 'Custom originals',
+        order: {
+          '/': [
+            'f.md',
+    +       'Renamed.md',
+            'b.md',
+            'Missing.md',
+            'Renamed.md',
+            'd.md',
+            'e.md',
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    order:
+      /:
+        0: 'f.md'
+        1: 'b.md'
+        2: 'Missing.md'
+        3: 'Renamed.md'
+        4: 'd.md'
+        5: 'e.md'
+        6: 'a.md'
+      Unrelated:
+        0: 'Absent.md'
+    mergedFolder: 'Custom originals'
+    askBeforeMerge: false
+  actual:
+    order:
+      /:
+        0: 'f.md'
+        1: 'Renamed.md'
+        2: 'b.md'
+        3: 'Missing.md'
+        4: 'Renamed.md'
+        5: 'd.md'
+        6: 'e.md'
+        7: 'a.md'
+      Unrelated:
+        0: 'Absent.md'
+    mergedFolder: 'Custom originals'
+    askBeforeMerge: false
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/integration/pinit.test.mjs:238:20)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: File Placer source position: note, stale after, placer first, placer reload
+not ok 17 - File Placer source position: note, stale after, placer first, placer reload
+  ---
+  duration_ms: 0.205417
+  type: 'test'
+  location: '/Users/maxogalactic/side-projects/obsidian-file-placer/tests/integration/pinit.test.mjs:173:9'
+  failureType: 'testCodeFailure'
+  error: |-
+    identity at index 3
+    + actual - expected
+    ... Skipped lines
+
+      {
+        el: {
+          removeClass: [Function: removeClass],
+          toggleClass: [Function: toggleClass]
+        },
+    ...
+              },
+    -         [Circular *2],
+              TFile {
+                parent: [Circular *1],
+    +           path: 'Renamed.md'
+    -           path: 'd.md'
+              },
+    +         [Circular *2],
+              TFile {
+                parent: [Circular *1],
+                path: 'e.md'
+              },
+              TFile {
+    ...
+          },
+    +     path: 'd.md'
+    -     path: 'Renamed.md'
+        }
+      }
+
+  code: 'ERR_TEST_FAILURE'
+  ...
+# Subtest: File Placer source position: note, stale after, placer first, pinit reload
+not ok 18 - File Placer source position: note, stale after, placer first, pinit reload
+  ---
+  duration_ms: 0.500542
+  type: 'test'
+  location: '/Users/maxogalactic/side-projects/obsidian-file-placer/tests/integration/pinit.test.mjs:173:9'
+  failureType: 'testCodeFailure'
+  error: |-
+    identity at index 3
+    + actual - expected
+    ... Skipped lines
+
+      {
+        el: {
+          removeClass: [Function: removeClass],
+          toggleClass: [Function: toggleClass]
+        },
+    ...
+              },
+    -         [Circular *2],
+              TFile {
+                parent: [Circular *1],
+    +           path: 'Renamed.md'
+    -           path: 'd.md'
+              },
+    +         [Circular *2],
+              TFile {
+                parent: [Circular *1],
+                path: 'e.md'
+              },
+              TFile {
+    ...
+          },
+    +     path: 'd.md'
+    -     path: 'Renamed.md'
+        }
+      }
+
+  code: 'ERR_TEST_FAILURE'
+  ...
+# Subtest: File Placer source position: note, stale after, pinit first, placer reload
+not ok 19 - File Placer source position: note, stale after, pinit first, placer reload
+  ---
+  duration_ms: 0.154083
+  type: 'test'
+  location: '/Users/maxogalactic/side-projects/obsidian-file-placer/tests/integration/pinit.test.mjs:173:9'
+  failureType: 'testCodeFailure'
+  error: |-
+    identity at index 3
+    + actual - expected
+    ... Skipped lines
+
+      {
+        el: {
+          removeClass: [Function: removeClass],
+          toggleClass: [Function: toggleClass]
+        },
+    ...
+              },
+    -         [Circular *2],
+              TFile {
+                parent: [Circular *1],
+    +           path: 'Renamed.md'
+    -           path: 'd.md'
+              },
+    +         [Circular *2],
+              TFile {
+                parent: [Circular *1],
+                path: 'e.md'
+              },
+              TFile {
+    ...
+          },
+    +     path: 'd.md'
+    -     path: 'Renamed.md'
+        }
+      }
+
+  code: 'ERR_TEST_FAILURE'
+  ...
+# Subtest: File Placer source position: note, stale after, pinit first, pinit reload
+not ok 20 - File Placer source position: note, stale after, pinit first, pinit reload
+  ---
+  duration_ms: 0.1465
+  type: 'test'
+  location: '/Users/maxogalactic/side-projects/obsidian-file-placer/tests/integration/pinit.test.mjs:173:9'
+  failureType: 'testCodeFailure'
+  error: |-
+    identity at index 3
+    + actual - expected
+    ... Skipped lines
+
+      {
+        el: {
+          removeClass: [Function: removeClass],
+          toggleClass: [Function: toggleClass]
+        },
+    ...
+              },
+    -         [Circular *2],
+              TFile {
+                parent: [Circular *1],
+    +           path: 'Renamed.md'
+    -           path: 'd.md'
+              },
+    +         [Circular *2],
+              TFile {
+                parent: [Circular *1],
+                path: 'e.md'
+              },
+              TFile {
+    ...
+          },
+    +     path: 'd.md'
+    -     path: 'Renamed.md'
+        }
+      }
+
+  code: 'ERR_TEST_FAILURE'
+  ...
+# Subtest: File Placer source position: folder, stale before, placer first, placer reload
+not ok 21 - File Placer source position: folder, stale before, placer first, placer reload
+  ---
+  duration_ms: 0.386916
+  type: 'test'
+  location: '/Users/maxogalactic/side-projects/obsidian-file-placer/tests/integration/pinit.test.mjs:173:9'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+
+      {
+        askBeforeMerge: false,
+        mergedFolder: 'Custom originals',
+        order: {
+          'Nested/Parent': [
+            'f.md',
+    +       'Renamed',
+            'b.md',
+            'Missing.md',
+            'Renamed',
+            'd.md',
+            'e.md',
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    order:
+      Nested/Parent:
+        0: 'f.md'
+        1: 'b.md'
+        2: 'Missing.md'
+        3: 'Renamed'
+        4: 'd.md'
+        5: 'e.md'
+        6: 'a.md'
+      Unrelated:
+        0: 'Absent.md'
+      Nested/Parent/Oldish:
+        0: 'Boundary.md'
+      Nested/Parent/Renamed:
+        0: 'z.md'
+        1: 'Child-missing.md'
+        2: 'a.md'
+      Nested/Parent/Renamed/Deep:
+        0: 'two.md'
+        1: 'one.md'
+    mergedFolder: 'Custom originals'
+    askBeforeMerge: false
+  actual:
+    order:
+      Nested/Parent:
+        0: 'f.md'
+        1: 'Renamed'
+        2: 'b.md'
+        3: 'Missing.md'
+        4: 'Renamed'
+        5: 'd.md'
+        6: 'e.md'
+        7: 'a.md'
+      Unrelated:
+        0: 'Absent.md'
+      Nested/Parent/Oldish:
+        0: 'Boundary.md'
+      Nested/Parent/Renamed:
+        0: 'z.md'
+        1: 'Child-missing.md'
+        2: 'a.md'
+      Nested/Parent/Renamed/Deep:
+        0: 'two.md'
+        1: 'one.md'
+    mergedFolder: 'Custom originals'
+    askBeforeMerge: false
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/integration/pinit.test.mjs:238:20)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: File Placer source position: folder, stale before, placer first, pinit reload
+not ok 22 - File Placer source position: folder, stale before, placer first, pinit reload
+  ---
+  duration_ms: 0.220583
+  type: 'test'
+  location: '/Users/maxogalactic/side-projects/obsidian-file-placer/tests/integration/pinit.test.mjs:173:9'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+
+      {
+        askBeforeMerge: false,
+        mergedFolder: 'Custom originals',
+        order: {
+          'Nested/Parent': [
+            'f.md',
+    +       'Renamed',
+            'b.md',
+            'Missing.md',
+            'Renamed',
+            'd.md',
+            'e.md',
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    order:
+      Nested/Parent:
+        0: 'f.md'
+        1: 'b.md'
+        2: 'Missing.md'
+        3: 'Renamed'
+        4: 'd.md'
+        5: 'e.md'
+        6: 'a.md'
+      Unrelated:
+        0: 'Absent.md'
+      Nested/Parent/Oldish:
+        0: 'Boundary.md'
+      Nested/Parent/Renamed:
+        0: 'z.md'
+        1: 'Child-missing.md'
+        2: 'a.md'
+      Nested/Parent/Renamed/Deep:
+        0: 'two.md'
+        1: 'one.md'
+    mergedFolder: 'Custom originals'
+    askBeforeMerge: false
+  actual:
+    order:
+      Nested/Parent:
+        0: 'f.md'
+        1: 'Renamed'
+        2: 'b.md'
+        3: 'Missing.md'
+        4: 'Renamed'
+        5: 'd.md'
+        6: 'e.md'
+        7: 'a.md'
+      Unrelated:
+        0: 'Absent.md'
+      Nested/Parent/Oldish:
+        0: 'Boundary.md'
+      Nested/Parent/Renamed:
+        0: 'z.md'
+        1: 'Child-missing.md'
+        2: 'a.md'
+      Nested/Parent/Renamed/Deep:
+        0: 'two.md'
+        1: 'one.md'
+    mergedFolder: 'Custom originals'
+    askBeforeMerge: false
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/integration/pinit.test.mjs:238:20)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: File Placer source position: folder, stale before, pinit first, placer reload
+not ok 23 - File Placer source position: folder, stale before, pinit first, placer reload
+  ---
+  duration_ms: 0.180584
+  type: 'test'
+  location: '/Users/maxogalactic/side-projects/obsidian-file-placer/tests/integration/pinit.test.mjs:173:9'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+
+      {
+        askBeforeMerge: false,
+        mergedFolder: 'Custom originals',
+        order: {
+          'Nested/Parent': [
+            'f.md',
+    +       'Renamed',
+            'b.md',
+            'Missing.md',
+            'Renamed',
+            'd.md',
+            'e.md',
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    order:
+      Nested/Parent:
+        0: 'f.md'
+        1: 'b.md'
+        2: 'Missing.md'
+        3: 'Renamed'
+        4: 'd.md'
+        5: 'e.md'
+        6: 'a.md'
+      Unrelated:
+        0: 'Absent.md'
+      Nested/Parent/Oldish:
+        0: 'Boundary.md'
+      Nested/Parent/Renamed:
+        0: 'z.md'
+        1: 'Child-missing.md'
+        2: 'a.md'
+      Nested/Parent/Renamed/Deep:
+        0: 'two.md'
+        1: 'one.md'
+    mergedFolder: 'Custom originals'
+    askBeforeMerge: false
+  actual:
+    order:
+      Nested/Parent:
+        0: 'f.md'
+        1: 'Renamed'
+        2: 'b.md'
+        3: 'Missing.md'
+        4: 'Renamed'
+        5: 'd.md'
+        6: 'e.md'
+        7: 'a.md'
+      Unrelated:
+        0: 'Absent.md'
+      Nested/Parent/Oldish:
+        0: 'Boundary.md'
+      Nested/Parent/Renamed:
+        0: 'z.md'
+        1: 'Child-missing.md'
+        2: 'a.md'
+      Nested/Parent/Renamed/Deep:
+        0: 'two.md'
+        1: 'one.md'
+    mergedFolder: 'Custom originals'
+    askBeforeMerge: false
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/integration/pinit.test.mjs:238:20)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: File Placer source position: folder, stale before, pinit first, pinit reload
+not ok 24 - File Placer source position: folder, stale before, pinit first, pinit reload
+  ---
+  duration_ms: 0.263708
+  type: 'test'
+  location: '/Users/maxogalactic/side-projects/obsidian-file-placer/tests/integration/pinit.test.mjs:173:9'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+
+      {
+        askBeforeMerge: false,
+        mergedFolder: 'Custom originals',
+        order: {
+          'Nested/Parent': [
+            'f.md',
+    +       'Renamed',
+            'b.md',
+            'Missing.md',
+            'Renamed',
+            'd.md',
+            'e.md',
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    order:
+      Nested/Parent:
+        0: 'f.md'
+        1: 'b.md'
+        2: 'Missing.md'
+        3: 'Renamed'
+        4: 'd.md'
+        5: 'e.md'
+        6: 'a.md'
+      Unrelated:
+        0: 'Absent.md'
+      Nested/Parent/Oldish:
+        0: 'Boundary.md'
+      Nested/Parent/Renamed:
+        0: 'z.md'
+        1: 'Child-missing.md'
+        2: 'a.md'
+      Nested/Parent/Renamed/Deep:
+        0: 'two.md'
+        1: 'one.md'
+    mergedFolder: 'Custom originals'
+    askBeforeMerge: false
+  actual:
+    order:
+      Nested/Parent:
+        0: 'f.md'
+        1: 'Renamed'
+        2: 'b.md'
+        3: 'Missing.md'
+        4: 'Renamed'
+        5: 'd.md'
+        6: 'e.md'
+        7: 'a.md'
+      Unrelated:
+        0: 'Absent.md'
+      Nested/Parent/Oldish:
+        0: 'Boundary.md'
+      Nested/Parent/Renamed:
+        0: 'z.md'
+        1: 'Child-missing.md'
+        2: 'a.md'
+      Nested/Parent/Renamed/Deep:
+        0: 'two.md'
+        1: 'one.md'
+    mergedFolder: 'Custom originals'
+    askBeforeMerge: false
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/integration/pinit.test.mjs:238:20)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: File Placer source position: folder, stale after, placer first, placer reload
+not ok 25 - File Placer source position: folder, stale after, placer first, placer reload
+  ---
+  duration_ms: 0.262
+  type: 'test'
+  location: '/Users/maxogalactic/side-projects/obsidian-file-placer/tests/integration/pinit.test.mjs:173:9'
+  failureType: 'testCodeFailure'
+  error: |-
+    identity at index 3
+    + actual - expected
+    ... Skipped lines
+
+      {
+        el: {
+          removeClass: [Function: removeClass],
+          toggleClass: [Function: toggleClass]
+        },
+    +   file: <ref *2> TFile {
+    -   file: <ref *2> TFolder {
+    -     children: [],
+          parent: <ref *1> TFolder {
+            children: [
+              TFile {
+                parent: [Circular *1],
+                path: 'Nested/Parent/a.md'
+    ...
+              },
+    +         TFolder {
+    +           children: [],
+    -         [Circular *2],
+    -         TFile {
+                parent: [Circular *1],
+    +           path: 'Nested/Parent/Renamed'
+    -           path: 'Nested/Parent/d.md'
+              },
+    +         [Circular *2],
+              TFile {
+                parent: [Circular *1],
+                path: 'Nested/Parent/e.md'
+              },
+              TFile {
+    ...
+          },
+    +     path: 'Nested/Parent/d.md'
+    -     path: 'Nested/Parent/Renamed'
+        }
+      }
+
+  code: 'ERR_TEST_FAILURE'
+  ...
+# Subtest: File Placer source position: folder, stale after, placer first, pinit reload
+not ok 26 - File Placer source position: folder, stale after, placer first, pinit reload
+  ---
+  duration_ms: 0.188041
+  type: 'test'
+  location: '/Users/maxogalactic/side-projects/obsidian-file-placer/tests/integration/pinit.test.mjs:173:9'
+  failureType: 'testCodeFailure'
+  error: |-
+    identity at index 3
+    + actual - expected
+    ... Skipped lines
+
+      {
+        el: {
+          removeClass: [Function: removeClass],
+          toggleClass: [Function: toggleClass]
+        },
+    +   file: <ref *2> TFile {
+    -   file: <ref *2> TFolder {
+    -     children: [],
+          parent: <ref *1> TFolder {
+            children: [
+              TFile {
+                parent: [Circular *1],
+                path: 'Nested/Parent/a.md'
+    ...
+              },
+    +         TFolder {
+    +           children: [],
+    -         [Circular *2],
+    -         TFile {
+                parent: [Circular *1],
+    +           path: 'Nested/Parent/Renamed'
+    -           path: 'Nested/Parent/d.md'
+              },
+    +         [Circular *2],
+              TFile {
+                parent: [Circular *1],
+                path: 'Nested/Parent/e.md'
+              },
+              TFile {
+    ...
+          },
+    +     path: 'Nested/Parent/d.md'
+    -     path: 'Nested/Parent/Renamed'
+        }
+      }
+
+  code: 'ERR_TEST_FAILURE'
+  ...
+# Subtest: File Placer source position: folder, stale after, pinit first, placer reload
+not ok 27 - File Placer source position: folder, stale after, pinit first, placer reload
+  ---
+  duration_ms: 0.176584
+  type: 'test'
+  location: '/Users/maxogalactic/side-projects/obsidian-file-placer/tests/integration/pinit.test.mjs:173:9'
+  failureType: 'testCodeFailure'
+  error: |-
+    identity at index 3
+    + actual - expected
+    ... Skipped lines
+
+      {
+        el: {
+          removeClass: [Function: removeClass],
+          toggleClass: [Function: toggleClass]
+        },
+    +   file: <ref *2> TFile {
+    -   file: <ref *2> TFolder {
+    -     children: [],
+          parent: <ref *1> TFolder {
+            children: [
+              TFile {
+                parent: [Circular *1],
+                path: 'Nested/Parent/a.md'
+    ...
+              },
+    +         TFolder {
+    +           children: [],
+    -         [Circular *2],
+    -         TFile {
+                parent: [Circular *1],
+    +           path: 'Nested/Parent/Renamed'
+    -           path: 'Nested/Parent/d.md'
+              },
+    +         [Circular *2],
+              TFile {
+                parent: [Circular *1],
+                path: 'Nested/Parent/e.md'
+              },
+              TFile {
+    ...
+          },
+    +     path: 'Nested/Parent/d.md'
+    -     path: 'Nested/Parent/Renamed'
+        }
+      }
+
+  code: 'ERR_TEST_FAILURE'
+  ...
+# Subtest: File Placer source position: folder, stale after, pinit first, pinit reload
+not ok 28 - File Placer source position: folder, stale after, pinit first, pinit reload
+  ---
+  duration_ms: 0.16225
+  type: 'test'
+  location: '/Users/maxogalactic/side-projects/obsidian-file-placer/tests/integration/pinit.test.mjs:173:9'
+  failureType: 'testCodeFailure'
+  error: |-
+    identity at index 3
+    + actual - expected
+    ... Skipped lines
+
+      {
+        el: {
+          removeClass: [Function: removeClass],
+          toggleClass: [Function: toggleClass]
+        },
+    +   file: <ref *2> TFile {
+    -   file: <ref *2> TFolder {
+    -     children: [],
+          parent: <ref *1> TFolder {
+            children: [
+              TFile {
+                parent: [Circular *1],
+                path: 'Nested/Parent/a.md'
+    ...
+              },
+    +         TFolder {
+    +           children: [],
+    -         [Circular *2],
+    -         TFile {
+                parent: [Circular *1],
+    +           path: 'Nested/Parent/Renamed'
+    -           path: 'Nested/Parent/d.md'
+              },
+    +         [Circular *2],
+              TFile {
+                parent: [Circular *1],
+                path: 'Nested/Parent/e.md'
+              },
+              TFile {
+    ...
+          },
+    +     path: 'Nested/Parent/d.md'
+    -     path: 'Nested/Parent/Renamed'
+        }
+      }
+
+  code: 'ERR_TEST_FAILURE'
+  ...
+1..28
+# tests 28
+# suites 0
+# pass 12
+# fail 16
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 67.922292

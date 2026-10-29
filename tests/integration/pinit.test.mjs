@@ -5,7 +5,7 @@ import { load, TFile, TFolder } from "../helpers.mjs";
 
 // Opt in to testing the actual sibling source; standalone checkouts need no other plugin.
 const pinitSource = process.env.PINIT_SOURCE ?? "../obsidian-pinit-to-top-or-bottom/src/main.ts";
-const { default: FilePlacer } = await load("src/main.ts");
+const { default: FilePlacer } = await load(process.env.FILE_PLACER_SOURCE ?? "src/main.ts");
 const { default: Pinit } = await load(resolve(pinitSource));
 
 for (const first of ["placer", "pinit"]) {
@@ -162,6 +162,109 @@ for (const kind of ["note", "folder"]) {
           plugins.pinit.onunload();
         }
       });
+    }
+  }
+}
+
+for (const kind of ["note", "folder"]) {
+  for (const collision of ["before", "after"]) {
+    for (const first of ["placer", "pinit"]) {
+      for (const disabled of ["placer", "pinit"]) {
+        test(`File Placer source position: ${kind}, stale ${collision}, ${first} first, ${disabled} reload`, async () => {
+          const parent = new TFolder(kind === "note" ? "/" : "Nested/Parent");
+          const pathIn = name => parent.isRoot() ? name : `${parent.path}/${name}`;
+          const oldName = kind === "note" ? "Old.md" : "Old";
+          const newName = kind === "note" ? "Renamed.md" : "Renamed";
+          const names = ["a.md", "b.md", oldName, "d.md", "e.md", "f.md"];
+          const items = names.map(name => {
+            const file = new (name === oldName && kind === "folder" ? TFolder : TFile)(pathIn(name));
+            file.parent = parent;
+            return { file, el: { toggleClass() {}, removeClass() {} } };
+          });
+          parent.children = items.map(item => item.file);
+          const renamed = items[2].file;
+          const oldPath = renamed.path;
+          const normal = [items[0], items[1], items[3], items[4], items[5], items[2]];
+          class Explorer {
+            containerEl = { doc: {}, contains: () => false };
+            fileItems = Object.fromEntries(items.map(item => [item.file.path, item]));
+            shown = [];
+            getSortedFolderItems() { return [...normal]; }
+            requestSort() { this.shown = this.getSortedFolderItems(parent); }
+          }
+          const view = new Explorer();
+          const app = {
+            workspace: { getLeavesOfType: () => [{ view }] },
+            vault: { getAbstractFileByPath: path => view.fileItems[path]?.file ?? null },
+            plugins: { plugins: {} },
+          };
+          const placer = new FilePlacer(app);
+          const order = ["f.md", "b.md", "Missing.md", oldName, "d.md", "e.md", "a.md"];
+          order.splice(collision === "before" ? 1 : 6, 0, newName);
+          placer.saved = {
+            order: { [parent.path]: order, Unrelated: ["Absent.md"], ...(kind === "folder" ? {
+              [oldPath]: ["z.md", "Child-missing.md", "a.md"],
+              [oldPath + "/Deep"]: ["two.md", "one.md"],
+              [oldPath + "ish"]: ["Boundary.md"],
+            } : {}) },
+            mergedFolder: "Custom originals", askBeforeMerge: false,
+          };
+          await placer.loadSettings();
+          const pinit = new Pinit(app);
+          pinit.saved = { top: [pathIn("e.md"), "Missing-top.md"], bottom: [pathIn("a.md"), "Missing-bottom.md"] };
+          await pinit.loadSettings();
+          const expectedPins = structuredClone(pinit.settings);
+          const plugins = { placer, pinit };
+          app.plugins.plugins["pinit-to-top-or-bottom"] = pinit;
+          const placed = [items[5], items[1], items[2], items[3], items[4], items[0]];
+          const combined = [items[4], items[5], items[1], items[2], items[3], items[0]];
+          const pinnedNormal = [items[4], items[1], items[3], items[5], items[2], items[0]];
+          try {
+            plugins[first].patchFileExplorer();
+            plugins[first === "placer" ? "pinit" : "placer"].patchFileExplorer();
+            renamed.path = pathIn(newName);
+            view.fileItems = Object.fromEntries(items.map(item => [item.file.path, item]));
+            const expected = structuredClone(placer.settings);
+            expected.order[parent.path] = ["f.md", "b.md", "Missing.md", newName, "d.md", "e.md", "a.md"];
+            if (kind === "folder") for (const suffix of ["", "/Deep"]) {
+              expected.order[renamed.path + suffix] = expected.order[oldPath + suffix];
+              delete expected.order[oldPath + suffix];
+            }
+            for (const name of [first, first === "placer" ? "pinit" : "placer"]) {
+              if (name === "pinit") pinit.onRename(renamed.path, oldPath);
+              else placer.onRename(renamed, oldPath);
+            }
+            assertItems(view.getSortedFolderItems(parent), combined, items);
+            assert.deepEqual(structuredClone(placer.settings), expected);
+            await new Promise(resolve => setImmediate(resolve));
+            assertItems(view.shown, combined, items);
+            assert.deepEqual(placer.saved, expected);
+            assert.deepEqual(pinit.settings, expectedPins);
+            assert.deepEqual(pinit.saved, expectedPins);
+            plugins[disabled].onunload();
+            assertItems(view.shown, disabled === "pinit" ? placed : pinnedNormal, items);
+            const replacement = disabled === "pinit" ? new Pinit(app) : new FilePlacer(app);
+            replacement.saved = structuredClone(plugins[disabled].saved);
+            await replacement.loadSettings();
+            plugins[disabled] = replacement;
+            if (disabled === "pinit") app.plugins.plugins["pinit-to-top-or-bottom"] = replacement;
+            replacement.patchFileExplorer();
+            assert.deepEqual(structuredClone(plugins.placer.settings), expected);
+            assertItems(view.shown, combined, items);
+            // Reset affects only this parent; pins and descendant/other settings remain.
+            await plugins.placer.resetOrder(parent.path);
+            delete expected.order[parent.path];
+            assert.deepEqual(plugins.placer.saved, expected);
+            assertItems(view.shown, pinnedNormal, items);
+            replacement.onunload();
+            plugins[disabled === "placer" ? "pinit" : "placer"].onunload();
+            assertItems(view.shown, normal, items);
+          } finally {
+            plugins.placer.onunload();
+            plugins.pinit.onunload();
+          }
+        });
+      }
     }
   }
 }

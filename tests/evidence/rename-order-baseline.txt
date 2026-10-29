@@ -1,0 +1,692 @@
+TAP version 13
+# Subtest: rename order note in /: stale destination before
+not ok 1 - rename order note in /: stale destination before
+  ---
+  duration_ms: 1.693125
+  type: 'test'
+  location: '/Users/maxogalactic/side-projects/obsidian-file-placer/tests/rename-order.test.mjs:44:7'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+
+      {
+        askBeforeMerge: false,
+        mergedFolder: 'Custom originals',
+        order: {
+          '/': [
+            'Before.md',
+    +       'Renamed.md',
+            'Missing-before.md',
+            'Renamed.md',
+            'Middle.md',
+            'Missing-after.md',
+            'After.md'
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    order:
+      /:
+        0: 'Before.md'
+        1: 'Missing-before.md'
+        2: 'Renamed.md'
+        3: 'Middle.md'
+        4: 'Missing-after.md'
+        5: 'After.md'
+      Unrelated:
+        0: 'Missing.md'
+        1: 'Still missing.md'
+    mergedFolder: 'Custom originals'
+    askBeforeMerge: false
+  actual:
+    order:
+      /:
+        0: 'Before.md'
+        1: 'Renamed.md'
+        2: 'Missing-before.md'
+        3: 'Renamed.md'
+        4: 'Middle.md'
+        5: 'Missing-after.md'
+        6: 'After.md'
+      Unrelated:
+        0: 'Missing.md'
+        1: 'Still missing.md'
+    mergedFolder: 'Custom originals'
+    askBeforeMerge: false
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/rename-order.test.mjs:66:16)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3)
+  ...
+# Subtest: rename order note in /: stale destination after
+not ok 2 - rename order note in /: stale destination after
+  ---
+  duration_ms: 0.280959
+  type: 'test'
+  location: '/Users/maxogalactic/side-projects/obsidian-file-placer/tests/rename-order.test.mjs:44:7'
+  failureType: 'testCodeFailure'
+  error: |-
+    identity at 1
+    + actual - expected
+    ... Skipped lines
+
+      {
+        file: <ref *2> TFile {
+          parent: <ref *1> TFolder {
+            children: [
+              TFile {
+    ...
+              },
+    -         [Circular *2],
+              TFile {
+                parent: [Circular *1],
+    +           path: 'Renamed.md'
+    -           path: 'Middle.md'
+              },
+    +         [Circular *2],
+              TFile {
+                parent: [Circular *1],
+                path: 'After.md'
+              }
+            ],
+    ...
+          },
+    +     path: 'Middle.md'
+    -     path: 'Renamed.md'
+        }
+      }
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    file:
+      path: 'Renamed.md'
+      parent:
+        path: '/'
+        parent: ~
+        children:
+          0:
+            path: 'Before.md'
+            parent: <Circular>
+          1: <Circular>
+          2:
+            path: 'Middle.md'
+            parent: <Circular>
+          3:
+            path: 'After.md'
+            parent: <Circular>
+  actual:
+    file:
+      path: 'Middle.md'
+      parent:
+        path: '/'
+        parent: ~
+        children:
+          0:
+            path: 'Before.md'
+            parent: <Circular>
+          1:
+            path: 'Renamed.md'
+            parent: <Circular>
+          2: <Circular>
+          3:
+            path: 'After.md'
+            parent: <Circular>
+  operator: 'strictEqual'
+  stack: |-
+    file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/rename-order.test.mjs:13:44
+    Array.forEach (<anonymous>)
+    assertItems (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/rename-order.test.mjs:13:12)
+    TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/rename-order.test.mjs:65:9)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: rename order note in /: stale destination none
+ok 3 - rename order note in /: stale destination none
+  ---
+  duration_ms: 1.605292
+  type: 'test'
+  ...
+# Subtest: rename order cross-parent note from / preserves move policy
+ok 4 - rename order cross-parent note from / preserves move policy
+  ---
+  duration_ms: 0.344167
+  type: 'test'
+  ...
+# Subtest: rename order folder in /: stale destination before
+not ok 5 - rename order folder in /: stale destination before
+  ---
+  duration_ms: 0.285542
+  type: 'test'
+  location: '/Users/maxogalactic/side-projects/obsidian-file-placer/tests/rename-order.test.mjs:44:7'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+
+      {
+        askBeforeMerge: false,
+        mergedFolder: 'Custom originals',
+        order: {
+          '/': [
+            'Before.md',
+    +       'Renamed',
+            'Missing-before.md',
+            'Renamed',
+            'Middle.md',
+            'Missing-after.md',
+            'After.md'
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    order:
+      /:
+        0: 'Before.md'
+        1: 'Missing-before.md'
+        2: 'Renamed'
+        3: 'Middle.md'
+        4: 'Missing-after.md'
+        5: 'After.md'
+      Unrelated:
+        0: 'Missing.md'
+        1: 'Still missing.md'
+      Oldish:
+        0: 'Boundary.md'
+      Renamed:
+        0: 'z.md'
+        1: 'Missing-child.md'
+        2: 'a.md'
+      Renamed/Deep:
+        0: 'two.md'
+        1: 'one.md'
+    mergedFolder: 'Custom originals'
+    askBeforeMerge: false
+  actual:
+    order:
+      /:
+        0: 'Before.md'
+        1: 'Renamed'
+        2: 'Missing-before.md'
+        3: 'Renamed'
+        4: 'Middle.md'
+        5: 'Missing-after.md'
+        6: 'After.md'
+      Unrelated:
+        0: 'Missing.md'
+        1: 'Still missing.md'
+      Oldish:
+        0: 'Boundary.md'
+      Renamed:
+        0: 'z.md'
+        1: 'Missing-child.md'
+        2: 'a.md'
+      Renamed/Deep:
+        0: 'two.md'
+        1: 'one.md'
+    mergedFolder: 'Custom originals'
+    askBeforeMerge: false
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/rename-order.test.mjs:66:16)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: rename order folder in /: stale destination after
+not ok 6 - rename order folder in /: stale destination after
+  ---
+  duration_ms: 0.194167
+  type: 'test'
+  location: '/Users/maxogalactic/side-projects/obsidian-file-placer/tests/rename-order.test.mjs:44:7'
+  failureType: 'testCodeFailure'
+  error: |-
+    identity at 1
+    + actual - expected
+    ... Skipped lines
+
+      {
+    +   file: <ref *2> TFile {
+    -   file: <ref *2> TFolder {
+    -     children: [],
+          parent: <ref *1> TFolder {
+            children: [
+              TFile {
+                parent: [Circular *1],
+                path: 'Before.md'
+              },
+    +         TFolder {
+    +           children: [],
+    -         [Circular *2],
+    -         TFile {
+                parent: [Circular *1],
+    +           path: 'Renamed'
+    -           path: 'Middle.md'
+              },
+    +         [Circular *2],
+              TFile {
+                parent: [Circular *1],
+                path: 'After.md'
+              }
+            ],
+    ...
+          },
+    +     path: 'Middle.md'
+    -     path: 'Renamed'
+        }
+      }
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    file:
+      path: 'Renamed'
+      parent:
+        path: '/'
+        parent: ~
+        children:
+          0:
+            path: 'Before.md'
+            parent: <Circular>
+          1: <Circular>
+          2:
+            path: 'Middle.md'
+            parent: <Circular>
+          3:
+            path: 'After.md'
+            parent: <Circular>
+      children:
+  actual:
+    file:
+      path: 'Middle.md'
+      parent:
+        path: '/'
+        parent: ~
+        children:
+          0:
+            path: 'Before.md'
+            parent: <Circular>
+          1:
+            path: 'Renamed'
+            parent: <Circular>
+            children:
+          2: <Circular>
+          3:
+            path: 'After.md'
+            parent: <Circular>
+  operator: 'strictEqual'
+  stack: |-
+    file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/rename-order.test.mjs:13:44
+    Array.forEach (<anonymous>)
+    assertItems (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/rename-order.test.mjs:13:12)
+    TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/rename-order.test.mjs:65:9)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: rename order folder in /: stale destination none
+ok 7 - rename order folder in /: stale destination none
+  ---
+  duration_ms: 1.030125
+  type: 'test'
+  ...
+# Subtest: rename order cross-parent folder from / preserves move policy
+ok 8 - rename order cross-parent folder from / preserves move policy
+  ---
+  duration_ms: 0.263167
+  type: 'test'
+  ...
+# Subtest: rename order note in Nested/Parent: stale destination before
+not ok 9 - rename order note in Nested/Parent: stale destination before
+  ---
+  duration_ms: 0.176083
+  type: 'test'
+  location: '/Users/maxogalactic/side-projects/obsidian-file-placer/tests/rename-order.test.mjs:44:7'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+
+      {
+        askBeforeMerge: false,
+        mergedFolder: 'Custom originals',
+        order: {
+          'Nested/Parent': [
+            'Before.md',
+    +       'Renamed.md',
+            'Missing-before.md',
+            'Renamed.md',
+            'Middle.md',
+            'Missing-after.md',
+            'After.md'
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    order:
+      Nested/Parent:
+        0: 'Before.md'
+        1: 'Missing-before.md'
+        2: 'Renamed.md'
+        3: 'Middle.md'
+        4: 'Missing-after.md'
+        5: 'After.md'
+      Unrelated:
+        0: 'Missing.md'
+        1: 'Still missing.md'
+    mergedFolder: 'Custom originals'
+    askBeforeMerge: false
+  actual:
+    order:
+      Nested/Parent:
+        0: 'Before.md'
+        1: 'Renamed.md'
+        2: 'Missing-before.md'
+        3: 'Renamed.md'
+        4: 'Middle.md'
+        5: 'Missing-after.md'
+        6: 'After.md'
+      Unrelated:
+        0: 'Missing.md'
+        1: 'Still missing.md'
+    mergedFolder: 'Custom originals'
+    askBeforeMerge: false
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/rename-order.test.mjs:66:16)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: rename order note in Nested/Parent: stale destination after
+not ok 10 - rename order note in Nested/Parent: stale destination after
+  ---
+  duration_ms: 0.15775
+  type: 'test'
+  location: '/Users/maxogalactic/side-projects/obsidian-file-placer/tests/rename-order.test.mjs:44:7'
+  failureType: 'testCodeFailure'
+  error: |-
+    identity at 1
+    + actual - expected
+    ... Skipped lines
+
+      {
+        file: <ref *2> TFile {
+          parent: <ref *1> TFolder {
+            children: [
+              TFile {
+    ...
+              },
+    -         [Circular *2],
+              TFile {
+                parent: [Circular *1],
+    +           path: 'Nested/Parent/Renamed.md'
+    -           path: 'Nested/Parent/Middle.md'
+              },
+    +         [Circular *2],
+              TFile {
+                parent: [Circular *1],
+                path: 'Nested/Parent/After.md'
+              }
+            ],
+    ...
+          },
+    +     path: 'Nested/Parent/Middle.md'
+    -     path: 'Nested/Parent/Renamed.md'
+        }
+      }
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    file:
+      path: 'Nested/Parent/Renamed.md'
+      parent:
+        path: 'Nested/Parent'
+        parent: ~
+        children:
+          0:
+            path: 'Nested/Parent/Before.md'
+            parent: <Circular>
+          1: <Circular>
+          2:
+            path: 'Nested/Parent/Middle.md'
+            parent: <Circular>
+          3:
+            path: 'Nested/Parent/After.md'
+            parent: <Circular>
+  actual:
+    file:
+      path: 'Nested/Parent/Middle.md'
+      parent:
+        path: 'Nested/Parent'
+        parent: ~
+        children:
+          0:
+            path: 'Nested/Parent/Before.md'
+            parent: <Circular>
+          1:
+            path: 'Nested/Parent/Renamed.md'
+            parent: <Circular>
+          2: <Circular>
+          3:
+            path: 'Nested/Parent/After.md'
+            parent: <Circular>
+  operator: 'strictEqual'
+  stack: |-
+    file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/rename-order.test.mjs:13:44
+    Array.forEach (<anonymous>)
+    assertItems (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/rename-order.test.mjs:13:12)
+    TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/rename-order.test.mjs:65:9)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: rename order note in Nested/Parent: stale destination none
+ok 11 - rename order note in Nested/Parent: stale destination none
+  ---
+  duration_ms: 0.631333
+  type: 'test'
+  ...
+# Subtest: rename order cross-parent note from Nested/Parent preserves move policy
+ok 12 - rename order cross-parent note from Nested/Parent preserves move policy
+  ---
+  duration_ms: 0.176916
+  type: 'test'
+  ...
+# Subtest: rename order folder in Nested/Parent: stale destination before
+not ok 13 - rename order folder in Nested/Parent: stale destination before
+  ---
+  duration_ms: 0.1985
+  type: 'test'
+  location: '/Users/maxogalactic/side-projects/obsidian-file-placer/tests/rename-order.test.mjs:44:7'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+
+      {
+        askBeforeMerge: false,
+        mergedFolder: 'Custom originals',
+        order: {
+          'Nested/Parent': [
+            'Before.md',
+    +       'Renamed',
+            'Missing-before.md',
+            'Renamed',
+            'Middle.md',
+            'Missing-after.md',
+            'After.md'
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    order:
+      Nested/Parent:
+        0: 'Before.md'
+        1: 'Missing-before.md'
+        2: 'Renamed'
+        3: 'Middle.md'
+        4: 'Missing-after.md'
+        5: 'After.md'
+      Unrelated:
+        0: 'Missing.md'
+        1: 'Still missing.md'
+      Nested/Parent/Oldish:
+        0: 'Boundary.md'
+      Nested/Parent/Renamed:
+        0: 'z.md'
+        1: 'Missing-child.md'
+        2: 'a.md'
+      Nested/Parent/Renamed/Deep:
+        0: 'two.md'
+        1: 'one.md'
+    mergedFolder: 'Custom originals'
+    askBeforeMerge: false
+  actual:
+    order:
+      Nested/Parent:
+        0: 'Before.md'
+        1: 'Renamed'
+        2: 'Missing-before.md'
+        3: 'Renamed'
+        4: 'Middle.md'
+        5: 'Missing-after.md'
+        6: 'After.md'
+      Unrelated:
+        0: 'Missing.md'
+        1: 'Still missing.md'
+      Nested/Parent/Oldish:
+        0: 'Boundary.md'
+      Nested/Parent/Renamed:
+        0: 'z.md'
+        1: 'Missing-child.md'
+        2: 'a.md'
+      Nested/Parent/Renamed/Deep:
+        0: 'two.md'
+        1: 'one.md'
+    mergedFolder: 'Custom originals'
+    askBeforeMerge: false
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/rename-order.test.mjs:66:16)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: rename order folder in Nested/Parent: stale destination after
+not ok 14 - rename order folder in Nested/Parent: stale destination after
+  ---
+  duration_ms: 0.161833
+  type: 'test'
+  location: '/Users/maxogalactic/side-projects/obsidian-file-placer/tests/rename-order.test.mjs:44:7'
+  failureType: 'testCodeFailure'
+  error: |-
+    identity at 1
+    + actual - expected
+    ... Skipped lines
+
+      {
+    +   file: <ref *2> TFile {
+    -   file: <ref *2> TFolder {
+    -     children: [],
+          parent: <ref *1> TFolder {
+            children: [
+              TFile {
+                parent: [Circular *1],
+                path: 'Nested/Parent/Before.md'
+              },
+    +         TFolder {
+    +           children: [],
+    -         [Circular *2],
+    -         TFile {
+                parent: [Circular *1],
+    +           path: 'Nested/Parent/Renamed'
+    -           path: 'Nested/Parent/Middle.md'
+              },
+    +         [Circular *2],
+              TFile {
+                parent: [Circular *1],
+                path: 'Nested/Parent/After.md'
+              }
+            ],
+    ...
+          },
+    +     path: 'Nested/Parent/Middle.md'
+    -     path: 'Nested/Parent/Renamed'
+        }
+      }
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    file:
+      path: 'Nested/Parent/Renamed'
+      parent:
+        path: 'Nested/Parent'
+        parent: ~
+        children:
+          0:
+            path: 'Nested/Parent/Before.md'
+            parent: <Circular>
+          1: <Circular>
+          2:
+            path: 'Nested/Parent/Middle.md'
+            parent: <Circular>
+          3:
+            path: 'Nested/Parent/After.md'
+            parent: <Circular>
+      children:
+  actual:
+    file:
+      path: 'Nested/Parent/Middle.md'
+      parent:
+        path: 'Nested/Parent'
+        parent: ~
+        children:
+          0:
+            path: 'Nested/Parent/Before.md'
+            parent: <Circular>
+          1:
+            path: 'Nested/Parent/Renamed'
+            parent: <Circular>
+            children:
+          2: <Circular>
+          3:
+            path: 'Nested/Parent/After.md'
+            parent: <Circular>
+  operator: 'strictEqual'
+  stack: |-
+    file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/rename-order.test.mjs:13:44
+    Array.forEach (<anonymous>)
+    assertItems (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/rename-order.test.mjs:13:12)
+    TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/rename-order.test.mjs:65:9)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: rename order folder in Nested/Parent: stale destination none
+ok 15 - rename order folder in Nested/Parent: stale destination none
+  ---
+  duration_ms: 0.411667
+  type: 'test'
+  ...
+# Subtest: rename order cross-parent folder from Nested/Parent preserves move policy
+ok 16 - rename order cross-parent folder from Nested/Parent preserves move policy
+  ---
+  duration_ms: 0.181541
+  type: 'test'
+  ...
+# Subtest: rename order absent source leaves existing destination and unrelated missing entries alone
+ok 17 - rename order absent source leaves existing destination and unrelated missing entries alone
+  ---
+  duration_ms: 0.1715
+  type: 'test'
+  ...
+1..17
+# tests 17
+# suites 0
+# pass 9
+# fail 8
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 77.509208
