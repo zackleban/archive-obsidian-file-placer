@@ -187,3 +187,15 @@ the prompt when automatic updates are disabled;
 require an appropriate minimum version. These sources do not certify this plugin
 or replace the missing runtime results. The README now distinguishes note-text
 recovery from whole-vault link recovery and does not promise automatic retargeting.
+
+## Quality review — 2026-10-29
+
+agent decision 2026-10-28: review the four accepted follow-ups before further improvements; retain the established tests and runtime protocols because no new source defect justifies duplicating them.
+
+Fresh `npm run qa` passes **17/17 tests**, zero-warning lint, TypeScript, production build and package checks. `npm run test:integration` from this repository passes **four** cases against the sibling Pinit checkout; the suite remains here alone. Reviewed both README install paths, version/lock agreement, bundled monkey-around notices and the existing recovery evidence. No concrete implementation or packaging regression was found; production assets remain byte-identical.
+
+The integration cases exercise both actual plugins with an explorer double in both load orders and either disable/re-enable sequence. Snapshot/restoration evidence remains host-double evidence. [RUNTIME-SORTING.md](RUNTIME-SORTING.md) and the recovery section above still own all blocked live gates; no access retry or new recovery fixture was performed.
+
+`git diff --check` passes. Nothing was pushed, tagged, released or submitted.
+
+Official manifest, submission requirements, developer policies, plugin guidelines and release instructions were rechecked on 2026-10-29. Local metadata, disclosures and licensing checks do not establish minimum-version runtime compatibility, directory name availability or community approval.
