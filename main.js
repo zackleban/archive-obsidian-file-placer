@@ -201,8 +201,8 @@ var FilePlacerPlugin = class extends import_obsidian.Plugin {
     this.watched = /* @__PURE__ */ new Map();
     this.plan = null;
     this.shownEl = null;
-    // The mouse during a drag: where it last moved, when, which way, and the row it is over.
-    this.mouse = { x: NaN, y: NaN, at: 0, direction: "down", row: null };
+    // Hold time belongs to a represented intent, not a reusable row node.
+    this.mouse = { x: NaN, y: NaN, at: 0, direction: "down", intent: null };
   }
   async onload() {
     await this.loadSettings();
@@ -340,8 +340,8 @@ var FilePlacerPlugin = class extends import_obsidian.Plugin {
     });
     this.forEachExplorer((view) => view.requestSort());
   }
-  // Listens in the capture phase, so it runs before the file explorer's own drop handling,
-  // which skips any drag event whose default was already prevented.
+  // Capture and preventDefault coordinate claimed drops with the core explorer.
+  // Actual host listener/drag-manager ordering remains a live check in docs/REVIEW.md.
   watchExplorers() {
     const live = /* @__PURE__ */ new Set();
     for (const leaf of this.app.workspace.getLeavesOfType(FILE_EXPLORER)) {
@@ -351,7 +351,10 @@ var FilePlacerPlugin = class extends import_obsidian.Plugin {
       if (this.watched.has(el)) continue;
       const component = this.addChild(new import_obsidian.Component());
       this.watched.set(el, component);
-      component.registerDomEvent(el, "dragstart", (evt) => this.resetMouse(evt.clientX, evt.clientY), true);
+      component.registerDomEvent(el, "dragstart", (evt) => {
+        this.endDrag();
+        this.resetMouse(evt.clientX, evt.clientY);
+      }, true);
       component.registerDomEvent(el.doc, "dragend", () => this.endDrag(), true);
       component.registerDomEvent(el, "dragenter", (evt) => this.onDragOver(evt), true);
       component.registerDomEvent(el, "dragover", (evt) => this.onDragOver(evt), true);
@@ -383,7 +386,10 @@ var FilePlacerPlugin = class extends import_obsidian.Plugin {
     ];
   }
   onDragOver(evt) {
-    if (evt.defaultPrevented || this.unsupported || !this.unpatch) return;
+    if (evt.defaultPrevented || this.unloaded || this.unsupported || !this.unpatch) {
+      this.endDrag();
+      return;
+    }
     const plan = this.planFor(evt);
     this.show(plan);
     if (!plan) {
@@ -398,7 +404,7 @@ var FilePlacerPlugin = class extends import_obsidian.Plugin {
     );
   }
   onDrop(evt) {
-    const plan = !evt.defaultPrevented && this.rowAt(evt) === this.plan?.row ? this.plan : null;
+    const plan = !evt.defaultPrevented && this.plan && this.isCurrent(this.plan, evt) ? this.plan : null;
     this.endDrag();
     if (!plan) return;
     evt.preventDefault();
@@ -410,28 +416,63 @@ var FilePlacerPlugin = class extends import_obsidian.Plugin {
     else void this.safely(() => this.place(plan.files, plan.folder, plan.anchor, plan.after));
   }
   planFor(evt) {
+    const intent = this.intentFor(evt);
+    if (!intent) return null;
+    const held = this.track(evt, intent);
+    return this.operationFor(intent, held, this.mouse.direction);
+  }
+  // Snapshot mutable paths and the selection array. Also require the row to belong
+  // to a currently watched, live explorer (including detached-window documents).
+  intentFor(evt) {
+    if (this.unloaded || this.unsupported || !this.unpatch) return null;
     const files = this.draggedFiles();
     const row = this.rowAt(evt);
-    if (!files || !row) return null;
+    if (!files || !row?.isConnected) return null;
+    const owner = this.app.workspace.getLeavesOfType(FILE_EXPLORER).find((leaf) => !leaf.isDeferred && this.watched.has(leaf.view.containerEl) && leaf.view.containerEl.contains(row))?.view.containerEl;
+    if (!owner) return null;
+    const current = (file2) => this.app.vault.getAbstractFileByPath(file2.path) === file2;
     const file = this.app.vault.getAbstractFileByPath(row.dataset.path ?? "");
-    if (!file || !file.parent || files.includes(file)) return null;
-    const held = this.track(evt, row);
-    if (held && files.length === 1 && isNote(files[0]) && isNote(file)) return { kind: "merge", row, source: files[0], target: file };
-    if (held && file instanceof import_obsidian.TFolder && this.canHold(files, file)) return { kind: "into", row, files, folder: file };
-    const side = this.mouse.direction;
-    if (side === "down" && file instanceof import_obsidian.TFolder && file.children.length > 0 && !row.parentElement?.hasClass("is-collapsed")) {
-      return this.canHold(files, file) ? { kind: "place", row, side, files, folder: file, anchor: null, after: false } : null;
+    if (!file?.parent || !current(file.parent) || files.includes(file) || !files.every(current)) return null;
+    const identity = (file2) => ({ file: file2, path: file2.path });
+    return {
+      row,
+      owner,
+      files: files.map(identity),
+      target: identity(file),
+      parent: identity(file.parent),
+      openFolder: file instanceof import_obsidian.TFolder && file.children.length > 0 && !row.parentElement?.hasClass("is-collapsed")
+    };
+  }
+  sameIntent(a, b) {
+    const same2 = (a2, b2) => a2.file === b2.file && a2.path === b2.path;
+    return !!a && a.row === b.row && a.owner === b.owner && a.openFolder === b.openFolder && same2(a.target, b.target) && same2(a.parent, b.parent) && a.files.length === b.files.length && a.files.every((file, i) => same2(file, b.files[i]));
+  }
+  isCurrent(plan, evt) {
+    const intent = this.intentFor(evt);
+    if (!intent || !this.sameIntent(plan.intent, intent)) return false;
+    const current = this.operationFor(intent, plan.kind !== "place", plan.kind === "place" ? plan.side : this.mouse.direction);
+    if (!current || current.kind !== plan.kind) return false;
+    return plan.kind !== "place" || current.kind === "place" && current.folder === plan.folder && current.anchor === plan.anchor && current.after === plan.after;
+  }
+  operationFor(intent, held, side) {
+    const { row } = intent;
+    const file = intent.target.file;
+    const files = intent.files.map(({ file: file2 }) => file2);
+    if (held && files.length === 1 && isNote(files[0]) && isNote(file)) return { kind: "merge", intent, row, source: files[0], target: file };
+    if (held && file instanceof import_obsidian.TFolder && this.canHold(files, file)) return { kind: "into", intent, row, files, folder: file };
+    if (side === "down" && file instanceof import_obsidian.TFolder && intent.openFolder) {
+      return this.canHold(files, file) ? { kind: "place", intent, row, side, files, folder: file, anchor: null, after: false } : null;
     }
-    const folder = file.parent;
-    return this.canHold(files, folder) ? { kind: "place", row, side, files, folder, anchor: file, after: side === "down" } : null;
+    const folder = intent.parent.file;
+    return folder instanceof import_obsidian.TFolder && this.canHold(files, folder) ? { kind: "place", intent, row, side, files, folder, anchor: file, after: side === "down" } : null;
   }
   rowAt(evt) {
     const target = evt.target;
     return target?.instanceOf(Element) ? target.closest(ROW) : null;
   }
   // Follows the mouse: the line sits on top of the row while it moves up and under it while it
-  // moves down. Returns true once the mouse has held still over the same row for HOLD_MS.
-  track(evt, row) {
+  // moves down. Returns true after holding still over the same intent for HOLD_MS.
+  track(evt, intent) {
     if (Number.isNaN(this.mouse.x)) this.resetMouse(evt.clientX, evt.clientY);
     const mouse = this.mouse;
     const now = Date.now();
@@ -439,11 +480,11 @@ var FilePlacerPlugin = class extends import_obsidian.Plugin {
     const dy = evt.clientY - mouse.y;
     if (Math.abs(dy) >= STILL_PX) mouse.direction = dy < 0 ? "up" : "down";
     if (Math.abs(dx) >= STILL_PX || Math.abs(dy) >= STILL_PX) Object.assign(mouse, { x: evt.clientX, y: evt.clientY, at: now });
-    if (row !== mouse.row) Object.assign(mouse, { row, at: now });
+    if (!this.sameIntent(mouse.intent, intent)) Object.assign(mouse, { intent, at: now });
     return now - mouse.at >= HOLD_MS;
   }
   resetMouse(x, y) {
-    this.mouse = { x, y, at: Date.now(), direction: "down", row: null };
+    this.mouse = { x, y, at: Date.now(), direction: "down", intent: null };
   }
   endDrag() {
     this.show(null);
@@ -454,7 +495,11 @@ var FilePlacerPlugin = class extends import_obsidian.Plugin {
     const el = plan?.row ?? null;
     if (this.shownEl && this.shownEl !== el) this.shownEl.removeClasses(SHOWN_CLASSES);
     this.shownEl = el;
-    if (!plan) return;
+    if (!plan) {
+      this.mouse.x = NaN;
+      this.mouse.intent = null;
+      return;
+    }
     const wanted = [HOVER_CLASS, plan.kind === "place" ? LINE_CLASS[plan.side] : INTO_CLASS];
     for (const cls of SHOWN_CLASSES) plan.row.toggleClass(cls, wanted.includes(cls));
   }

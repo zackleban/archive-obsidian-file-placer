@@ -32,6 +32,7 @@ open, including minimum-version and mobile coverage.
 - Try a name conflict, a folder dragged into itself, and a multiple-file drag. Nothing should be overwritten.
 - Merge two test notes with YAML, fenced code, repeated lines, and links. Inspect both `.md.txt` snapshots, the merged target, and archived source. Check restoration.
 - Use a detached explorer window and test dragging, drag cancellation, and changing windows.
+- Check current/minimum-version host drag-manager ordering at capture-phase drop: ordinary, held, multi-selection, cancelled/ended, and reused rows. Change source/target between preview and drop; verify File Placer rejects stale intent and separately observe core behavior. Repeat in a popout. Synthetic tests do not close this gate.
 - Enable Pinit in both plugin-load orders. Top/bottom pins must remain pinned; disabling either plugin must leave the other working.
 - On mobile, verify loading, settings, and saved ordering; touch-only dragging is not advertised.
 
@@ -211,3 +212,103 @@ Fresh `npm run qa` passes **17/17 tests**, zero-warning lint, TypeScript, produc
 [RUNTIME-SORTING.md](RUNTIME-SORTING.md) and the recovery section above retain the blocked live protocols. Host-double sorting, saved-state reload and synthetic restoration do not establish live compatibility, filesystem durability or actual link resolution. No new runtime protocol was created.
 
 Rechecked current official manifest, submission requirements, developer policies, plugin guidelines and submission instructions linked in this record. Local metadata, licensing and automated checks do not establish directory availability, minimum-version runtime compatibility or community approval. Production assets match the reviewed source and remain byte-identical to this review's starting candidate; `git diff --check` passes. No tests were added because no new implementation defect was reproduced. No app-access retry, installation, push, tag, release or submission occurred.
+
+## Drop-intent repair — 2026-10-29
+
+**agent decision 2026-10-28:** bind previews to observed semantic intent and reject
+stale drops before action dispatch, because baseline actual-source tests select
+obsolete merge, move and placement operations. Keep the merge algorithm and
+sorting implementation unchanged. Use one editing owner and an independent
+read-only drag-intent reviewer; the reviewer found no blocking defect in the
+candidate contract or final focused coverage.
+
+### Contract and event policy
+
+Each preview snapshots the ordered source objects and paths, represented target
+object/path, parent object/path, row, owning explorer container and open-folder
+placement state. Mutable manager arrays are copied. Current vault lookups must
+still resolve to those identities, and the row must be connected inside a watched,
+nondeferred explorer still present in the workspace. At drop, eligibility and the
+applicable destination/anchor are checked using the displayed action and direction.
+Validation neither advances hold time nor substitutes another action. Conflicts
+are rejected before event claiming; existing move/name/self-move checks remain.
+
+Hold time resets when represented intent changes. Invalid or already prevented
+hover, leaving the pane, dragstart/end, retired panes and unload invalidate the
+preview. A source/target change needs a fresh 700 ms hold for merge/into-folder.
+Elapsed time at drop alone cannot turn an ordinary placement into a held action.
+An equivalent manager wrapper with the same ordered selection is allowed.
+
+A stale drop clears highlights, dispatches no File Placer action and is left
+unclaimed. An already prevented drop stays prevented and dispatches no action.
+Valid drops are claimed once with `preventDefault()`. Core behavior after an
+unclaimed drop is outside this contract: it may still perform its own action.
+Missing/cleared manager state is rejected, so if a live host clears it before
+File Placer's capture listener, that drop will be left to core. Actual ordering
+and core handling remain open checks above; no host-level no-op is claimed.
+
+### Persisted baseline and candidate evidence
+
+`tests/drop-intent.test.mjs` loads the actual source through the existing esbuild
+helper and runs actual `onDragOver`, `planFor`, `track`, `show`, `rowAt` and `onDrop`.
+JSDOM 30.1.3 supplies native nodes, nested row targets, `closest`, `dataset`,
+attachment, classes and cancelable capture/bubble events. An Obsidian Component
+double registers/removes real listeners. `Date.now` is controlled; no private
+plan fields or hold timestamps are set by tests. Actions are checked at
+`askToMerge`, `moveInto` and `place`, including exact object arguments and ordering.
+Separate confirmation-disabled cases use the actual actions with synthetic vault
+texts and counted create/process/rename/save calls.
+
+- Before any production-source edit, the first persisted 80 cases failed **66/80**
+  at `e22bbf81e5f754754a363012b8aded8397205843`; unchanged valid controls passed.
+- After bounded review additions, the final **92-case** suite replayed against
+  that exact baseline fails **72/92** (20 pass). All 12 original hold-reset cases
+  fail on inherited timing; the added multi-selection hold case also fails.
+  Stale selected actions and actual synthetic side effects reproduce independently
+  of a confirmation modal. This is not an observed live merge or data-loss event.
+- Candidate focused `node --test tests/drop-intent.test.mjs`: **92/92 pass**.
+  Changed/cleared/multiple/reordered sources; mutable selection arrays; path
+  changes; removed/replaced objects; changed parents/destination conflicts;
+  row reuse and pane ownership; ended/new drags; unload and retained callbacks;
+  prevented drops; 699/700 ms timing; fresh valid actions after rejection;
+  up/down/first-inside placement and real synthetic rename/save order all pass.
+- The baseline replay uses `FILE_PLACER_SOURCE=<baseline>/src/main.ts` with
+  `main.ts`, `order.ts` and `merge.ts` extracted from `e22bbf8` and the same installed
+  toolchain. This override changes only the loaded implementation, not test logic.
+
+### Evidence boundaries and dependencies
+
+These tests invoke the real explorer patch/watch setup but do not run Obsidian's
+full plugin loader. File objects, vault operations, drag manager, Obsidian DOM
+extensions and Component lifecycle are doubles. Native DOM dispatch does not
+establish physical drag behavior, rendering, cross-window timing, host event
+ordering, filesystem durability, link maintenance or real modal behavior. The
+pane tests use one synthetic document; popout behavior remains unverified.
+Assertions count actual synthetic write/rename/save calls, not real disk writes.
+Unobserved clear-and-restore changes between delivered events cannot be detected;
+this is validation at observed hover/drop boundaries, not a transaction lock
+against later changes or modal-confirmation races. Existing merge recovery and
+link evidence above remains unchanged.
+
+Installed Obsidian 1.14.4 declarations document cross-window `Node.instanceOf`,
+owner `doc`, DOM listener registration and child unload semantics. They expose
+no public drag-manager ordering guarantee. The old source comment asserting core
+listener behavior now explicitly leaves it as a live check. No app access retry,
+new recovery vault, personal-vault installation or minimum-version claim occurred.
+[RUNTIME-SORTING.md](RUNTIME-SORTING.md) remains the sole live sorting evidence home.
+
+JSDOM is pinned as a development-only dependency; no pre-existing locked package
+entry changed. Its Node requirement is `^22.22.2 || ^24.15.0 || >=26.0.0`; local
+execution uses Node 24.22.0 and npm 11.19.1. README development requirements now
+match that constraint. Runtime dependencies, manifest and minimum version are
+unchanged. The initial offline install found no cached package, then a normal
+registry install succeeded without scripts; no accounts or paid services were used.
+
+Final `npm run qa` passes **109/109 tests** (17 existing plus 92 drag-intent cases),
+zero-warning lint, TypeScript, production build and package checks. One final
+`npm run test:integration` passes **12/12** against unchanged sibling Pinit
+`0aa0c84cdd2480d8ddb45a99d59d570ba32d69d5`. `main.js` was rebuilt from the candidate
+source; JSDOM is absent from the production bundle. `git diff --check` passes.
+No push, tag, release or submission was performed. These are local candidate
+checks; all existing live sorting, drag, popout, recovery/link and minimum-version
+gates remain open in their existing records.

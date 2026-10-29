@@ -8,7 +8,7 @@ Requires Obsidian **1.7.2 or newer** and the core **Files** plugin. Dragging nee
 
 This repository contains a local submission candidate, not a published community release. To try it in a test vault:
 
-1. Run `npm ci` and `npm run qa` in this repository (Node.js 22.13+ or 24 recommended for development).
+1. Run `npm ci` and `npm run qa` in this repository. Development is tested on Node.js 24.22.0; the locked DOM-test dependency requires Node `^22.22.2 || ^24.15.0 || >=26.0.0`.
 2. Create `<vault>/<config-dir>/plugins/file-placer/`. The config directory is normally `.obsidian`.
 3. Copy `main.js`, `manifest.json`, and `styles.css` into that folder.
 4. Reload Obsidian and enable **File Placer** under **Settings → Community plugins**.
@@ -24,6 +24,10 @@ This repository contains a local submission candidate, not a published community
 - Pinit to Top or Bottom pins take precedence over manual placement. With both current local candidates installed, disabling Pinit immediately restores the placed order; re-enabling it restores saved pins. Install both updated candidates for this cleanup fix; older Pinit versions still use the settings compatibility fallback.
 
 A move never overwrites another file with the same name. A folder cannot move inside itself. The plugin claims only drops with a valid preview; other drops use Obsidian's normal behavior.
+
+A preview belongs to the current ordered source selection, represented target and destination. Changing a source or target path/identity, reusing a row, changing its applicable folder placement, or ending the drag invalidates that preview. A changed selection or target needs a fresh 700 ms hold before offering merge or move-into-folder again. Placement keeps the direction shown by its line; waiting without a new held preview does not turn the drop into a merge.
+
+At drop, File Placer rechecks the preview and current move conflicts before claiming the event. A stale preview clears without dispatching a File Placer merge, move or placement, even with merge confirmation disabled. File Placer leaves that drop unclaimed for the core host; this does **not** promise that Obsidian will do nothing. An already default-prevented drop is left prevented and dispatches no File Placer action. Missing drag-manager state is rejected rather than guessed. Live explorer event ordering, including when the host clears its drag state, remains unverified in [docs/REVIEW.md](docs/REVIEW.md#drop-intent-repair--2026-10-29).
 
 ## Merge notes
 
@@ -63,7 +67,7 @@ Colors can be overridden with a CSS snippet using `--file-placer-hover` and `--f
 
 - `npm run dev`: rebuild while editing.
 - `npm run lint`: official Obsidian ESLint rules and TypeScript-aware checks.
-- `npm test`: merge preservation, conflict/failure handling, frontmatter, ordering, and settings regressions.
+- `npm test`: merge preservation, conflict/failure handling, frontmatter, ordering, settings and actual-source drag-intent regressions. Drag tests use native JSDOM events with controlled time and Obsidian API doubles; JSDOM is development-only.
 - `npm run test:integration`: tests the actual File Placer and Pinit source together in both load orders, disabling either plugin and re-enabling it. Requires the Pinit checkout at `../obsidian-pinit-to-top-or-bottom` (or set `PINIT_SOURCE` to its `src/main.ts`). This optional suite uses an explorer test double, not a live Obsidian window; standalone QA needs no sibling checkout.
 - `npm run build`: strict TypeScript check and production bundle.
 - `npm run qa`: all checks plus manifest/package/version and artifact validation.

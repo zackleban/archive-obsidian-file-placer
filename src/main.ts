@@ -19,10 +19,24 @@ const HOLD_MS = 700;
 // Moves smaller than this don't count, so a shaky hand doesn't flip the line.
 const STILL_PX = 3;
 
-type Plan =
+interface FileIdentity {
+	file: TAbstractFile;
+	path: string;
+}
+
+interface DragIntent {
+	row: HTMLElement;
+	owner: HTMLElement;
+	files: FileIdentity[];
+	target: FileIdentity;
+	parent: FileIdentity;
+	openFolder: boolean;
+}
+
+type Plan = { intent: DragIntent } & (
 	| { kind: "place"; row: HTMLElement; side: Direction; files: TAbstractFile[]; folder: TFolder; anchor: TAbstractFile | null; after: boolean }
 	| { kind: "into"; row: HTMLElement; files: TAbstractFile[]; folder: TFolder }
-	| { kind: "merge"; row: HTMLElement; source: TFile; target: TFile };
+	| { kind: "merge"; row: HTMLElement; source: TFile; target: TFile });
 
 interface FilePlacerSettings {
 	// Folder path ("/" for the vault root) to its children's names, in the order they were placed.
@@ -78,8 +92,8 @@ export default class FilePlacerPlugin extends Plugin {
 	private watched = new Map<HTMLElement, Component>();
 	private plan: Plan | null = null;
 	private shownEl: HTMLElement | null = null;
-	// The mouse during a drag: where it last moved, when, which way, and the row it is over.
-	private mouse = { x: NaN, y: NaN, at: 0, direction: "down" as Direction, row: null as HTMLElement | null };
+	// Hold time belongs to a represented intent, not a reusable row node.
+	private mouse = { x: NaN, y: NaN, at: 0, direction: "down" as Direction, intent: null as DragIntent | null };
 
 	async onload() {
 		await this.loadSettings();
@@ -240,8 +254,8 @@ export default class FilePlacerPlugin extends Plugin {
 		this.forEachExplorer((view) => view.requestSort());
 	}
 
-	// Listens in the capture phase, so it runs before the file explorer's own drop handling,
-	// which skips any drag event whose default was already prevented.
+	// Capture and preventDefault coordinate claimed drops with the core explorer.
+	// Actual host listener/drag-manager ordering remains a live check in docs/REVIEW.md.
 	private watchExplorers() {
 		const live = new Set<HTMLElement>();
 		for (const leaf of this.app.workspace.getLeavesOfType(FILE_EXPLORER)) {
@@ -251,7 +265,10 @@ export default class FilePlacerPlugin extends Plugin {
 			if (this.watched.has(el)) continue;
 			const component = this.addChild(new Component());
 			this.watched.set(el, component);
-			component.registerDomEvent(el, "dragstart", (evt) => this.resetMouse(evt.clientX, evt.clientY), true);
+			component.registerDomEvent(el, "dragstart", (evt) => {
+				this.endDrag();
+				this.resetMouse(evt.clientX, evt.clientY);
+			}, true);
 			component.registerDomEvent(el.doc, "dragend", () => this.endDrag(), true);
 			component.registerDomEvent(el, "dragenter", (evt) => this.onDragOver(evt), true);
 			component.registerDomEvent(el, "dragover", (evt) => this.onDragOver(evt), true);
@@ -287,7 +304,10 @@ export default class FilePlacerPlugin extends Plugin {
 	}
 
 	private onDragOver(evt: DragEvent) {
-		if (evt.defaultPrevented || this.unsupported || !this.unpatch) return;
+		if (evt.defaultPrevented || this.unloaded || this.unsupported || !this.unpatch) {
+			this.endDrag();
+			return;
+		}
 		const plan = this.planFor(evt);
 		this.show(plan);
 		if (!plan) {
@@ -304,7 +324,7 @@ export default class FilePlacerPlugin extends Plugin {
 	}
 
 	private onDrop(evt: DragEvent) {
-		const plan = !evt.defaultPrevented && this.rowAt(evt) === this.plan?.row ? this.plan : null;
+		const plan = !evt.defaultPrevented && this.plan && this.isCurrent(this.plan, evt) ? this.plan : null;
 		this.endDrag();
 		if (!plan) return;
 		evt.preventDefault();
@@ -314,23 +334,64 @@ export default class FilePlacerPlugin extends Plugin {
 	}
 
 	private planFor(evt: DragEvent): Plan | null {
+		const intent = this.intentFor(evt);
+		if (!intent) return null;
+		const held = this.track(evt, intent);
+		return this.operationFor(intent, held, this.mouse.direction);
+	}
+
+	// Snapshot mutable paths and the selection array. Also require the row to belong
+	// to a currently watched, live explorer (including detached-window documents).
+	private intentFor(evt: DragEvent): DragIntent | null {
+		if (this.unloaded || this.unsupported || !this.unpatch) return null;
 		const files = this.draggedFiles();
 		const row = this.rowAt(evt);
-		if (!files || !row) return null;
+		if (!files || !row?.isConnected) return null;
+		const owner = this.app.workspace.getLeavesOfType(FILE_EXPLORER)
+			.find((leaf) => !leaf.isDeferred && this.watched.has(leaf.view.containerEl) && leaf.view.containerEl.contains(row))?.view.containerEl;
+		if (!owner) return null;
+		const current = (file: TAbstractFile) => this.app.vault.getAbstractFileByPath(file.path) === file;
 		const file = this.app.vault.getAbstractFileByPath(row.dataset.path ?? "");
-		if (!file || !file.parent || files.includes(file)) return null;
-		const held = this.track(evt, row);
+		if (!file?.parent || !current(file.parent) || files.includes(file) || !files.every(current)) return null;
+		const identity = (file: TAbstractFile): FileIdentity => ({ file, path: file.path });
+		return {
+			row, owner, files: files.map(identity), target: identity(file), parent: identity(file.parent),
+			openFolder: file instanceof TFolder && file.children.length > 0 && !row.parentElement?.hasClass("is-collapsed"),
+		};
+	}
 
-		if (held && files.length === 1 && isNote(files[0]) && isNote(file)) return { kind: "merge", row, source: files[0], target: file };
-		if (held && file instanceof TFolder && this.canHold(files, file)) return { kind: "into", row, files, folder: file };
+	private sameIntent(a: DragIntent | null, b: DragIntent): boolean {
+		const same = (a: FileIdentity, b: FileIdentity) => a.file === b.file && a.path === b.path;
+		return !!a && a.row === b.row && a.owner === b.owner && a.openFolder === b.openFolder &&
+			same(a.target, b.target) && same(a.parent, b.parent) && a.files.length === b.files.length &&
+			a.files.every((file, i) => same(file, b.files[i]));
+	}
 
-		const side = this.mouse.direction;
+	private isCurrent(plan: Plan, evt: DragEvent): boolean {
+		const intent = this.intentFor(evt);
+		if (!intent || !this.sameIntent(plan.intent, intent)) return false;
+		// Recheck eligibility/destination using the displayed side and held action.
+		// Do not advance the hold clock or turn an obsolete preview into a new action.
+		const current = this.operationFor(intent, plan.kind !== "place", plan.kind === "place" ? plan.side : this.mouse.direction);
+		if (!current || current.kind !== plan.kind) return false;
+		return plan.kind !== "place" || (current.kind === "place" && current.folder === plan.folder &&
+			current.anchor === plan.anchor && current.after === plan.after);
+	}
+
+	private operationFor(intent: DragIntent, held: boolean, side: Direction): Plan | null {
+		const { row } = intent;
+		const file = intent.target.file;
+		const files = intent.files.map(({ file }) => file);
+
+		if (held && files.length === 1 && isNote(files[0]) && isNote(file)) return { kind: "merge", intent, row, source: files[0], target: file };
+		if (held && file instanceof TFolder && this.canHold(files, file)) return { kind: "into", intent, row, files, folder: file };
+
 		// Under an open folder's name is the top of what's inside it.
-		if (side === "down" && file instanceof TFolder && file.children.length > 0 && !row.parentElement?.hasClass("is-collapsed")) {
-			return this.canHold(files, file) ? { kind: "place", row, side, files, folder: file, anchor: null, after: false } : null;
+		if (side === "down" && file instanceof TFolder && intent.openFolder) {
+			return this.canHold(files, file) ? { kind: "place", intent, row, side, files, folder: file, anchor: null, after: false } : null;
 		}
-		const folder = file.parent;
-		return this.canHold(files, folder) ? { kind: "place", row, side, files, folder, anchor: file, after: side === "down" } : null;
+		const folder = intent.parent.file;
+		return folder instanceof TFolder && this.canHold(files, folder) ? { kind: "place", intent, row, side, files, folder, anchor: file, after: side === "down" } : null;
 	}
 
 	private rowAt(evt: DragEvent): HTMLElement | null {
@@ -339,8 +400,8 @@ export default class FilePlacerPlugin extends Plugin {
 	}
 
 	// Follows the mouse: the line sits on top of the row while it moves up and under it while it
-	// moves down. Returns true once the mouse has held still over the same row for HOLD_MS.
-	private track(evt: DragEvent, row: HTMLElement): boolean {
+	// moves down. Returns true after holding still over the same intent for HOLD_MS.
+	private track(evt: DragEvent, intent: DragIntent): boolean {
 		if (Number.isNaN(this.mouse.x)) this.resetMouse(evt.clientX, evt.clientY);
 		const mouse = this.mouse;
 		const now = Date.now();
@@ -348,12 +409,12 @@ export default class FilePlacerPlugin extends Plugin {
 		const dy = evt.clientY - mouse.y;
 		if (Math.abs(dy) >= STILL_PX) mouse.direction = dy < 0 ? "up" : "down";
 		if (Math.abs(dx) >= STILL_PX || Math.abs(dy) >= STILL_PX) Object.assign(mouse, { x: evt.clientX, y: evt.clientY, at: now });
-		if (row !== mouse.row) Object.assign(mouse, { row, at: now });
+		if (!this.sameIntent(mouse.intent, intent)) Object.assign(mouse, { intent, at: now });
 		return now - mouse.at >= HOLD_MS;
 	}
 
 	private resetMouse(x: number, y: number) {
-		this.mouse = { x, y, at: Date.now(), direction: "down", row: null };
+		this.mouse = { x, y, at: Date.now(), direction: "down", intent: null };
 	}
 
 	private endDrag() {
@@ -366,7 +427,11 @@ export default class FilePlacerPlugin extends Plugin {
 		const el = plan?.row ?? null;
 		if (this.shownEl && this.shownEl !== el) this.shownEl.removeClasses(SHOWN_CLASSES);
 		this.shownEl = el;
-		if (!plan) return;
+		if (!plan) {
+			this.mouse.x = NaN;
+			this.mouse.intent = null;
+			return;
+		}
 		const wanted = [HOVER_CLASS, plan.kind === "place" ? LINE_CLASS[plan.side] : INTO_CLASS];
 		for (const cls of SHOWN_CLASSES) plan.row.toggleClass(cls, wanted.includes(cls));
 	}
