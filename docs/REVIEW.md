@@ -1,5 +1,7 @@
 # Local review checklist
 
+Latest local checkpoint: [Four-fix quality REVIEW — 2026-10-29](#four-fix-quality-review--2026-10-29). Earlier entries below remain dated history.
+
 Prepared on 2026-10-28. Nothing was submitted, tagged, pushed, or released.
 
 ## Automated checks
@@ -312,3 +314,15 @@ source; JSDOM is absent from the production bundle. `git diff --check` passes.
 No push, tag, release or submission was performed. These are local candidate
 checks; all existing live sorting, drag, popout, recovery/link and minimum-version
 gates remain open in their existing records.
+
+## Four-fix quality REVIEW — 2026-10-29
+
+agent decision 2026-10-28: accept this bounded local REVIEW only after independent source/contract review and fresh checks; preserve live/community gates because synthetic hosts and local packaging cannot establish them.
+
+Reviewed ordered source identities, current target/destination/pane membership, hold reset, immediate pre-dispatch checks, default prevention and highlight cleanup. Actual synthetic merge/move/place composition and preserved Pinit lifecycle/sorting agree with the accepted contract. No new defect found. Rejected previews dispatch no File Placer action and stay unclaimed; core behavior and post-dispatch/modal races remain outside this contract. The sole shared suite stays at tests/integration/pinit.test.mjs; a fresh npm run test:integration passes 12/12 against sibling Pinit 0aa0c84 (implementation unchanged).
+
+Fresh `npm run qa` passed **109/109 tests**, TypeScript, production build and package checks. Configured official lint passed with zero warnings. This QA ran once for this REVIEW; standalone results across all seven are **382 tests**, plus **12 shared cases**. The preceding 365-plus-12 figure was an arithmetic intake expectation; the 17 new graph cases account for the difference.
+
+README installation/development requirements, manifest/package/lock/root-lock/version-map agreement, licenses/notices, dependency classification and production artifacts were checked against actual configuration. Current official [plugin guidelines](https://docs.obsidian.md/Plugins/Releasing/Plugin%20guidelines), [developer policies](https://docs.obsidian.md/community-directory/developer-policies), [submission requirements](https://docs.obsidian.md/community-directory/submission-requirements-for-plugins), [manifest schema](https://docs.obsidian.md/Reference/Manifest) and [submission instructions](https://docs.obsidian.md/Plugins/Releasing/Submit%20your%20plugin) were rechecked. Declared minimums remain unverified runtime gates; local consistency is not hosted-scanner or community approval.
+
+Existing live checklists and recovery protocols above remain their sole homes; no app-access retry, personal-vault installation, push, tag, release or submission occurred. Production assets are byte-identical to the starting candidate.
