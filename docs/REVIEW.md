@@ -22,6 +22,11 @@ References checked:
 
 ## Real-app smoke checks still to run
 
+Shared sorting evidence and resumption steps: [RUNTIME-SORTING.md](RUNTIME-SORTING.md).
+The 2026-10-28 live attempt is **blocked**, not passed: installed bundle metadata
+reports 1.14.5, but app launch/control was unavailable. Every live item below stays
+open, including minimum-version and mobile coverage.
+
 - Enable with Files open, closed, and deferred; confirm the explorer still works when disabled.
 - Place files before/after another item, into an expanded/collapsed folder, and at the vault root. Reload and check persistence.
 - Try a name conflict, a folder dragged into itself, and a multiple-file drag. Nothing should be overwritten.
@@ -37,3 +42,11 @@ Agent decision, 2026-10-28: review the seven completed local preparations before
 Fresh `npm run qa` passed: 14 tests, TypeScript, production build, and package checks. Fixed a reproduced interaction failure: File Placer kept applying saved Pinit pins during Pinit teardown while its registry entry remained. Pinit now exposes active pins, and File Placer uses that state. Both updated local candidates are needed for the fix. `npm run test:integration` additionally passes four cases against the actual sibling Pinit source: both load orders, disabling either plugin, re-enabling it, and restoring ordinary order after both unload. Two of these cases failed before the fix. The suite lives only in this repository; standalone QA does not require Pinit.
 
 This is automated local evidence, not a live Obsidian or minimum-version certification. The real-app checklist above remains open. Nothing was installed into the personal vault, pushed, released, or submitted.
+
+## Runtime follow-up — 2026-10-28
+
+Fresh `npm run qa` (14 tests) and `npm run test:integration` (four host-double
+cases) pass; rebuilding leaves tracked assets unchanged. No runtime defect was
+reproduced and no implementation changed. See the shared record above for exact
+access failures and all still-blocked desktop scenarios. This follow-up does not
+complete the live sorting deliverable.
