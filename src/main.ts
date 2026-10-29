@@ -89,6 +89,7 @@ export default class FilePlacerPlugin extends Plugin {
 	private unsupported = false;
 	private merging = false;
 	private unloaded = false;
+	private mergePrompts = new Set<MergeModal>();
 	private watched = new Map<HTMLElement, Component>();
 	private plan: Plan | null = null;
 	private shownEl: HTMLElement | null = null;
@@ -117,6 +118,8 @@ export default class FilePlacerPlugin extends Plugin {
 
 	onunload() {
 		this.unloaded = true;
+		for (const modal of this.mergePrompts) modal.close();
+		this.mergePrompts.clear();
 		this.endDrag();
 		for (const component of this.watched.values()) this.removeChild(component);
 		this.watched.clear();
@@ -472,9 +475,32 @@ export default class FilePlacerPlugin extends Plugin {
 	}
 
 	private askToMerge(source: TFile, target: TFile) {
-		const merge = () => void this.safely(() => this.merge(source, target));
-		if (this.settings.askBeforeMerge) new MergeModal(this.app, source, target, this.mergedFolder(), merge).open();
-		else merge();
+		if (this.unloaded) return;
+		if (!this.settings.askBeforeMerge) {
+			void this.safely(() => this.merge(source, target));
+			return;
+		}
+		// Paths and destination belong to what this prompt displays, not mutable
+		// TFile objects/settings. Contents are deliberately read only on confirmation.
+		const sourcePath = source.path;
+		const targetPath = target.path;
+		const folder = this.mergedFolder();
+		const merge = () => void this.safely(() => {
+			if (this.unloaded) return Promise.resolve();
+			let sameFolder = false;
+			try { sameFolder = this.mergedFolder() === folder; } catch { /* Invalid settings also retire this intent. */ }
+			if (!sameFolder || source.path !== sourcePath || target.path !== targetPath ||
+				this.app.vault.getAbstractFileByPath(sourcePath) !== source ||
+				this.app.vault.getAbstractFileByPath(targetPath) !== target) {
+				throw new Error("The merge confirmation is out of date. Choose the notes again.");
+			}
+			// No await between validation and dispatch. The merge lock/content checks
+			// still apply; this is not a lock across later filesystem operations.
+			return this.merge(source, target);
+		});
+		const modal = new MergeModal(this.app, sourcePath, targetPath, folder, merge, () => this.mergePrompts.delete(modal));
+		this.mergePrompts.add(modal);
+		modal.open();
 	}
 
 	private async ensureFolder(path: string): Promise<TFolder> {
@@ -556,14 +582,19 @@ export default class FilePlacerPlugin extends Plugin {
 }
 
 class MergeModal extends Modal {
-	constructor(app: App, private source: TFile, private target: TFile, private folder: string, private onMerge: () => void) {
+	private pending = true;
+
+	constructor(app: App, private sourcePath: string, private targetPath: string, private folder: string,
+		private onMerge: () => void, private onDismiss: () => void) {
 		super(app);
 	}
 
 	onOpen() {
-		const from = this.source.basename;
-		const into = this.target.basename;
+		const from = nameOf(this.sourcePath).replace(/\.md$/, "");
+		const into = nameOf(this.targetPath).replace(/\.md$/, "");
 		this.titleEl.setText(`Merge "${from}" into "${into}"?`);
+		this.contentEl.createEl("p", { text: `Source: ${this.sourcePath}` });
+		this.contentEl.createEl("p", { text: `Target: ${this.targetPath}` });
 		this.contentEl.createEl("p", {
 			text: `"${into}" stays where it is and gets all of "${from}" added under it, with its headings one level down.`,
 		});
@@ -577,6 +608,8 @@ class MergeModal extends Modal {
 					.setButtonText("Merge")
 					.setCta()
 					.onClick(() => {
+						if (!this.pending) return;
+						this.pending = false;
 						this.close();
 						this.onMerge();
 					})
@@ -584,6 +617,8 @@ class MergeModal extends Modal {
 	}
 
 	onClose() {
+		this.pending = false;
+		this.onDismiss();
 		this.contentEl.empty();
 	}
 }

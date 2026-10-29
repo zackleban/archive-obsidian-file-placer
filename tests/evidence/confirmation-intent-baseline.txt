@@ -1,0 +1,1205 @@
+Baseline: 02166ce02ca893d533b547743a87799c23b8ef55, before production edits
+Command: node --test tests/confirmation-intent.test.mjs
+Exit: 1; 25 tests, 5 pass, 20 fail. Trailing whitespace normalized.
+
+✖ single prompt: source renamed rejects before dispatch or writes (7.319167ms)
+✖ single prompt: source moved with same basename rejects before dispatch or writes (1.241917ms)
+✖ single prompt: target renamed rejects before dispatch or writes (0.742042ms)
+✖ single prompt: target moved with same basename rejects before dispatch or writes (0.634541ms)
+✖ single prompt: source deleted rejects before dispatch or writes (0.871958ms)
+✖ single prompt: target deleted rejects before dispatch or writes (2.198292ms)
+✖ single prompt: source replaced at same path rejects before dispatch or writes (0.647666ms)
+✖ single prompt: target replaced at same path rejects before dispatch or writes (0.541042ms)
+✖ single prompt: originals folder changed rejects before dispatch or writes (0.566958ms)
+✖ single prompt: originals folder made invalid rejects before dispatch or writes (0.5725ms)
+✔ unchanged native confirmation preserves exact snapshots, body, properties and archive (0.50625ms)
+✖ prompt displays full immutable source and target paths (1.728334ms)
+✖ cancel: retained button callback cannot dispatch or write (0.528541ms)
+✖ external close: retained button callback cannot dispatch or write (0.431792ms)
+✖ unload: retained button callback cannot dispatch or write (0.406084ms)
+✖ consumed confirmation stays single-use after the first merge completes (0.58275ms)
+✖ consumed confirmation stays single-use while its merge awaits reads (0.463708ms)
+✖ retained second prompt cannot merge an already archived source again (synthetic coexistence) (0.572959ms)
+✖ fresh prompt after rejected destination change merges into the newly displayed folder (0.388542ms)
+✖ fresh prompt after rejected source move uses current path and keeps exact contents (0.407917ms)
+✔ normalized-equivalent destination setting still accepts unchanged displayed intent (0.3505ms)
+✔ contents edited while prompt is open are read at confirmation (0.350417ms)
+✔ confirmation-disabled behavior still runs actual merge without a modal (0.239916ms)
+✖ unload rejects a late request even with confirmation disabled (0.261542ms)
+✔ separate valid prompts retain the existing merge lock (0.571666ms)
+ℹ tests 25
+ℹ suites 0
+ℹ pass 5
+ℹ fail 20
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 252.001375
+
+✖ failing tests:
+
+test at tests/confirmation-intent.test.mjs:127:3
+✖ single prompt: source renamed rejects before dispatch or writes (7.319167ms)
+  AssertionError [ERR_ASSERTION]: no folder, snapshot, target, properties or archive operation
+  + actual - expected
+
+  + [
+  +   [
+  +     'mkdir',
+  +     'Merged originals'
+  +   ],
+  +   [
+  +     'create',
+  +     'Merged originals/Target (before merge).md.txt',
+  +     '---\n{"status":"target","tags":["shared","target"]}\n---\ntarget line'
+  +   ],
+  +   [
+  +     'create',
+  +     'Merged originals/Renamed (before merge).md.txt',
+  +     '---\r\n' +
+  +       '{"status":"source","tags":["shared","source"]}\r\n' +
+  +       '---\r\n' +
+  +       '# Source\r\n' +
+  +       'repeat\r\n' +
+  +       'repeat\r\n'
+  +   ],
+  +   [
+  +     'process',
+  +     'Into/Target.md'
+  +   ],
+  +   [
+  +     'frontmatter',
+  +     'Into/Target.md'
+  +   ],
+  +   [
+  +     'rename',
+  +     'From/Renamed.md',
+  +     'Merged originals/Renamed.md'
+  +   ]
+  + ]
+  - []
+
+      at TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/confirmation-intent.test.mjs:134:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [ [ 'mkdir', 'Merged originals' ], [ 'create', 'Merged originals/Target (before merge).md.txt', '---\n{"status":"target","tags":["shared","target"]}\n---\ntarget line' ], [ 'create', 'Merged originals/Renamed (before merge).md.txt', '---\r\n{"status":"source","tags":["shared","source"]}\r\n---\r\n# Source\r\nrepeat\r\nrepeat\r\n' ], [ 'process', 'Into/Target.md' ], [ 'frontmatter', 'Into/Target.md' ], [ 'rename', 'From/Renamed.md', 'Merged originals/Renamed.md' ] ],
+    expected: [],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests/confirmation-intent.test.mjs:127:3
+✖ single prompt: source moved with same basename rejects before dispatch or writes (1.241917ms)
+  AssertionError [ERR_ASSERTION]: no folder, snapshot, target, properties or archive operation
+  + actual - expected
+
+  + [
+  +   [
+  +     'mkdir',
+  +     'Merged originals'
+  +   ],
+  +   [
+  +     'create',
+  +     'Merged originals/Target (before merge).md.txt',
+  +     '---\n{"status":"target","tags":["shared","target"]}\n---\ntarget line'
+  +   ],
+  +   [
+  +     'create',
+  +     'Merged originals/Source (before merge).md.txt',
+  +     '---\r\n' +
+  +       '{"status":"source","tags":["shared","source"]}\r\n' +
+  +       '---\r\n' +
+  +       '# Source\r\n' +
+  +       'repeat\r\n' +
+  +       'repeat\r\n'
+  +   ],
+  +   [
+  +     'process',
+  +     'Into/Target.md'
+  +   ],
+  +   [
+  +     'frontmatter',
+  +     'Into/Target.md'
+  +   ],
+  +   [
+  +     'rename',
+  +     'Elsewhere/Source.md',
+  +     'Merged originals/Source.md'
+  +   ]
+  + ]
+  - []
+
+      at TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/confirmation-intent.test.mjs:134:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [ [ 'mkdir', 'Merged originals' ], [ 'create', 'Merged originals/Target (before merge).md.txt', '---\n{"status":"target","tags":["shared","target"]}\n---\ntarget line' ], [ 'create', 'Merged originals/Source (before merge).md.txt', '---\r\n{"status":"source","tags":["shared","source"]}\r\n---\r\n# Source\r\nrepeat\r\nrepeat\r\n' ], [ 'process', 'Into/Target.md' ], [ 'frontmatter', 'Into/Target.md' ], [ 'rename', 'Elsewhere/Source.md', 'Merged originals/Source.md' ] ],
+    expected: [],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests/confirmation-intent.test.mjs:127:3
+✖ single prompt: target renamed rejects before dispatch or writes (0.742042ms)
+  AssertionError [ERR_ASSERTION]: no folder, snapshot, target, properties or archive operation
+  + actual - expected
+
+  + [
+  +   [
+  +     'mkdir',
+  +     'Merged originals'
+  +   ],
+  +   [
+  +     'create',
+  +     'Merged originals/Renamed (before merge).md.txt',
+  +     '---\n{"status":"target","tags":["shared","target"]}\n---\ntarget line'
+  +   ],
+  +   [
+  +     'create',
+  +     'Merged originals/Source (before merge).md.txt',
+  +     '---\r\n' +
+  +       '{"status":"source","tags":["shared","source"]}\r\n' +
+  +       '---\r\n' +
+  +       '# Source\r\n' +
+  +       'repeat\r\n' +
+  +       'repeat\r\n'
+  +   ],
+  +   [
+  +     'process',
+  +     'Into/Renamed.md'
+  +   ],
+  +   [
+  +     'frontmatter',
+  +     'Into/Renamed.md'
+  +   ],
+  +   [
+  +     'rename',
+  +     'From/Source.md',
+  +     'Merged originals/Source.md'
+  +   ]
+  + ]
+  - []
+
+      at TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/confirmation-intent.test.mjs:134:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [ [ 'mkdir', 'Merged originals' ], [ 'create', 'Merged originals/Renamed (before merge).md.txt', '---\n{"status":"target","tags":["shared","target"]}\n---\ntarget line' ], [ 'create', 'Merged originals/Source (before merge).md.txt', '---\r\n{"status":"source","tags":["shared","source"]}\r\n---\r\n# Source\r\nrepeat\r\nrepeat\r\n' ], [ 'process', 'Into/Renamed.md' ], [ 'frontmatter', 'Into/Renamed.md' ], [ 'rename', 'From/Source.md', 'Merged originals/Source.md' ] ],
+    expected: [],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests/confirmation-intent.test.mjs:127:3
+✖ single prompt: target moved with same basename rejects before dispatch or writes (0.634541ms)
+  AssertionError [ERR_ASSERTION]: no folder, snapshot, target, properties or archive operation
+  + actual - expected
+
+  + [
+  +   [
+  +     'mkdir',
+  +     'Merged originals'
+  +   ],
+  +   [
+  +     'create',
+  +     'Merged originals/Target (before merge).md.txt',
+  +     '---\n{"status":"target","tags":["shared","target"]}\n---\ntarget line'
+  +   ],
+  +   [
+  +     'create',
+  +     'Merged originals/Source (before merge).md.txt',
+  +     '---\r\n' +
+  +       '{"status":"source","tags":["shared","source"]}\r\n' +
+  +       '---\r\n' +
+  +       '# Source\r\n' +
+  +       'repeat\r\n' +
+  +       'repeat\r\n'
+  +   ],
+  +   [
+  +     'process',
+  +     'Elsewhere/Target.md'
+  +   ],
+  +   [
+  +     'frontmatter',
+  +     'Elsewhere/Target.md'
+  +   ],
+  +   [
+  +     'rename',
+  +     'From/Source.md',
+  +     'Merged originals/Source.md'
+  +   ]
+  + ]
+  - []
+
+      at TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/confirmation-intent.test.mjs:134:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [ [ 'mkdir', 'Merged originals' ], [ 'create', 'Merged originals/Target (before merge).md.txt', '---\n{"status":"target","tags":["shared","target"]}\n---\ntarget line' ], [ 'create', 'Merged originals/Source (before merge).md.txt', '---\r\n{"status":"source","tags":["shared","source"]}\r\n---\r\n# Source\r\nrepeat\r\nrepeat\r\n' ], [ 'process', 'Elsewhere/Target.md' ], [ 'frontmatter', 'Elsewhere/Target.md' ], [ 'rename', 'From/Source.md', 'Merged originals/Source.md' ] ],
+    expected: [],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests/confirmation-intent.test.mjs:127:3
+✖ single prompt: source deleted rejects before dispatch or writes (0.871958ms)
+  AssertionError [ERR_ASSERTION]: rejected before merge dispatch
+  + actual - expected
+
+  + [
+  +   [
+  +     <ref *4> TFile {
+  +       parent: <ref *1> TFolder {
+  +         children: [
+  +           [Circular *4]
+  +         ],
+  +         parent: <ref *2> TFolder {
+  +           children: [
+  +             [Circular *1],
+  +             <ref *3> TFolder {
+  +               children: [
+  +                 TFile {
+  +                   parent: [Circular *3],
+  +                   path: 'Into/Target.md'
+  +                 }
+  +               ],
+  +               parent: [Circular *2],
+  +               path: 'Into'
+  +             },
+  +             TFolder {
+  +               children: [],
+  +               parent: [Circular *2],
+  +               path: 'Elsewhere'
+  +             }
+  +           ],
+  +           parent: null,
+  +           path: '/'
+  +         },
+  +         path: 'From'
+  +       },
+  +       path: 'From/Source.md'
+  +     },
+  +     <ref *5> TFile {
+  +       parent: <ref *3> TFolder {
+  +         children: [
+  +           [Circular *5]
+  +         ],
+  +         parent: <ref *2> TFolder {
+  +           children: [
+  +             <ref *1> TFolder {
+  +               children: [
+  +                 <ref *4> TFile {
+  +                   parent: [Circular *1],
+  +                   path: 'From/Source.md'
+  +                 }
+  +               ],
+  +               parent: [Circular *2],
+  +               path: 'From'
+  +             },
+  +             [Circular *3],
+  +             TFolder {
+  +               children: [],
+  +               parent: [Circular *2],
+  +               path: 'Elsewhere'
+  +             }
+  +           ],
+  +           parent: null,
+  +           path: '/'
+  +         },
+  +         path: 'Into'
+  +       },
+  +       path: 'Into/Target.md'
+  +     }
+  +   ]
+  + ]
+  - []
+
+      at TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/confirmation-intent.test.mjs:136:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [ [ [Object], [Object] ] ],
+    expected: [],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests/confirmation-intent.test.mjs:127:3
+✖ single prompt: target deleted rejects before dispatch or writes (2.198292ms)
+  AssertionError [ERR_ASSERTION]: rejected before merge dispatch
+  + actual - expected
+
+  + [
+  +   [
+  +     <ref *4> TFile {
+  +       parent: <ref *1> TFolder {
+  +         children: [
+  +           [Circular *4]
+  +         ],
+  +         parent: <ref *2> TFolder {
+  +           children: [
+  +             [Circular *1],
+  +             <ref *3> TFolder {
+  +               children: [
+  +                 TFile {
+  +                   parent: [Circular *3],
+  +                   path: 'Into/Target.md'
+  +                 }
+  +               ],
+  +               parent: [Circular *2],
+  +               path: 'Into'
+  +             },
+  +             TFolder {
+  +               children: [],
+  +               parent: [Circular *2],
+  +               path: 'Elsewhere'
+  +             }
+  +           ],
+  +           parent: null,
+  +           path: '/'
+  +         },
+  +         path: 'From'
+  +       },
+  +       path: 'From/Source.md'
+  +     },
+  +     <ref *5> TFile {
+  +       parent: <ref *3> TFolder {
+  +         children: [
+  +           [Circular *5]
+  +         ],
+  +         parent: <ref *2> TFolder {
+  +           children: [
+  +             <ref *1> TFolder {
+  +               children: [
+  +                 <ref *4> TFile {
+  +                   parent: [Circular *1],
+  +                   path: 'From/Source.md'
+  +                 }
+  +               ],
+  +               parent: [Circular *2],
+  +               path: 'From'
+  +             },
+  +             [Circular *3],
+  +             TFolder {
+  +               children: [],
+  +               parent: [Circular *2],
+  +               path: 'Elsewhere'
+  +             }
+  +           ],
+  +           parent: null,
+  +           path: '/'
+  +         },
+  +         path: 'Into'
+  +       },
+  +       path: 'Into/Target.md'
+  +     }
+  +   ]
+  + ]
+  - []
+
+      at TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/confirmation-intent.test.mjs:136:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [ [ [Object], [Object] ] ],
+    expected: [],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests/confirmation-intent.test.mjs:127:3
+✖ single prompt: source replaced at same path rejects before dispatch or writes (0.647666ms)
+  AssertionError [ERR_ASSERTION]: rejected before merge dispatch
+  + actual - expected
+
+  + [
+  +   [
+  +     <ref *4> TFile {
+  +       parent: <ref *1> TFolder {
+  +         children: [
+  +           [Circular *4],
+  +           TFile {
+  +             parent: [Circular *1],
+  +             path: 'From/Source.md'
+  +           }
+  +         ],
+  +         parent: <ref *2> TFolder {
+  +           children: [
+  +             [Circular *1],
+  +             <ref *3> TFolder {
+  +               children: [
+  +                 TFile {
+  +                   parent: [Circular *3],
+  +                   path: 'Into/Target.md'
+  +                 }
+  +               ],
+  +               parent: [Circular *2],
+  +               path: 'Into'
+  +             },
+  +             TFolder {
+  +               children: [],
+  +               parent: [Circular *2],
+  +               path: 'Elsewhere'
+  +             }
+  +           ],
+  +           parent: null,
+  +           path: '/'
+  +         },
+  +         path: 'From'
+  +       },
+  +       path: 'From/Source.md'
+  +     },
+  +     <ref *5> TFile {
+  +       parent: <ref *3> TFolder {
+  +         children: [
+  +           [Circular *5]
+  +         ],
+  +         parent: <ref *2> TFolder {
+  +           children: [
+  +             <ref *1> TFolder {
+  +               children: [
+  +                 <ref *4> TFile {
+  +                   parent: [Circular *1],
+  +                   path: 'From/Source.md'
+  +                 },
+  +                 TFile {
+  +                   parent: [Circular *1],
+  +                   path: 'From/Source.md'
+  +                 }
+  +               ],
+  +               parent: [Circular *2],
+  +               path: 'From'
+  +             },
+  +             [Circular *3],
+  +             TFolder {
+  +               children: [],
+  +               parent: [Circular *2],
+  +               path: 'Elsewhere'
+  +             }
+  +           ],
+  +           parent: null,
+  +           path: '/'
+  +         },
+  +         path: 'Into'
+  +       },
+  +       path: 'Into/Target.md'
+  +     }
+  +   ]
+  + ]
+  - []
+
+      at TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/confirmation-intent.test.mjs:136:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [ [ [Object], [Object] ] ],
+    expected: [],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests/confirmation-intent.test.mjs:127:3
+✖ single prompt: target replaced at same path rejects before dispatch or writes (0.541042ms)
+  AssertionError [ERR_ASSERTION]: rejected before merge dispatch
+  + actual - expected
+
+  + [
+  +   [
+  +     <ref *4> TFile {
+  +       parent: <ref *1> TFolder {
+  +         children: [
+  +           [Circular *4]
+  +         ],
+  +         parent: <ref *2> TFolder {
+  +           children: [
+  +             [Circular *1],
+  +             <ref *3> TFolder {
+  +               children: [
+  +                 TFile {
+  +                   parent: [Circular *3],
+  +                   path: 'Into/Target.md'
+  +                 },
+  +                 TFile {
+  +                   parent: [Circular *3],
+  +                   path: 'Into/Target.md'
+  +                 }
+  +               ],
+  +               parent: [Circular *2],
+  +               path: 'Into'
+  +             },
+  +             TFolder {
+  +               children: [],
+  +               parent: [Circular *2],
+  +               path: 'Elsewhere'
+  +             }
+  +           ],
+  +           parent: null,
+  +           path: '/'
+  +         },
+  +         path: 'From'
+  +       },
+  +       path: 'From/Source.md'
+  +     },
+  +     <ref *5> TFile {
+  +       parent: <ref *3> TFolder {
+  +         children: [
+  +           [Circular *5],
+  +           TFile {
+  +             parent: [Circular *3],
+  +             path: 'Into/Target.md'
+  +           }
+  +         ],
+  +         parent: <ref *2> TFolder {
+  +           children: [
+  +             <ref *1> TFolder {
+  +               children: [
+  +                 <ref *4> TFile {
+  +                   parent: [Circular *1],
+  +                   path: 'From/Source.md'
+  +                 }
+  +               ],
+  +               parent: [Circular *2],
+  +               path: 'From'
+  +             },
+  +             [Circular *3],
+  +             TFolder {
+  +               children: [],
+  +               parent: [Circular *2],
+  +               path: 'Elsewhere'
+  +             }
+  +           ],
+  +           parent: null,
+  +           path: '/'
+  +         },
+  +         path: 'Into'
+  +       },
+  +       path: 'Into/Target.md'
+  +     }
+  +   ]
+  + ]
+  - []
+
+      at TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/confirmation-intent.test.mjs:136:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [ [ [Object], [Object] ] ],
+    expected: [],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests/confirmation-intent.test.mjs:127:3
+✖ single prompt: originals folder changed rejects before dispatch or writes (0.566958ms)
+  AssertionError [ERR_ASSERTION]: no folder, snapshot, target, properties or archive operation
+  + actual - expected
+
+  + [
+  +   [
+  +     'mkdir',
+  +     'Other originals'
+  +   ],
+  +   [
+  +     'create',
+  +     'Other originals/Target (before merge).md.txt',
+  +     '---\n{"status":"target","tags":["shared","target"]}\n---\ntarget line'
+  +   ],
+  +   [
+  +     'create',
+  +     'Other originals/Source (before merge).md.txt',
+  +     '---\r\n' +
+  +       '{"status":"source","tags":["shared","source"]}\r\n' +
+  +       '---\r\n' +
+  +       '# Source\r\n' +
+  +       'repeat\r\n' +
+  +       'repeat\r\n'
+  +   ],
+  +   [
+  +     'process',
+  +     'Into/Target.md'
+  +   ],
+  +   [
+  +     'frontmatter',
+  +     'Into/Target.md'
+  +   ],
+  +   [
+  +     'rename',
+  +     'From/Source.md',
+  +     'Other originals/Source.md'
+  +   ]
+  + ]
+  - []
+
+      at TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/confirmation-intent.test.mjs:134:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [ [ 'mkdir', 'Other originals' ], [ 'create', 'Other originals/Target (before merge).md.txt', '---\n{"status":"target","tags":["shared","target"]}\n---\ntarget line' ], [ 'create', 'Other originals/Source (before merge).md.txt', '---\r\n{"status":"source","tags":["shared","source"]}\r\n---\r\n# Source\r\nrepeat\r\nrepeat\r\n' ], [ 'process', 'Into/Target.md' ], [ 'frontmatter', 'Into/Target.md' ], [ 'rename', 'From/Source.md', 'Other originals/Source.md' ] ],
+    expected: [],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests/confirmation-intent.test.mjs:127:3
+✖ single prompt: originals folder made invalid rejects before dispatch or writes (0.5725ms)
+  AssertionError [ERR_ASSERTION]: rejected before merge dispatch
+  + actual - expected
+
+  + [
+  +   [
+  +     <ref *4> TFile {
+  +       parent: <ref *1> TFolder {
+  +         children: [
+  +           [Circular *4]
+  +         ],
+  +         parent: <ref *2> TFolder {
+  +           children: [
+  +             [Circular *1],
+  +             <ref *3> TFolder {
+  +               children: [
+  +                 TFile {
+  +                   parent: [Circular *3],
+  +                   path: 'Into/Target.md'
+  +                 }
+  +               ],
+  +               parent: [Circular *2],
+  +               path: 'Into'
+  +             },
+  +             TFolder {
+  +               children: [],
+  +               parent: [Circular *2],
+  +               path: 'Elsewhere'
+  +             }
+  +           ],
+  +           parent: null,
+  +           path: '/'
+  +         },
+  +         path: 'From'
+  +       },
+  +       path: 'From/Source.md'
+  +     },
+  +     <ref *5> TFile {
+  +       parent: <ref *3> TFolder {
+  +         children: [
+  +           [Circular *5]
+  +         ],
+  +         parent: <ref *2> TFolder {
+  +           children: [
+  +             <ref *1> TFolder {
+  +               children: [
+  +                 <ref *4> TFile {
+  +                   parent: [Circular *1],
+  +                   path: 'From/Source.md'
+  +                 }
+  +               ],
+  +               parent: [Circular *2],
+  +               path: 'From'
+  +             },
+  +             [Circular *3],
+  +             TFolder {
+  +               children: [],
+  +               parent: [Circular *2],
+  +               path: 'Elsewhere'
+  +             }
+  +           ],
+  +           parent: null,
+  +           path: '/'
+  +         },
+  +         path: 'Into'
+  +       },
+  +       path: 'Into/Target.md'
+  +     }
+  +   ]
+  + ]
+  - []
+
+      at TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/confirmation-intent.test.mjs:136:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [ [ [Object], [Object] ] ],
+    expected: [],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests/confirmation-intent.test.mjs:154:1
+✖ prompt displays full immutable source and target paths (1.728334ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+
+    assert.ok(p.modal.contentEl.textContent.includes("From/Source.md"))
+
+      at TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/confirmation-intent.test.mjs:156:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/confirmation-intent.test.mjs:161:3
+✖ cancel: retained button callback cannot dispatch or write (0.528541ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+
+  + [
+  +   [
+  +     'mkdir',
+  +     'Merged originals'
+  +   ],
+  +   [
+  +     'create',
+  +     'Merged originals/Target (before merge).md.txt',
+  +     '---\n{"status":"target","tags":["shared","target"]}\n---\ntarget line'
+  +   ],
+  +   [
+  +     'create',
+  +     'Merged originals/Source (before merge).md.txt',
+  +     '---\r\n' +
+  +       '{"status":"source","tags":["shared","source"]}\r\n' +
+  +       '---\r\n' +
+  +       '# Source\r\n' +
+  +       'repeat\r\n' +
+  +       'repeat\r\n'
+  +   ],
+  +   [
+  +     'process',
+  +     'Into/Target.md'
+  +   ],
+  +   [
+  +     'frontmatter',
+  +     'Into/Target.md'
+  +   ],
+  +   [
+  +     'rename',
+  +     'From/Source.md',
+  +     'Merged originals/Source.md'
+  +   ]
+  + ]
+  - []
+
+      at TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/confirmation-intent.test.mjs:167:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ [ 'mkdir', 'Merged originals' ], [ 'create', 'Merged originals/Target (before merge).md.txt', '---\n{"status":"target","tags":["shared","target"]}\n---\ntarget line' ], [ 'create', 'Merged originals/Source (before merge).md.txt', '---\r\n{"status":"source","tags":["shared","source"]}\r\n---\r\n# Source\r\nrepeat\r\nrepeat\r\n' ], [ 'process', 'Into/Target.md' ], [ 'frontmatter', 'Into/Target.md' ], [ 'rename', 'From/Source.md', 'Merged originals/Source.md' ] ],
+    expected: [],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests/confirmation-intent.test.mjs:161:3
+✖ external close: retained button callback cannot dispatch or write (0.431792ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+
+  + [
+  +   [
+  +     'mkdir',
+  +     'Merged originals'
+  +   ],
+  +   [
+  +     'create',
+  +     'Merged originals/Target (before merge).md.txt',
+  +     '---\n{"status":"target","tags":["shared","target"]}\n---\ntarget line'
+  +   ],
+  +   [
+  +     'create',
+  +     'Merged originals/Source (before merge).md.txt',
+  +     '---\r\n' +
+  +       '{"status":"source","tags":["shared","source"]}\r\n' +
+  +       '---\r\n' +
+  +       '# Source\r\n' +
+  +       'repeat\r\n' +
+  +       'repeat\r\n'
+  +   ],
+  +   [
+  +     'process',
+  +     'Into/Target.md'
+  +   ],
+  +   [
+  +     'frontmatter',
+  +     'Into/Target.md'
+  +   ],
+  +   [
+  +     'rename',
+  +     'From/Source.md',
+  +     'Merged originals/Source.md'
+  +   ]
+  + ]
+  - []
+
+      at TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/confirmation-intent.test.mjs:167:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ [ 'mkdir', 'Merged originals' ], [ 'create', 'Merged originals/Target (before merge).md.txt', '---\n{"status":"target","tags":["shared","target"]}\n---\ntarget line' ], [ 'create', 'Merged originals/Source (before merge).md.txt', '---\r\n{"status":"source","tags":["shared","source"]}\r\n---\r\n# Source\r\nrepeat\r\nrepeat\r\n' ], [ 'process', 'Into/Target.md' ], [ 'frontmatter', 'Into/Target.md' ], [ 'rename', 'From/Source.md', 'Merged originals/Source.md' ] ],
+    expected: [],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests/confirmation-intent.test.mjs:161:3
+✖ unload: retained button callback cannot dispatch or write (0.406084ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+
+  + [
+  +   [
+  +     'mkdir',
+  +     'Merged originals'
+  +   ],
+  +   [
+  +     'create',
+  +     'Merged originals/Target (before merge).md.txt',
+  +     '---\n{"status":"target","tags":["shared","target"]}\n---\ntarget line'
+  +   ],
+  +   [
+  +     'create',
+  +     'Merged originals/Source (before merge).md.txt',
+  +     '---\r\n' +
+  +       '{"status":"source","tags":["shared","source"]}\r\n' +
+  +       '---\r\n' +
+  +       '# Source\r\n' +
+  +       'repeat\r\n' +
+  +       'repeat\r\n'
+  +   ],
+  +   [
+  +     'process',
+  +     'Into/Target.md'
+  +   ],
+  +   [
+  +     'frontmatter',
+  +     'Into/Target.md'
+  +   ],
+  +   [
+  +     'rename',
+  +     'From/Source.md',
+  +     'Merged originals/Source.md'
+  +   ]
+  + ]
+  - []
+
+      at TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/confirmation-intent.test.mjs:167:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ [ 'mkdir', 'Merged originals' ], [ 'create', 'Merged originals/Target (before merge).md.txt', '---\n{"status":"target","tags":["shared","target"]}\n---\ntarget line' ], [ 'create', 'Merged originals/Source (before merge).md.txt', '---\r\n{"status":"source","tags":["shared","source"]}\r\n---\r\n# Source\r\nrepeat\r\nrepeat\r\n' ], [ 'process', 'Into/Target.md' ], [ 'frontmatter', 'Into/Target.md' ], [ 'rename', 'From/Source.md', 'Merged originals/Source.md' ] ],
+    expected: [],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests/confirmation-intent.test.mjs:173:1
+✖ consumed confirmation stays single-use after the first merge completes (0.58275ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  ... Skipped lines
+
+    [
+      [
+        'mkdir',
+        'Merged originals'
+      ],
+  ...
+      ],
+  +   [
+  +     'create',
+  +     'Merged originals/Target (before merge) 1.md.txt',
+  +     '---\n' +
+  +       '{"status":["target","source"],"tags":["shared","target","source"]}\n' +
+  +       '---\n' +
+  +       'target line\n' +
+  +       '\n' +
+  +       '## Source\r\n' +
+  +       'repeat\r\n' +
+  +       'repeat\n'
+  +   ],
+  +   [
+  +     'create',
+  +     'Merged originals/Source (before merge) 1.md.txt',
+  +     '---\r\n' +
+  +       '{"status":"source","tags":["shared","source"]}\r\n' +
+  +       '---\r\n' +
+  +       '# Source\r\n' +
+  +       'repeat\r\n' +
+  +       'repeat\r\n'
+  +   ],
+  +   [
+  +     'process',
+  +     'Into/Target.md'
+  +   ],
+  +   [
+  +     'frontmatter',
+  +     'Into/Target.md'
+  +   ],
+  +   [
+  +     'rename',
+  +     'Merged originals/Source.md',
+  +     'Merged originals/Source 1.md'
+  +   ]
+    ]
+
+      at TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/confirmation-intent.test.mjs:177:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ [ 'mkdir', 'Merged originals' ], [ 'create', 'Merged originals/Target (before merge).md.txt', '---\n{"status":"target","tags":["shared","target"]}\n---\ntarget line' ], [ 'create', 'Merged originals/Source (before merge).md.txt', '---\r\n{"status":"source","tags":["shared","source"]}\r\n---\r\n# Source\r\nrepeat\r\nrepeat\r\n' ], [ 'process', 'Into/Target.md' ], [ 'frontmatter', 'Into/Target.md' ], [ 'rename', 'From/Source.md', 'Merged originals/Source.md' ], [ 'create', 'Merged originals/Target (before merge) 1.md.txt', '---\n{"status":["target","source"],"tags":["shared","target","source"]}\n---\ntarget line\n\n## Source\r\nrepeat\r\nrepeat\n' ], [ 'create', 'Merged originals/Source (before merge) 1.md.txt', '---\r\n{"status":"source","tags":["shared","source"]}\r\n---\r\n# Source\r\nrepeat\r\nrepeat\r\n' ], [ 'process', 'Into/Target.md' ], [ 'frontmatter', 'Into/Target.md' ], [ 'rename', 'Merged originals/Source.md', 'Merged originals/Source 1.md' ] ],
+    expected: [ [ 'mkdir', 'Merged originals' ], [ 'create', 'Merged originals/Target (before merge).md.txt', '---\n{"status":"target","tags":["shared","target"]}\n---\ntarget line' ], [ 'create', 'Merged originals/Source (before merge).md.txt', '---\r\n{"status":"source","tags":["shared","source"]}\r\n---\r\n# Source\r\nrepeat\r\nrepeat\r\n' ], [ 'process', 'Into/Target.md' ], [ 'frontmatter', 'Into/Target.md' ], [ 'rename', 'From/Source.md', 'Merged originals/Source.md' ] ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests/confirmation-intent.test.mjs:181:1
+✖ consumed confirmation stays single-use while its merge awaits reads (0.463708ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  3 !== 1
+
+      at TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/confirmation-intent.test.mjs:186:16)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 3,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/confirmation-intent.test.mjs:191:1
+✖ retained second prompt cannot merge an already archived source again (synthetic coexistence) (0.572959ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+
+  + [
+  +   [
+  +     'create',
+  +     'Merged originals/Target (before merge) 1.md.txt',
+  +     '---\n' +
+  +       '{"status":["target","source"],"tags":["shared","target","source"]}\n' +
+  +       '---\n' +
+  +       'target line\n' +
+  +       '\n' +
+  +       '## Source\r\n' +
+  +       'repeat\r\n' +
+  +       'repeat\n'
+  +   ],
+  +   [
+  +     'create',
+  +     'Merged originals/Source (before merge) 1.md.txt',
+  +     '---\r\n' +
+  +       '{"status":"source","tags":["shared","source"]}\r\n' +
+  +       '---\r\n' +
+  +       '# Source\r\n' +
+  +       'repeat\r\n' +
+  +       'repeat\r\n'
+  +   ],
+  +   [
+  +     'process',
+  +     'Into/Target.md'
+  +   ],
+  +   [
+  +     'frontmatter',
+  +     'Into/Target.md'
+  +   ],
+  +   [
+  +     'rename',
+  +     'Merged originals/Source.md',
+  +     'Merged originals/Source 1.md'
+  +   ]
+  + ]
+  - []
+
+      at TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/confirmation-intent.test.mjs:196:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ [ 'create', 'Merged originals/Target (before merge) 1.md.txt', '---\n{"status":["target","source"],"tags":["shared","target","source"]}\n---\ntarget line\n\n## Source\r\nrepeat\r\nrepeat\n' ], [ 'create', 'Merged originals/Source (before merge) 1.md.txt', '---\r\n{"status":"source","tags":["shared","source"]}\r\n---\r\n# Source\r\nrepeat\r\nrepeat\r\n' ], [ 'process', 'Into/Target.md' ], [ 'frontmatter', 'Into/Target.md' ], [ 'rename', 'Merged originals/Source.md', 'Merged originals/Source 1.md' ] ],
+    expected: [],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests/confirmation-intent.test.mjs:200:1
+✖ fresh prompt after rejected destination change merges into the newly displayed folder (0.388542ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+
+  + [
+  +   [
+  +     'mkdir',
+  +     'Other originals'
+  +   ],
+  +   [
+  +     'create',
+  +     'Other originals/Target (before merge).md.txt',
+  +     '---\n{"status":"target","tags":["shared","target"]}\n---\ntarget line'
+  +   ],
+  +   [
+  +     'create',
+  +     'Other originals/Source (before merge).md.txt',
+  +     '---\r\n' +
+  +       '{"status":"source","tags":["shared","source"]}\r\n' +
+  +       '---\r\n' +
+  +       '# Source\r\n' +
+  +       'repeat\r\n' +
+  +       'repeat\r\n'
+  +   ],
+  +   [
+  +     'process',
+  +     'Into/Target.md'
+  +   ],
+  +   [
+  +     'frontmatter',
+  +     'Into/Target.md'
+  +   ],
+  +   [
+  +     'rename',
+  +     'From/Source.md',
+  +     'Other originals/Source.md'
+  +   ]
+  + ]
+  - []
+
+      at TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/confirmation-intent.test.mjs:203:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ [ 'mkdir', 'Other originals' ], [ 'create', 'Other originals/Target (before merge).md.txt', '---\n{"status":"target","tags":["shared","target"]}\n---\ntarget line' ], [ 'create', 'Other originals/Source (before merge).md.txt', '---\r\n{"status":"source","tags":["shared","source"]}\r\n---\r\n# Source\r\nrepeat\r\nrepeat\r\n' ], [ 'process', 'Into/Target.md' ], [ 'frontmatter', 'Into/Target.md' ], [ 'rename', 'From/Source.md', 'Other originals/Source.md' ] ],
+    expected: [],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests/confirmation-intent.test.mjs:208:1
+✖ fresh prompt after rejected source move uses current path and keeps exact contents (0.407917ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+
+  + [
+  +   [
+  +     'mkdir',
+  +     'Merged originals'
+  +   ],
+  +   [
+  +     'create',
+  +     'Merged originals/Target (before merge).md.txt',
+  +     '---\n{"status":"target","tags":["shared","target"]}\n---\ntarget line'
+  +   ],
+  +   [
+  +     'create',
+  +     'Merged originals/Source (before merge).md.txt',
+  +     '---\r\n' +
+  +       '{"status":"source","tags":["shared","source"]}\r\n' +
+  +       '---\r\n' +
+  +       '# Source\r\n' +
+  +       'repeat\r\n' +
+  +       'repeat\r\n'
+  +   ],
+  +   [
+  +     'process',
+  +     'Into/Target.md'
+  +   ],
+  +   [
+  +     'frontmatter',
+  +     'Into/Target.md'
+  +   ],
+  +   [
+  +     'rename',
+  +     'Elsewhere/Source.md',
+  +     'Merged originals/Source.md'
+  +   ]
+  + ]
+  - []
+
+      at TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/confirmation-intent.test.mjs:210:53)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ [ 'mkdir', 'Merged originals' ], [ 'create', 'Merged originals/Target (before merge).md.txt', '---\n{"status":"target","tags":["shared","target"]}\n---\ntarget line' ], [ 'create', 'Merged originals/Source (before merge).md.txt', '---\r\n{"status":"source","tags":["shared","source"]}\r\n---\r\n# Source\r\nrepeat\r\nrepeat\r\n' ], [ 'process', 'Into/Target.md' ], [ 'frontmatter', 'Into/Target.md' ], [ 'rename', 'Elsewhere/Source.md', 'Merged originals/Source.md' ] ],
+    expected: [],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests/confirmation-intent.test.mjs:237:1
+✖ unload rejects a late request even with confirmation disabled (0.261542ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+
+  + [
+  +   [
+  +     'mkdir',
+  +     'Merged originals'
+  +   ],
+  +   [
+  +     'create',
+  +     'Merged originals/Target (before merge).md.txt',
+  +     '---\n{"status":"target","tags":["shared","target"]}\n---\ntarget line'
+  +   ],
+  +   [
+  +     'create',
+  +     'Merged originals/Source (before merge).md.txt',
+  +     '---\r\n' +
+  +       '{"status":"source","tags":["shared","source"]}\r\n' +
+  +       '---\r\n' +
+  +       '# Source\r\n' +
+  +       'repeat\r\n' +
+  +       'repeat\r\n'
+  +   ],
+  +   [
+  +     'process',
+  +     'Into/Target.md'
+  +   ],
+  +   [
+  +     'frontmatter',
+  +     'Into/Target.md'
+  +   ],
+  +   [
+  +     'rename',
+  +     'From/Source.md',
+  +     'Merged originals/Source.md'
+  +   ]
+  + ]
+  - []
+
+      at TestContext.<anonymous> (file:///Users/maxogalactic/side-projects/obsidian-file-placer/tests/confirmation-intent.test.mjs:240:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ [ 'mkdir', 'Merged originals' ], [ 'create', 'Merged originals/Target (before merge).md.txt', '---\n{"status":"target","tags":["shared","target"]}\n---\ntarget line' ], [ 'create', 'Merged originals/Source (before merge).md.txt', '---\r\n{"status":"source","tags":["shared","source"]}\r\n---\r\n# Source\r\nrepeat\r\nrepeat\r\n' ], [ 'process', 'Into/Target.md' ], [ 'frontmatter', 'Into/Target.md' ], [ 'rename', 'From/Source.md', 'Merged originals/Source.md' ] ],
+    expected: [],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }

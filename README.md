@@ -33,6 +33,12 @@ At drop, File Placer rechecks the preview and current move conflicts before clai
 
 Hold one Markdown note over another for about 700 ms, then drop on the purple outline. Confirm the dialog to merge the dragged **source** into the **target**. Confirmation is on by default and can be disabled in settings.
 
+The dialog shows the source and target paths and the originals folder. Confirming uses those same note identities, paths and destination. If either note was renamed, moved, deleted or replaced, or the destination setting now resolves to a different or invalid path, File Placer rejects the confirmation before starting a merge or creating backups and asks you to choose the notes again. Open a fresh dialog to use the new intent. Equivalent spellings of the same destination are allowed.
+
+Each dialog can be confirmed only once. Canceling or closing it, or disabling File Placer, makes retained callbacks inactive; disabling also closes pending dialogs. A prompt left over after another merge archives its source is obsolete. With confirmation disabled, the current drop-intent checks and merge safeguards still apply without opening a dialog.
+
+Note contents are read when you confirm, so edits made while the dialog is open are included. Existing concurrent-edit checks still protect edits detected during the merge. Confirmation validation is immediate before dispatch; it does not make later asynchronous filesystem operations atomic or provide automatic rollback.
+
 The target stays in place. Source headings move down one level, except level-six headings and headings inside fenced code blocks. If needed, a heading using the source's name is added. Source properties are combined with target properties; conflicting values become a deduplicated list. Unreadable source properties are retained as a YAML code block. Nonblank body lines are checked before writing; the merged formatting is not byte-for-byte identical.
 
 Before changing either note, exact text snapshots of both are saved as `<name> (before merge).md.txt` in **Merged originals** (or a visible vault folder selected in settings). The `.txt` extension prevents Obsidian's automatic Markdown link updates from changing those snapshots. Existing snapshots get numbered names.
@@ -67,7 +73,7 @@ Colors can be overridden with a CSS snippet using `--file-placer-hover` and `--f
 
 - `npm run dev`: rebuild while editing.
 - `npm run lint`: official Obsidian ESLint rules and TypeScript-aware checks.
-- `npm test`: merge preservation, conflict/failure handling, frontmatter, ordering, settings and actual-source drag-intent regressions. Drag tests use native JSDOM events with controlled time and Obsidian API doubles; JSDOM is development-only.
+- `npm test`: merge preservation, conflict/failure handling, frontmatter, ordering, settings and actual-source drag/confirmation-intent regressions. Drag and confirmation tests use native JSDOM events with controlled time or Modal/Setting lifecycle doubles and synthetic vault operations; JSDOM is development-only.
 - `npm run test:integration`: tests the actual File Placer and Pinit source together in both load orders, disabling either plugin and re-enabling it. Requires the Pinit checkout at `../obsidian-pinit-to-top-or-bottom` (or set `PINIT_SOURCE` to its `src/main.ts`). This optional suite uses an explorer test double, not a live Obsidian window; standalone QA needs no sibling checkout.
 - `npm run build`: strict TypeScript check and production bundle.
 - `npm run qa`: all checks plus manifest/package/version and artifact validation.

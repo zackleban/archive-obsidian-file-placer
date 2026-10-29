@@ -1,6 +1,6 @@
 # Local review checklist
 
-Latest local checkpoint: [Four-fix quality REVIEW — 2026-10-29](#four-fix-quality-review--2026-10-29). Earlier entries below remain dated history.
+Latest local checkpoint: [Confirmation-intent repair — 2026-10-29](#confirmation-intent-repair--2026-10-29). Earlier entries below remain dated history.
 
 Prepared on 2026-10-28. Nothing was submitted, tagged, pushed, or released.
 
@@ -33,6 +33,7 @@ open, including minimum-version and mobile coverage.
 - Place files before/after another item, into an expanded/collapsed folder, and at the vault root. Reload and check persistence.
 - Try a name conflict, a folder dragged into itself, and a multiple-file drag. Nothing should be overwritten.
 - Merge two test notes with YAML, fenced code, repeated lines, and links. Inspect both `.md.txt` snapshots, the merged target, and archived source. Check restoration.
+- While a merge dialog is open, rename/move or replace a note and change the originals folder; verify rejection with no merge writes, then open a fresh valid prompt. Check Cancel, Escape/backdrop close, disable and normal confirmation on current/minimum versions and in popouts. Actual modal lifecycle, focus, visibility and coexistence remain unverified.
 - Use a detached explorer window and test dragging, drag cancellation, and changing windows.
 - Check current/minimum-version host drag-manager ordering at capture-phase drop: ordinary, held, multi-selection, cancelled/ended, and reused rows. Change source/target between preview and drop; verify File Placer rejects stale intent and separately observe core behavior. Repeat in a popout. Synthetic tests do not close this gate.
 - Enable Pinit in both plugin-load orders. Top/bottom pins must remain pinned; disabling either plugin must leave the other working.
@@ -326,3 +327,118 @@ Fresh `npm run qa` passed **109/109 tests**, TypeScript, production build and pa
 README installation/development requirements, manifest/package/lock/root-lock/version-map agreement, licenses/notices, dependency classification and production artifacts were checked against actual configuration. Current official [plugin guidelines](https://docs.obsidian.md/Plugins/Releasing/Plugin%20guidelines), [developer policies](https://docs.obsidian.md/community-directory/developer-policies), [submission requirements](https://docs.obsidian.md/community-directory/submission-requirements-for-plugins), [manifest schema](https://docs.obsidian.md/Reference/Manifest) and [submission instructions](https://docs.obsidian.md/Plugins/Releasing/Submit%20your%20plugin) were rechecked. Declared minimums remain unverified runtime gates; local consistency is not hosted-scanner or community approval.
 
 Existing live checklists and recovery protocols above remain their sole homes; no app-access retry, personal-vault installation, push, tag, release or submission occurred. Production assets are byte-identical to the starting candidate.
+
+## Confirmation-intent repair — 2026-10-29
+
+**agent decision 2026-10-28:** reject changed displayed intent and require a fresh
+prompt because following mutable objects/settings contradicts what was confirmed.
+One editing owner and an independent read-only reviewer cover this bounded repair.
+Local Mac source/DOM tools fit; GPU work and asset credits add no useful evidence.
+The drop-intent guard, sorting and merge/recovery algorithms remain unchanged.
+
+### Contract
+
+`askToMerge` captures source/target object identities, their paths, and the
+normalized originals-folder path. The modal displays immutable full note paths,
+short names and that destination. Immediately before merge dispatch, the current
+object paths must equal the captured paths, vault lookups at those paths must
+resolve to those objects, and the current setting must resolve to the same valid
+destination. Different or invalid destinations, moved/renamed/deleted/replaced
+notes, and a source archived by a prior merge reject with:
+`File Placer: The merge confirmation is out of date. Choose the notes again.`
+No merge dispatch, backup folder/snapshot creation, target processing, frontmatter
+processing or archive rename occurs for those rejected confirmations.
+
+A normalized-equivalent destination spelling is unchanged intent. The contract
+captures a destination **path**, not an existing folder object's identity; folder
+existence/name conflicts are still handled by the merge's existing checks. Changes
+restored before confirmation are not a historical event log and cannot be detected.
+
+Each modal consumes its pending action before closing and dispatching. `onClose`
+invalidates it and releases plugin ownership; Cancel and host close use the same
+path. Unload marks the plugin inactive, closes all pending prompts and prevents
+late confirmation/request callbacks. Already consumed, canceled, closed or unloaded
+callbacks silently do nothing. A rejected prompt is also consumed; a fresh prompt
+can accept new paths/settings. Separate still-valid prompts encounter the existing
+merge lock if another merge is running. No automatic retry is added.
+
+No contents are frozen while the prompt is open: confirmation reads current note
+texts and retains the existing exact snapshots, line-preservation checks, source
+rereads, target `process` comparison and merge lock. Validation and dispatch have
+no intervening await; `mergeNotes` captures its destination before its first await.
+This does not lock paths/settings/contents across subsequent asynchronous host
+operations, cancel an already dispatched merge on unload, or make recovery atomic.
+Confirmation-disabled operation continues through the actual merge without a
+modal; the previously accepted drop guard remains separate.
+
+### Baseline, replay and local evidence
+
+`tests/confirmation-intent.test.mjs` loads actual source and exercises the real
+`askToMerge`, `MergeModal` lifecycle/button callbacks, `safely`, `merge` and
+`mergeNotes`. The merge observer forwards to the real implementation. Native
+JSDOM buttons deliver clicks through a Setting double; the Modal double invokes
+`onOpen`/`onClose`, attaches/removes native elements and exposes exact displayed
+text. Synthetic vault operations record every folder/create/process/frontmatter/
+rename call and maintain file identity, paths and contents. Assertions require
+zero effects before checking rejected dispatch, and exact full target text,
+properties, snapshots, source text/archive identity and operation order on success.
+
+- Before editing production code, the persisted **25-case baseline failed 20/25**
+  against `02166ce02ca893d533b547743a87799c23b8ef55`; five positive controls passed.
+  Full output: [confirmation-intent-baseline.txt](../tests/evidence/confirmation-intent-baseline.txt).
+- Baseline source/target moves and renames, destination changes, closed callbacks
+  and repeated/obsolete prompts performed actual synthetic writes. Baseline
+  deletion/replacement already stopped within `mergeNotes`, but still dispatched;
+  an invalid destination also dispatched and lacked choose-again feedback.
+- Candidate focused suite: **25/25 pass**. It covers all those changes separately,
+  unchanged confirmation, displayed paths, cancellation/external close/unload,
+  repeated invocation before and after completion, retained second-prompt replay,
+  fresh prompts after destination/source-path rejection, normalized destination,
+  current-content reads, confirmation-disabled behavior and the merge lock.
+
+Replay against the exact baseline without modifying the checkout (run from the
+repository; the temporary source directory is disposable):
+
+```sh
+baseline_dir=$(mktemp -d /tmp/file-placer-confirmation-baseline.XXXXXX)
+ln -s "$PWD/node_modules" "$baseline_dir/node_modules"
+for source in main.ts merge.ts order.ts; do
+  git show "02166ce02ca893d533b547743a87799c23b8ef55:src/$source" > "$baseline_dir/$source"
+done
+FILE_PLACER_SOURCE="$baseline_dir/main.ts" node --test tests/confirmation-intent.test.mjs
+```
+
+This source override changes only implementation selection, not assertions or
+host behavior. The expected baseline exit is 1. The unchanged implementation's
+five controls pass, distinguishing intended successful behavior from rejection.
+
+### Boundaries and final checks
+
+Installed Obsidian 1.14.4 declarations expose Modal `open`, `close`, `onOpen`,
+`onClose` and ButtonComponent `onClick`; they do not guarantee modal coexistence
+or event ordering. The retained-second-prompt test models two host-owned callbacks
+with synthetic open modals, **not demonstrated live UI coexistence**. Direct
+retained-callback tests intentionally bypass normal DOM removal to test ownership.
+Escape/backdrop delivery, focus and actual rendering are not simulated. Vault,
+file objects, lifecycle, Notice and JSON-flow-YAML frontmatter processing are
+host doubles; no real disk durability, link maintenance or YAML formatting is
+certified. Notices assert constructor text, not an observed application message.
+
+Existing live sorting/drag/modal/recovery/link/popout/minimum-version checks stay
+open in this record and [RUNTIME-SORTING.md](RUNTIME-SORTING.md). No new live-check
+home, app-access retry or personal-vault installation was made. Local acceptance
+is not community approval or a minimum-version certification.
+
+Independent read-only review found no blocking contract or coverage defect and
+separately ran the focused suite (**25/25 pass**). The documented baseline replay,
+including temporary dependency resolution, reproduces **20 failures / 25 cases**
+with the same five controls passing.
+
+One final `npm run qa` passes **134/134 tests** (17 preservation/behavior, 92 drop
+intent and 25 confirmation intent), zero-warning lint, TypeScript, production
+build and package checks. One final `npm run test:integration` passes **12/12**
+against unchanged clean Pinit `8d5374307df00ded6d7cc596dc0410f1ba7f54a7` on
+`agent/2026-10-28`. No final-check failure required a repeated QA/integration run.
+`main.js` is rebuilt from final source; dependencies, metadata and CSS are
+unchanged. Working/staged diff checks pass. Nothing was pushed, tagged, released
+or submitted. These results accept the bounded local candidate only.

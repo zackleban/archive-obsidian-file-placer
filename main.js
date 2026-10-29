@@ -198,6 +198,7 @@ var FilePlacerPlugin = class extends import_obsidian.Plugin {
     this.unsupported = false;
     this.merging = false;
     this.unloaded = false;
+    this.mergePrompts = /* @__PURE__ */ new Set();
     this.watched = /* @__PURE__ */ new Map();
     this.plan = null;
     this.shownEl = null;
@@ -222,6 +223,8 @@ var FilePlacerPlugin = class extends import_obsidian.Plugin {
   }
   onunload() {
     this.unloaded = true;
+    for (const modal of this.mergePrompts) modal.close();
+    this.mergePrompts.clear();
     this.endDrag();
     for (const component of this.watched.values()) this.removeChild(component);
     this.watched.clear();
@@ -532,9 +535,29 @@ var FilePlacerPlugin = class extends import_obsidian.Plugin {
     return items.length > 0 ? items.map((item) => item.file.name) : folder.children.map((child) => child.name);
   }
   askToMerge(source, target) {
-    const merge = () => void this.safely(() => this.merge(source, target));
-    if (this.settings.askBeforeMerge) new MergeModal(this.app, source, target, this.mergedFolder(), merge).open();
-    else merge();
+    if (this.unloaded) return;
+    if (!this.settings.askBeforeMerge) {
+      void this.safely(() => this.merge(source, target));
+      return;
+    }
+    const sourcePath = source.path;
+    const targetPath = target.path;
+    const folder = this.mergedFolder();
+    const merge = () => void this.safely(() => {
+      if (this.unloaded) return Promise.resolve();
+      let sameFolder = false;
+      try {
+        sameFolder = this.mergedFolder() === folder;
+      } catch {
+      }
+      if (!sameFolder || source.path !== sourcePath || target.path !== targetPath || this.app.vault.getAbstractFileByPath(sourcePath) !== source || this.app.vault.getAbstractFileByPath(targetPath) !== target) {
+        throw new Error("The merge confirmation is out of date. Choose the notes again.");
+      }
+      return this.merge(source, target);
+    });
+    const modal = new MergeModal(this.app, sourcePath, targetPath, folder, merge, () => this.mergePrompts.delete(modal));
+    this.mergePrompts.add(modal);
+    modal.open();
   }
   async ensureFolder(path) {
     const existing = this.app.vault.getAbstractFileByPath(path);
@@ -608,17 +631,21 @@ var FilePlacerPlugin = class extends import_obsidian.Plugin {
   }
 };
 var MergeModal = class extends import_obsidian.Modal {
-  constructor(app, source, target, folder, onMerge) {
+  constructor(app, sourcePath, targetPath, folder, onMerge, onDismiss) {
     super(app);
-    this.source = source;
-    this.target = target;
+    this.sourcePath = sourcePath;
+    this.targetPath = targetPath;
     this.folder = folder;
     this.onMerge = onMerge;
+    this.onDismiss = onDismiss;
+    this.pending = true;
   }
   onOpen() {
-    const from = this.source.basename;
-    const into = this.target.basename;
+    const from = nameOf(this.sourcePath).replace(/\.md$/, "");
+    const into = nameOf(this.targetPath).replace(/\.md$/, "");
     this.titleEl.setText(`Merge "${from}" into "${into}"?`);
+    this.contentEl.createEl("p", { text: `Source: ${this.sourcePath}` });
+    this.contentEl.createEl("p", { text: `Target: ${this.targetPath}` });
     this.contentEl.createEl("p", {
       text: `"${into}" stays where it is and gets all of "${from}" added under it, with its headings one level down.`
     });
@@ -627,12 +654,16 @@ var MergeModal = class extends import_obsidian.Modal {
     });
     new import_obsidian.Setting(this.contentEl).addButton((button) => button.setButtonText("Cancel").onClick(() => this.close())).addButton(
       (button) => button.setButtonText("Merge").setCta().onClick(() => {
+        if (!this.pending) return;
+        this.pending = false;
         this.close();
         this.onMerge();
       })
     );
   }
   onClose() {
+    this.pending = false;
+    this.onDismiss();
     this.contentEl.empty();
   }
 };
