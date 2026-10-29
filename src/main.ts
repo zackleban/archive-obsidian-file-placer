@@ -50,9 +50,14 @@ interface DragManager {
 	setAction(action: string | null): void;
 }
 
+interface PinSettings {
+	top?: unknown;
+	bottom?: unknown;
+}
+
 interface InternalApp extends App {
 	dragManager?: DragManager;
-	plugins?: { plugins: Record<string, { settings?: { top?: unknown; bottom?: unknown } } | undefined> };
+	plugins?: { plugins: Record<string, { settings?: PinSettings; getActivePins?: () => PinSettings | null } | undefined> };
 }
 
 const parentOf = (path: string) => (path.includes("/") ? path.slice(0, path.lastIndexOf("/")) : "/");
@@ -267,9 +272,11 @@ export default class FilePlacerPlugin extends Plugin {
 		const order = this.settings.order[folder.path];
 		if (!order) return items;
 		// Items pinned by Pinit to Top or Bottom keep their pins.
-		const pinit = (this.app as InternalApp).plugins?.plugins[PINIT]?.settings;
-		const top = new Set(strings(pinit?.top));
-		const bottom = new Set(strings(pinit?.bottom));
+		const pinit = (this.app as InternalApp).plugins?.plugins[PINIT];
+		// New Pinit versions expose only active pins; retain compatibility with older ones.
+		const pins = typeof pinit?.getActivePins === "function" ? pinit.getActivePins() : pinit?.settings;
+		const top = new Set(strings(pins?.top));
+		const bottom = new Set(strings(pins?.bottom));
 		const pinned = (item: FileExplorerItem) => top.has(item.file.path) || bottom.has(item.file.path);
 		return [
 			...items.filter((item) => top.has(item.file.path)),

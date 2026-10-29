@@ -21,7 +21,7 @@ This repository contains a local submission candidate, not a published community
 - Hold still over a folder for about 700 ms, then drop on its purple outline to move into it.
 - Each folder remembers its order. New items remain beside their neighbors in the ordinary sort order.
 - Right-click a folder and choose **Back to normal sort**, or reset it in the plugin settings. The settings also include the vault root.
-- Pinit to Top or Bottom pins take precedence over manual placement.
+- Pinit to Top or Bottom pins take precedence over manual placement. With both current local candidates installed, disabling Pinit immediately restores the placed order; re-enabling it restores saved pins. Install both updated candidates for this cleanup fix; older Pinit versions still use the settings compatibility fallback.
 
 A move never overwrites another file with the same name. A folder cannot move inside itself. The plugin claims only drops with a valid preview; other drops use Obsidian's normal behavior.
 
@@ -43,7 +43,7 @@ Open the originals folder in your file manager. Copy the `.md.txt` snapshots som
 
 ## Settings and privacy
 
-Settings include merge confirmation, the originals folder, and per-folder reset buttons. Order and preferences live in this plugin's `data.json`. No accounts, telemetry, network calls, or paid services are used. Disabling the plugin restores ordinary sorting and leaves all notes, snapshots, and saved ordering intact.
+Settings include merge confirmation, the originals folder, and per-folder reset buttons. Order and preferences live in this plugin's `data.json`. No accounts, telemetry, network calls, or paid services are used. Disabling the plugin removes manual ordering and leaves all notes, snapshots, and saved ordering intact. Other enabled sorting plugins still apply.
 
 Colors can be overridden with a CSS snippet using `--file-placer-hover` and `--file-placer-line`.
 
@@ -52,6 +52,7 @@ Colors can be overridden with a CSS snippet using `--file-placer-hover` and `--f
 - `npm run dev`: rebuild while editing.
 - `npm run lint`: official Obsidian ESLint rules and TypeScript-aware checks.
 - `npm test`: merge preservation, conflict/failure handling, frontmatter, ordering, and settings regressions.
+- `npm run test:integration`: tests the actual File Placer and Pinit source together in both load orders, disabling either plugin and re-enabling it. Requires the Pinit checkout at `../obsidian-pinit-to-top-or-bottom` (or set `PINIT_SOURCE` to its `src/main.ts`). This optional suite uses an explorer test double, not a live Obsidian window; standalone QA needs no sibling checkout.
 - `npm run build`: strict TypeScript check and production bundle.
 - `npm run qa`: all checks plus manifest/package/version and artifact validation.
 

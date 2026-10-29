@@ -371,9 +371,10 @@ var FilePlacerPlugin = class extends import_obsidian.Plugin {
   arrange(folder, items) {
     const order = this.settings.order[folder.path];
     if (!order) return items;
-    const pinit = this.app.plugins?.plugins[PINIT]?.settings;
-    const top = new Set(strings(pinit?.top));
-    const bottom = new Set(strings(pinit?.bottom));
+    const pinit = this.app.plugins?.plugins[PINIT];
+    const pins = typeof pinit?.getActivePins === "function" ? pinit.getActivePins() : pinit?.settings;
+    const top = new Set(strings(pins?.top));
+    const bottom = new Set(strings(pins?.bottom));
     const pinned = (item) => top.has(item.file.path) || bottom.has(item.file.path);
     return [
       ...items.filter((item) => top.has(item.file.path)),

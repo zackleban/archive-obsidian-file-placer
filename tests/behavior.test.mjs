@@ -109,3 +109,23 @@ test("closed explorer panes release their registered listeners",()=>{
   app.workspace.getLeavesOfType=()=>[];plugin.watchExplorers();
   assert.equal(plugin.watched.size,0);assert.equal(component.unloaded,true);
 });
+
+test("inactive Pinit pins do not override placement while its registry entry remains",()=>{
+  const {plugin,app}=fixture();
+  const folder=new TFolder("/");
+  const items=["a.md","b.md","c.md"].map(path=>({file:new TFile(path)}));
+  plugin.settings.order={"/":["c.md","b.md","a.md"]};
+  app.plugins={plugins:{"pinit-to-top-or-bottom":{
+    settings:{top:["a.md"],bottom:["c.md"]},getActivePins:()=>null,
+  }}};
+  assert.deepEqual(plugin.arrange(folder,items).map(item=>item.file.path),["c.md","b.md","a.md"]);
+});
+
+test("older Pinit versions keep pin priority through the settings fallback",()=>{
+  const {plugin,app}=fixture();
+  const folder=new TFolder("/");
+  const items=["a.md","b.md","c.md"].map(path=>({file:new TFile(path)}));
+  plugin.settings.order={"/":["c.md","b.md","a.md"]};
+  app.plugins={plugins:{"pinit-to-top-or-bottom":{settings:{top:["a.md"],bottom:["c.md"]}}}};
+  assert.deepEqual(plugin.arrange(folder,items).map(item=>item.file.path),["a.md","b.md","c.md"]);
+});
